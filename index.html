@@ -102,25 +102,29 @@ html, body {
 /* ══════════════════════════════
    SCENE 1 — VERIFICATION FORM
 ══════════════════════════════ */
-#s1 { background:#f5f5f7; }
+#s1, #s3 { background:#f5f5f7; }
 
-#s1-body { flex:1; display:flex; overflow:hidden; }
+#s1-body, #s3-body { flex:1; display:flex; overflow:hidden; }
 
-#s1-content {
+#s1-content, #s3-content {
   flex:1; display:flex; align-items:flex-start; justify-content:center;
   padding:48px 70px 40px 80px;
   background:#f5f5f7; overflow:hidden; position:relative; z-index:25;
 }
+/* scene 3 has one extra field — tighten spacing so all 4 fit */
+#s3-content { padding:28px 70px 24px 80px; }
+#s3-title   { margin-bottom:22px; }
+#s3 .fld    { margin-bottom:14px; }
 
-#s1-form {
+#s1-form, #s3-form {
   width:100%; max-width:500px;
   display:flex; flex-direction:column;
   opacity:0; position:relative;
   transform-origin:top center; will-change:transform;
 }
-#s1-flash { position:absolute; inset:-12px; border-radius:16px; background:rgba(39,174,96,0); pointer-events:none; z-index:50; }
+#s1-flash, #s3-flash { position:absolute; inset:-12px; border-radius:16px; background:rgba(39,174,96,0); pointer-events:none; z-index:50; }
 
-#s1-title { font-size:30px; font-weight:900; color:#1a1464; text-align:right; margin-bottom:32px; opacity:0; }
+#s1-title, #s3-title { font-size:30px; font-weight:900; color:#1a1464; text-align:right; margin-bottom:32px; opacity:0; }
 
 .fld { margin-bottom:20px; opacity:0; position:relative; }
 .fld-spot { position:absolute; inset:-8px -12px; border-radius:12px; background:rgba(232,135,74,.07); box-shadow:0 0 0 2.5px rgba(232,135,74,.2),0 6px 28px rgba(232,135,74,.12); pointer-events:none; opacity:0; transition:opacity .3s; z-index:0; }
@@ -150,11 +154,11 @@ html, body {
 .chk svg .cp { stroke-dasharray:24; stroke-dashoffset:24; transition:stroke-dashoffset .35s ease .2s; }
 .chk.show svg .cp { stroke-dashoffset:0; }
 
-#s1-btn { width:100%; padding:15px; background:#1a1464; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Cairo',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; margin-top:8px; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .25s,box-shadow .25s; }
-#s1-btn:hover { background:#2530a8; }
+#s1-btn, #s3-btn { width:100%; padding:15px; background:#1a1464; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Cairo',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; margin-top:8px; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .25s,box-shadow .25s; }
+#s1-btn:hover, #s3-btn:hover { background:#2530a8; }
 
 /* sidebar */
-#s1-sidebar { width:240px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:36px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
+#s1-sidebar, #s3-sidebar { width:240px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:36px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
 .stp-row { display:flex; flex-direction:row-reverse; align-items:center; gap:14px; padding:10px 20px 10px 16px; }
 .stp-num { width:30px; height:30px; border-radius:50%; background:#efefef; color:#c0c0c0; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .5s ease; }
 .stp-lbl { font-size:13px; font-weight:500; color:#c0c0c0; text-align:right; direction:rtl; line-height:1.4; transition:all .4s; flex:1; }
@@ -404,6 +408,104 @@ html, body {
     </footer>
   </div>
 
+  <!-- ══════════════ SCREEN 3 — VERIFICATION (COMPANY / BANK) ══════════════ -->
+  <div class="screen" id="s3">
+    <div class="dim-layer" id="dim3"></div>
+
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a1464" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s3-body">
+      <div id="s3-content">
+        <div id="s3-form">
+          <div id="s3-flash"></div>
+          <div id="s3-title">التحقق</div>
+
+          <div class="fld" id="fg4">
+            <div class="fld-spot" id="spot4"></div>
+            <div class="fld-top">
+              <span class="fld-req">*</span>
+              <span class="fld-lbl" id="lbl4">رقم الهوية الوطنية / الإقامة / هوية المالك</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <input class="fld-input" id="inp4" placeholder="10 أرقام فقط" readonly>
+            <div class="chk" id="chk4"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div class="fld" id="fg5">
+            <div class="fld-spot" id="spot5"></div>
+            <div class="fld-top">
+              <span class="fld-req">*</span>
+              <span class="fld-lbl" id="lbl5">رقم هوية السائق</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <input class="fld-input" id="inp5" placeholder="10 أرقام فقط" readonly>
+            <div class="chk" id="chk5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div class="fld" id="fg6">
+            <div class="fld-spot" id="spot6"></div>
+            <div class="fld-top">
+              <span class="fld-req">*</span>
+              <span class="fld-lbl" id="lbl6">رقم الجوال</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <div class="ph-wrap">
+              <div class="ph-code" id="phcode3">
+                <svg width="26" height="17" viewBox="0 0 26 17"><rect width="26" height="17" rx="2" fill="#006C35"/><rect x="4" y="4" width="18" height="5" rx="1" fill="white" opacity=".88"/><rect x="4" y="11" width="15" height="1.5" rx=".7" fill="white" opacity=".9"/><polygon points="19,10.5 22,12 19,13.5" fill="white" opacity=".9"/></svg>
+                <span>966+</span>
+              </div>
+              <input class="ph-inp" id="inp6" placeholder="5xxxxxxxx" readonly>
+            </div>
+            <div class="chk" id="chk6"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div class="fld" id="fg7">
+            <div class="fld-spot" id="spot7"></div>
+            <div class="fld-top">
+              <span class="fld-lbl" id="lbl7">البريد الإلكتروني</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <input class="fld-input" id="inp7" placeholder="البريد الإلكتروني" readonly>
+          </div>
+
+          <div style="height:18px;"></div>
+
+          <button id="s3-btn" class="shimmable">
+            <span>التالي</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <aside id="s3-sidebar">
+        <div class="stp-row active"><div class="stp-num" id="stp1c">1</div><div class="stp-lbl">بيانات مقدم المطالبة</div></div>
+        <div class="stp-line" id="line1c"></div>
+        <div class="stp-row"><div class="stp-num">2</div><div class="stp-lbl">تفاصيل الحادث</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
+      </aside>
+    </div>
+
+    <footer class="site-ftr" id="s3-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+  </div>
+
 </div><!-- /scene -->
 
 <script>
@@ -425,6 +527,7 @@ scaleScene(); window.addEventListener('resize',scaleScene);
 gsap.set(cur,{left:-60,top:-60,opacity:0});
 let trailTimer=null;
 function startTrail(){
+  if(trailTimer) clearInterval(trailTimer);
   trailTimer=setInterval(()=>{
     const x=parseFloat(cur.style.left||0), y=parseFloat(cur.style.top||0);
     const d=document.createElement('div'); d.className='tr';
@@ -488,8 +591,8 @@ const spotOn=n=>gsap.to($('spot'+n),{opacity:1,duration:.28});
 const spotOff=n=>gsap.to($('spot'+n),{opacity:0,duration:.28});
 const lblOn=n=>$('lbl'+n).classList.add('active');
 const lblOff=n=>$('lbl'+n).classList.remove('active');
-const pingOn=()=>$('stp1').classList.add('ping');
-const pingOff=()=>$('stp1').classList.remove('ping');
+const pingOn=(id='stp1')=>$(id).classList.add('ping');
+const pingOff=(id='stp1')=>$(id).classList.remove('ping');
 function shimBtn(id){ const b=$(id); b.classList.remove('shim'); void b.offsetWidth; b.classList.add('shim'); }
 async function successFlash(flashEl){
   gsap.to(flashEl,{backgroundColor:'rgba(39,174,96,0.12)',duration:.25,ease:'power2.out'});
@@ -662,8 +765,15 @@ async function runScene1(){
 /* ══════════════════════════════════════════
    SCENE 2 — OTP
 ══════════════════════════════════════════ */
-async function runScene2(){
+async function runScene2(isFinal=true){
   const dim=$('dim2');
+
+  /* reset (so the screen can be replayed for the company flow) */
+  ['b1','b2','b3','b4'].forEach(id=>{ const b=$(id); b.classList.remove('filled','active'); const d=b.querySelector('.digit'); if(d) d.textContent=''; });
+  $('s2-btn').classList.remove('ready'); $('s2-btn').style.background='';
+  $('timer-txt').textContent='0:56';
+  gsap.set($('otp-spot'),{opacity:0});
+  dim.classList.remove('on');
 
   /* init s2 elements */
   gsap.set($('s2-form'),{y:24,scale:.97,opacity:0});
@@ -736,21 +846,126 @@ async function runScene2(){
   await zoomOut(s2form,0.85); await sleep(180);
   sfx_success(); await successFlash($('s2-flash'));
 
-  /* cinematic close — branded curtain sweeps in */
   stopTrail();
-  const end = document.createElement('div');
-  end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#1a1464 0%,#2d3fa8 40%,#e8874a 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
-  document.body.appendChild(end);
-  gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
-  gsap.to(cur, { opacity:0, duration:.5 });
+  if(isFinal){
+    /* cinematic close — branded curtain sweeps in */
+    const end = document.createElement('div');
+    end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#1a1464 0%,#2d3fa8 40%,#e8874a 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
+    document.body.appendChild(end);
+    gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
+    gsap.to(cur, { opacity:0, duration:.5 });
+  } else {
+    gsap.to(cur, { opacity:0, duration:.4 });
+  }
+}
+
+/* ══════════════════════════════════════════
+   SCENE 3 — VERIFICATION (COMPANY / BANK)
+══════════════════════════════════════════ */
+async function runScene3(){
+  const dim=$('dim3');
+
+  /* init (form elements already hidden via CSS — just set transforms) */
+  gsap.set($('s3-sidebar'),{x:32,opacity:0});
+  gsap.set($('s3-form'),{y:26,scale:.97,opacity:0});
+  gsap.set($('s3-title'),{y:-16,opacity:0});
+  gsap.set(['#fg4','#fg5','#fg6','#fg7'],{x:20,opacity:0});
+  gsap.set($('s3-btn'),{y:18,scale:.95,opacity:0});
+
+  setP(2);
+
+  /* page builds */
+  gsap.to($('s3-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
+  await sleep(480);
+  gsap.to($('s3-form'),{y:0,scale:1,opacity:1,duration:.7,ease:'power3.out'});
+  await sleep(360);
+  gsap.to($('s3-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.5)'});
+  await sleep(260);
+  gsap.to($('fg4'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to($('fg5'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to($('fg6'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to($('fg7'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  setP(16);
+
+  const f=$('s3-form'), c=$('s3-content');
+
+  /* ── FIELD 4 — owner / company ID ── */
+  pingOn('stp1c'); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(f,c,$('fg4'),1.55,0.95);
+  spotOn(4); lblOn(4);
+  const r4=$('inp4').getBoundingClientRect();
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  await moveTo(r4.left+r4.width*.62,r4.top+r4.height*.5,1.1);
+  await clickAt(r4.left+r4.width*.62,r4.top+r4.height*.5);
+  $('inp4').focus(); await sleep(180);
+  await typeIn($('inp4'),'7001689913',70);
+  lblOff(4); showChk(4); sfx_check(); await sleep(340);
+  spotOff(4); pingOff('stp1c'); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(f,0.9); setP(34); await sleep(340);
+
+  /* ── FIELD 5 — driver ID ── */
+  pingOn('stp1c'); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(f,c,$('fg5'),1.55,0.95);
+  spotOn(5); lblOn(5);
+  const r5=$('inp5').getBoundingClientRect();
+  await moveTo(r5.left+r5.width*.62,r5.top+r5.height*.5,.6);
+  await clickAt(r5.left+r5.width*.62,r5.top+r5.height*.5);
+  $('inp5').focus(); await sleep(180);
+  await typeIn($('inp5'),'2341968192',70);
+  lblOff(5); showChk(5); sfx_check(); await sleep(340);
+  spotOff(5); pingOff('stp1c'); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(f,0.9); setP(52); await sleep(340);
+
+  /* ── FIELD 6 — mobile ── */
+  pingOn('stp1c'); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(f,c,$('fg6'),1.55,0.95);
+  spotOn(6); lblOn(6);
+  const r6=$('inp6').getBoundingClientRect();
+  await moveTo(r6.left+r6.width*.55,r6.top+r6.height*.5,.55);
+  await clickAt(r6.left+r6.width*.55,r6.top+r6.height*.5);
+  $('inp6').classList.add('focused'); $('phcode3').style.borderColor='#e8874a';
+  await sleep(180);
+  await typeIn($('inp6'),'537077897',74);
+  $('phcode3').style.borderColor='#c8d8ff';
+  lblOff(6); showChk(6); sfx_check(); await sleep(340);
+  spotOff(6); pingOff('stp1c'); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(f,0.9); setP(70); await sleep(360);
+
+  /* sidebar progress line */
+  $('line1c').classList.add('done'); await sleep(400);
+
+  /* ── BUTTON ── */
+  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(420);
+  shimBtn('s3-btn'); await sleep(500);
+  sfx_zoomin(); await zoomTo(f,c,$('s3-btn'),1.3,0.85,80);
+  await sleep(320);
+  const rb=$('s3-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s3-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s3-btn').style.background='#2530a8',
+    onComplete:()=>setTimeout(()=>{ $('s3-btn').style.background='#1a1464'; shimBtn('s3-btn'); },200)
+  });
+
+  setP(82); await sleep(500);
+  await zoomOut(f,0.85); await sleep(180);
+  sfx_success(); await successFlash($('s3-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
 
 /* ══ MASTER SEQUENCE ══ */
 async function run(){
+  /* ── Part A: individual claimant ── */
   await runScene1();
-  /* transition to scene 2 */
   await transitionTo('s1','s2');
-  await runScene2();
+  await runScene2(false);
+
+  /* ── Part B: company / bank claimant ── */
+  await transitionTo('s2','s3');
+  await runScene3();
+  await transitionTo('s3','s2');
+  await runScene2(true);
 }
 
 
