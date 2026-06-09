@@ -264,11 +264,11 @@ html, body {
 @keyframes cardPop { 0%{transform:scale(1)} 45%{transform:scale(1.05)} 100%{transform:scale(1)} }
 .opt-card.pop { animation:cardPop .35s ease; }
 
-.q-row { display:flex; flex-direction:row-reverse; align-items:center; gap:10px; margin-bottom:14px; direction:rtl; position:relative; z-index:1; }
+.q-row { display:flex; flex-direction:row-reverse; align-items:center; gap:16px; margin-bottom:14px; direction:rtl; position:relative; z-index:1; flex-wrap:wrap; }
 .q-help { width:19px; height:19px; border-radius:50%; background:#efefef; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.q-lbl { font-size:13.5px; font-weight:600; color:#222; }
+.q-lbl { font-size:13px; font-weight:600; color:#222; }
 .q-req { color:#e8874a; font-weight:700; }
-.rad-grp { display:flex; flex-direction:row-reverse; gap:26px; margin-right:auto; }
+.rad-grp { display:flex; flex-direction:row-reverse; gap:22px; }
 .rad-opt { display:flex; flex-direction:row-reverse; align-items:center; gap:7px; cursor:pointer; }
 .rad-dot { width:18px; height:18px; border-radius:50%; border:2px solid #c4c4c4; position:relative; transition:border-color .25s; flex-shrink:0; }
 .rad-dot::after { content:''; position:absolute; inset:3px; border-radius:50%; background:#1a1464; transform:scale(0); transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
@@ -610,13 +610,13 @@ html, body {
             <div class="acc-spot" id="spot-src"></div>
             <div class="acc-h">مصدر تقرير الحادث</div>
             <div class="card-row">
-              <div class="opt-card" id="src-basher">
-                <div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-                <div class="oc-lbl">باشر / المرور</div>
-              </div>
               <div class="opt-card" id="src-najm">
                 <div class="oc-ic"><div style="width:30px;height:30px;border-radius:50%;background:#00a651;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:900;">نجم</div></div>
                 <div class="oc-lbl">نجم</div>
+              </div>
+              <div class="opt-card" id="src-basher">
+                <div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                <div class="oc-lbl">باشر / المرور</div>
               </div>
               <div class="opt-card" id="src-other">
                 <div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1a1464" stroke-width="1.8" stroke-linecap="round"><path d="M12 2 4 7v10l8 5 8-5V7z"/></svg></div>
@@ -1177,9 +1177,26 @@ async function runScene3(){
 const accSpot=(id,on)=>gsap.to($(id),{opacity:on?1:0,duration:.28});
 function selCard(id){ const el=$(id); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('sel','pop'); }
 
+/* smooth vertical scroll of the (tall) accident form so a target sits in view */
+let s4y = 0;
+function curScale(){ return Math.max(window.innerWidth/1280, window.innerHeight/720); }
+async function scrollToEl(formEl, contEl, targetEl, dur=0.7, frac=0.42){
+  const sc   = curScale();
+  const cont = contEl.getBoundingClientRect();
+  const tgt  = targetEl.getBoundingClientRect();
+  const desired = cont.top + cont.height*frac;
+  const current = tgt.top + tgt.height/2;
+  s4y += (desired - current)/sc;
+  if(s4y > 0) s4y = 0;
+  const maxScroll = Math.max(0, formEl.offsetHeight - contEl.clientHeight + 30);
+  if(s4y < -maxScroll) s4y = -maxScroll;
+  return new Promise(res=>gsap.to(formEl,{y:s4y,duration:dur,ease:'power2.inOut',onComplete:res}));
+}
+
 async function runScene4(){
   const dim=$('dim4');
   const f=$('s4-form'), c=$('s4-content');
+  s4y=0;
 
   /* init */
   gsap.set($('s4-sidebar'),{x:32,opacity:0});
@@ -1205,56 +1222,50 @@ async function runScene4(){
   await sleep(360);
   setP(14);
 
-  /* ── 1) SOURCE = نجم ── */
-  dim.classList.add('on');
-  sfx_zoomin(); await zoomTo(f,c,$('sec-source'),1.22,0.9);
-  accSpot('spot-src',true);
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+
+  /* ── 1) SOURCE = نجم ── */
+  await scrollToEl(f,c,$('sec-source'),.6,.5);
+  dim.classList.add('on'); accSpot('spot-src',true); await sleep(120);
   const rbash=$('src-basher').getBoundingClientRect();
-  await moveTo(rbash.left+rbash.width/2,rbash.top+rbash.height/2,1.0);
+  await moveTo(rbash.left+rbash.width/2,rbash.top+rbash.height/2,.9);
   await sleep(220);
   const rnajm=$('src-najm').getBoundingClientRect();
   await moveTo(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2,.5);
   sfx_confirm(); await clickAt(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2);
-  selCard('src-najm'); sfx_check(); await sleep(360);
-  accSpot('spot-src',false);
-  dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.85); await sleep(260);
+  selCard('src-najm'); sfx_check(); await sleep(340);
+  accSpot('spot-src',false); dim.classList.remove('on'); await sleep(220);
 
   /* reveal the rest of the form */
   gsap.to('#sec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
   gsap.to('#sec-owner',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
   gsap.to('#sec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
   gsap.to('#s4-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(60);
-  gsap.to('#s4-back',{y:0,opacity:1,duration:.4}); await sleep(320);
+  gsap.to('#s4-back',{y:0,opacity:1,duration:.4}); await sleep(300);
   setP(28);
 
   /* ── 2) TYPE = أضرار في المركبة ── */
-  dim.classList.add('on');
-  sfx_zoomin(); await zoomTo(f,c,$('sec-type'),1.22,0.9);
-  accSpot('spot-type',true); await sleep(120);
+  await scrollToEl(f,c,$('sec-type'),.7,.45);
+  dim.classList.add('on'); accSpot('spot-type',true); await sleep(140);
   const rveh=$('type-veh').getBoundingClientRect();
   await moveTo(rveh.left+rveh.width/2,rveh.top+rveh.height/2,.7);
   sfx_confirm(); await clickAt(rveh.left+rveh.width/2,rveh.top+rveh.height/2);
-  selCard('type-veh'); sfx_check(); await sleep(360);
-  accSpot('spot-type',false);
-  dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.85); setP(42); await sleep(320);
+  selCard('type-veh'); sfx_check(); await sleep(340);
+  accSpot('spot-type',false); dim.classList.remove('on'); setP(42); await sleep(240);
 
   /* ── 3) OWNER = لا → driver identity ── */
-  dim.classList.add('on');
-  sfx_zoomin(); await zoomTo(f,c,$('sec-owner'),1.3,0.9);
-  accSpot('spot-owner',true); await sleep(120);
+  await scrollToEl(f,c,$('sec-owner'),.7,.4);
+  dim.classList.add('on'); accSpot('spot-owner',true); await sleep(140);
   const rno=$('own-no').getBoundingClientRect();
   await moveTo(rno.left+rno.width/2,rno.top+rno.height/2,.7);
   sfx_click(); await clickAt(rno.left+rno.width/2,rno.top+rno.height/2);
-  $('own-no').classList.add('sel'); sfx_check(); await sleep(200);
+  $('own-no').classList.add('sel'); sfx_check(); await sleep(220);
 
   /* driver field slides in */
   $('fld-driver').style.display='block';
   gsap.fromTo($('fld-driver'),{opacity:0,y:-8},{opacity:1,y:0,duration:.45,ease:'power2.out'});
   await sleep(320);
-  sfx_zoomin(); await zoomTo(f,c,$('fld-driver'),1.4,0.85);
+  await scrollToEl(f,c,$('fld-driver'),.55,.5);
   $('lbl-driver').classList.add('active');
   const rdrv=$('inp-driver').getBoundingClientRect();
   await moveTo(rdrv.left+rdrv.width*.55,rdrv.top+rdrv.height*.5,.6);
@@ -1262,58 +1273,48 @@ async function runScene4(){
   await sleep(160);
   await typeIn($('inp-driver'),'2094309909',68);
   $('lbl-driver').classList.remove('active'); $('chk-driver').classList.add('show'); sfx_check(); await sleep(340);
-  accSpot('spot-owner',false);
-  dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.85); setP(58); await sleep(320);
+  accSpot('spot-owner',false); dim.classList.remove('on'); setP(58); await sleep(240);
 
   /* ── 4) NAJM REPORT NUMBER ── */
-  dim.classList.add('on');
-  sfx_zoomin(); await zoomTo(f,c,$('fld-najm'),1.4,0.9);
-  accSpot('spot-najm',true);
-  $('lbl-najm').classList.add('active');
+  await scrollToEl(f,c,$('fld-najm'),.7,.45);
+  dim.classList.add('on'); accSpot('spot-najm',true);
+  $('lbl-najm').classList.add('active'); await sleep(120);
   const rn=$('inp-najm').getBoundingClientRect();
   await moveTo(rn.left+rn.width*.55,rn.top+rn.height*.5,.7);
   await clickAt(rn.left+rn.width*.55,rn.top+rn.height*.5);
   await sleep(160);
   await typeIn($('inp-najm'),'RD1805262256',58);
   $('lbl-najm').classList.remove('active'); $('chk-najm').classList.add('show'); sfx_check(); await sleep(340);
-  accSpot('spot-najm',false);
-  dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.85); setP(72); await sleep(300);
+  accSpot('spot-najm',false); dim.classList.remove('on'); setP(72); await sleep(220);
 
   /* ── 5) SERIAL / CUSTOMS NUMBER ── */
-  dim.classList.add('on');
-  sfx_zoomin(); await zoomTo(f,c,$('fld-serial'),1.4,0.9);
-  accSpot('spot-serial',true);
-  $('lbl-serial').classList.add('active');
+  await scrollToEl(f,c,$('fld-serial'),.6,.45);
+  dim.classList.add('on'); accSpot('spot-serial',true);
+  $('lbl-serial').classList.add('active'); await sleep(120);
   const rs=$('inp-serial').getBoundingClientRect();
   await moveTo(rs.left+rs.width*.55,rs.top+rs.height*.5,.7);
   await clickAt(rs.left+rs.width*.55,rs.top+rs.height*.5);
   await sleep(160);
   await typeIn($('inp-serial'),'956423220',62);
   $('lbl-serial').classList.remove('active'); $('chk-serial').classList.add('show'); sfx_check(); await sleep(340);
-  accSpot('spot-serial',false);
-  dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.85); setP(86); await sleep(320);
+  accSpot('spot-serial',false); dim.classList.remove('on'); setP(86); await sleep(240);
 
   /* step 2 line completes */
-  $('s4-line2').classList.add('done'); await sleep(360);
+  $('s4-line2').classList.add('done'); await sleep(320);
 
   /* ── BUTTON ── */
-  sfx_btnpop(); shimBtn('s4-btn'); await sleep(420);
-  sfx_zoomin(); await zoomTo(f,c,$('s4-btn'),1.25,0.85,60);
-  await sleep(300);
+  await scrollToEl(f,c,$('s4-btn'),.6,.5);
+  sfx_btnpop(); shimBtn('s4-btn'); await sleep(360);
   const rb=$('s4-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
   await sleep(260); sfx_confirm(); await clickAt(xb,yb);
-  gsap.to($('s4-btn'),{scale:.96,duration:.08,yoyo:true,repeat:1,
+  gsap.to($('s4-btn'),{scale:.97,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s4-btn').style.background='#2530a8',
     onComplete:()=>setTimeout(()=>{ $('s4-btn').style.background='#1a1464'; shimBtn('s4-btn'); },200)
   });
 
   setP(100); await sleep(500);
-  await zoomOut(f,0.85); await sleep(180);
   sfx_success(); await successFlash($('s4-flash'));
 
   /* cinematic close */
