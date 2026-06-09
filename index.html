@@ -1225,6 +1225,7 @@ async function runScene4(){
   setP(14);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  pingOn('s4-stp2');
 
   /* ── 1) SOURCE = نجم (cursor goes straight to نجم) ── */
   await scrollToEl(f,c,$('sec-source'),.6,.5);
@@ -1299,6 +1300,7 @@ async function runScene4(){
   accSpot('spot-serial',false); setP(86); await sleep(240);
 
   /* step 2 line completes */
+  pingOff('s4-stp2');
   $('s4-line2').classList.add('done'); await sleep(320);
 
   /* ── BUTTON ── */
