@@ -264,12 +264,13 @@ html, body {
 @keyframes cardPop { 0%{transform:scale(1)} 45%{transform:scale(1.05)} 100%{transform:scale(1)} }
 .opt-card.pop { animation:cardPop .35s ease; }
 
-.q-row { display:flex; flex-direction:row-reverse; align-items:center; gap:16px; margin-bottom:14px; direction:rtl; position:relative; z-index:1; flex-wrap:wrap; }
+.q-row { display:flex; direction:rtl; align-items:center; gap:22px; margin-bottom:14px; position:relative; z-index:1; flex-wrap:wrap; }
+.q-lblwrap { display:flex; direction:rtl; align-items:center; gap:8px; }
 .q-help { width:19px; height:19px; border-radius:50%; background:#efefef; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .q-lbl { font-size:13px; font-weight:600; color:#222; }
 .q-req { color:#e8874a; font-weight:700; }
-.rad-grp { display:flex; flex-direction:row-reverse; gap:22px; }
-.rad-opt { display:flex; flex-direction:row-reverse; align-items:center; gap:7px; cursor:pointer; }
+.rad-grp { display:flex; direction:rtl; gap:26px; }
+.rad-opt { display:flex; direction:rtl; align-items:center; gap:7px; cursor:pointer; }
 .rad-dot { width:18px; height:18px; border-radius:50%; border:2px solid #c4c4c4; position:relative; transition:border-color .25s; flex-shrink:0; }
 .rad-dot::after { content:''; position:absolute; inset:3px; border-radius:50%; background:#1a1464; transform:scale(0); transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
 .rad-opt.sel .rad-dot { border-color:#1a1464; }
@@ -646,8 +647,10 @@ html, body {
           <div class="acc-sec" id="sec-owner">
             <div class="acc-spot" id="spot-owner"></div>
             <div class="q-row">
-              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
-              <span class="q-lbl"><span class="q-req">*</span> هل مالك المركبة هو القائد أثناء وقوع الحادث؟</span>
+              <div class="q-lblwrap">
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+                <span class="q-lbl"><span class="q-req">*</span> هل مالك المركبة هو القائد أثناء وقوع الحادث؟</span>
+              </div>
               <div class="rad-grp">
                 <div class="rad-opt" id="own-yes"><span class="rad-dot"></span><span class="rad-txt">نعم</span></div>
                 <div class="rad-opt" id="own-no"><span class="rad-dot"></span><span class="rad-txt">لا</span></div>
@@ -1358,139 +1361,144 @@ function getACtx() {
   return actx;
 }
 
-/* ── Generic envelope helper ── */
-function playTone({ freq=440, freq2=null, type='sine', gain=0.18,
-                    attack=0.01, sustain=0.08, release=0.18,
-                    delay=0, detune=0 } = {}) {
+/* ── Shared soft master bus (gentle volume + a touch of high-cut warmth) ── */
+let master = null;
+function getMaster() {
+  const ctx = getACtx();
+  if (!master) {
+    master = ctx.createGain();
+    master.gain.value = 0.5;
+    const soft = ctx.createBiquadFilter();
+    soft.type = 'lowpass'; soft.frequency.value = 6500; soft.Q.value = 0.4;
+    master.connect(soft); soft.connect(ctx.destination);
+  }
+  return master;
+}
+
+/* ── Generic envelope helper (lowpass-filtered for a soft, non-harsh tone) ── */
+function playTone({ freq=440, freq2=null, type='sine', gain=0.14,
+                    attack=0.012, sustain=0.06, release=0.2,
+                    delay=0, detune=0, cutoff=2400 } = {}) {
   const ctx = getACtx();
   const t   = ctx.currentTime + delay;
   const osc = ctx.createOscillator();
   const env = ctx.createGain();
-  const mst = ctx.createGain();
+  const lp  = ctx.createBiquadFilter();
+  lp.type = 'lowpass'; lp.frequency.value = cutoff; lp.Q.value = 0.6;
 
-  osc.type    = type;
+  osc.type = type;
   osc.frequency.setValueAtTime(freq, t);
   if (freq2) osc.frequency.exponentialRampToValueAtTime(freq2, t + attack + sustain);
   if (detune) osc.detune.setValueAtTime(detune, t);
 
-  env.gain.setValueAtTime(0, t);
+  env.gain.setValueAtTime(0.0001, t);
   env.gain.linearRampToValueAtTime(gain, t + attack);
   env.gain.setValueAtTime(gain, t + attack + sustain);
   env.gain.exponentialRampToValueAtTime(0.0001, t + attack + sustain + release);
 
-  mst.gain.setValueAtTime(0.7, t);   /* master volume */
-
-  osc.connect(env); env.connect(mst); mst.connect(ctx.destination);
+  osc.connect(env); env.connect(lp); lp.connect(getMaster());
   osc.start(t);
   osc.stop(t + attack + sustain + release + 0.05);
 }
 
-/* ── Noise burst (for click/type feel) ── */
-function playNoise({ duration=0.06, gain=0.06, freq=800, q=2, delay=0 } = {}) {
+/* ── Noise burst (soft, filterable — supports a frequency sweep for whooshes) ── */
+function playNoise({ duration=0.06, gain=0.06, freq=800, freq2=null, q=1, delay=0, type='lowpass' } = {}) {
   const ctx    = getACtx();
   const t      = ctx.currentTime + delay;
-  const buf    = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+  const buf    = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * duration)), ctx.sampleRate);
   const data   = buf.getChannelData(0);
   for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
   const src    = ctx.createBufferSource();
   const filter = ctx.createBiquadFilter();
   const env    = ctx.createGain();
   src.buffer   = buf;
-  filter.type  = 'bandpass'; filter.frequency.value = freq; filter.Q.value = q;
-  env.gain.setValueAtTime(gain, t);
+  filter.type  = type; filter.frequency.setValueAtTime(freq, t); filter.Q.value = q;
+  if (freq2) filter.frequency.exponentialRampToValueAtTime(freq2, t + duration);
+  env.gain.setValueAtTime(0.0001, t);
+  env.gain.linearRampToValueAtTime(gain, t + 0.01);
   env.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-  src.connect(filter); filter.connect(env); env.connect(ctx.destination);
+  src.connect(filter); filter.connect(env); env.connect(getMaster());
   src.start(t); src.stop(t + duration + 0.01);
 }
 
 /* ════════════════════════════
-   NAMED SOUND EFFECTS
+   NAMED SOUND EFFECTS — soft, modern UI feel
 ════════════════════════════ */
 
-/* 🎬 Scene open — deep cinematic whoosh */
+/* 🎬 Scene open — deep, soft cinematic swell */
 function sfx_open() {
-  playTone({ freq:60, freq2:200, type:'sawtooth', gain:0.12, attack:.05, sustain:.35, release:.5 });
-  playTone({ freq:120, freq2:400, type:'sine', gain:0.08, attack:.1, sustain:.3, release:.4, delay:.05 });
-  playNoise({ duration:.4, gain:.04, freq:300, q:0.5, delay:.02 });
+  playTone({ freq:65, freq2:150, type:'sine', gain:0.10, attack:.10, sustain:.35, release:.6, cutoff:500 });
+  playTone({ freq:196, type:'sine', gain:0.05, attack:.18, sustain:.3, release:.6, cutoff:1400 });
+  playNoise({ duration:.6, gain:.035, freq:1600, freq2:300, q:0.5 });
 }
 
-/* 🖱️ Mouse click */
+/* 🖱️ Mouse click — soft tactile tock */
 function sfx_click() {
-  playNoise({ duration:.04, gain:.1, freq:1200, q:3 });
-  playTone({ freq:800, freq2:400, type:'sine', gain:0.06, attack:.005, sustain:.02, release:.08 });
+  playNoise({ duration:.05, gain:.045, freq:2400, freq2:900, q:0.8 });
+  playTone({ freq:170, type:'sine', gain:0.05, attack:.001, sustain:.004, release:.06, cutoff:900 });
 }
 
-/* ⌨️ Keypress — subtle tick */
+/* ⌨️ Keypress — barely-there tick */
 function sfx_key() {
-  playNoise({ duration:.025, gain:.055, freq:2200, q:4 });
-  playTone({ freq:1100, type:'triangle', gain:0.03, attack:.003, sustain:.01, release:.04 });
+  playNoise({ duration:.018, gain:.028, freq:3200, freq2:1800, q:0.9 });
 }
 
-/* ✅ Checkmark appears — satisfying chime */
+/* ✅ Checkmark — soft warm bell (root + octave, struck together) */
 function sfx_check() {
-  playTone({ freq:523, type:'sine', gain:0.14, attack:.01, sustain:.06, release:.25 });
-  playTone({ freq:659, type:'sine', gain:0.10, attack:.01, sustain:.06, release:.22, delay:.08 });
-  playTone({ freq:784, type:'sine', gain:0.08, attack:.01, sustain:.06, release:.30, delay:.16 });
+  playTone({ freq:660, type:'sine', gain:0.085, attack:.012, sustain:.05, release:.32, cutoff:2200 });
+  playTone({ freq:990, type:'sine', gain:0.045, attack:.012, sustain:.03, release:.34, delay:.015, cutoff:2600 });
 }
 
-/* 📦 Field zoom in — woosh forward */
+/* 📦 Field focus — gentle upward swell */
 function sfx_zoomin() {
-  playTone({ freq:180, freq2:320, type:'sine', gain:0.09, attack:.04, sustain:.12, release:.18 });
-  playNoise({ duration:.18, gain:.03, freq:600, q:1, delay:.02 });
+  playTone({ freq:220, freq2:360, type:'sine', gain:0.05, attack:.05, sustain:.1, release:.2, cutoff:1300 });
 }
 
-/* 📦 Field zoom out — settle */
+/* 📦 Field release — soft settle */
 function sfx_zoomout() {
-  playTone({ freq:280, freq2:160, type:'sine', gain:0.07, attack:.03, sustain:.1, release:.2 });
+  playTone({ freq:340, freq2:190, type:'sine', gain:0.045, attack:.04, sustain:.08, release:.22, cutoff:1100 });
 }
 
-/* 🔵 Button appears — pop */
+/* 🔵 Element appears — soft pop */
 function sfx_btnpop() {
-  playTone({ freq:392, type:'sine', gain:0.13, attack:.01, sustain:.04, release:.18 });
-  playTone({ freq:523, type:'sine', gain:0.09, attack:.02, sustain:.03, release:.15, delay:.05 });
+  playTone({ freq:523, type:'sine', gain:0.06, attack:.012, sustain:.03, release:.2, cutoff:2200 });
 }
 
-/* ▶️ Button click — confirm thud */
+/* ▶️ Confirm — warm, rounded click (no buzz) */
 function sfx_confirm() {
-  playTone({ freq:220, freq2:180, type:'triangle', gain:0.18, attack:.01, sustain:.08, release:.25 });
-  playTone({ freq:440, freq2:360, type:'sine',     gain:0.12, attack:.01, sustain:.06, release:.2,  delay:.04 });
-  playNoise({ duration:.08, gain:.07, freq:900, q:2, delay:.01 });
+  playTone({ freq:300, freq2:210, type:'sine', gain:0.10, attack:.006, sustain:.05, release:.24, cutoff:1100 });
+  playTone({ freq:600, type:'sine', gain:0.04, attack:.006, sustain:.03, release:.18, delay:.01, cutoff:1800 });
+  playNoise({ duration:.05, gain:.03, freq:1400, freq2:600, q:0.8, delay:.004 });
 }
 
-/* ✨ Success flash — bright fanfare */
+/* ✨ Success — gentle rising triad over a soft pad (calm, not arcade) */
 function sfx_success() {
-  [0, .1, .2, .32].forEach((d, i) => {
-    const notes = [523, 659, 784, 1047];
-    playTone({ freq:notes[i], type:'sine', gain:0.14-i*.02, attack:.01, sustain:.08, release:.35, delay:d });
-  });
-  playNoise({ duration:.15, gain:.04, freq:2000, q:0.8, delay:.05 });
+  [{f:523,d:0},{f:659,d:.10},{f:880,d:.20}].forEach((n,i) =>
+    playTone({ freq:n.f, type:'sine', gain:0.075-i*.012, attack:.02, sustain:.06, release:.55, delay:n.d, cutoff:2400 }));
+  playTone({ freq:262, type:'sine', gain:0.045, attack:.06, sustain:.25, release:.7, cutoff:900 });
 }
 
-/* 🎬 Transition curtain sweep */
+/* 🎬 Transition — soft airy whoosh */
 function sfx_transition() {
-  playTone({ freq:100, freq2:300, type:'sawtooth', gain:0.1, attack:.03, sustain:.2, release:.25 });
-  playNoise({ duration:.28, gain:.035, freq:400, q:0.8, delay:.03 });
-  playTone({ freq:300, freq2:500, type:'sine', gain:0.07, attack:.05, sustain:.15, release:.2, delay:.1 });
+  playNoise({ duration:.45, gain:.045, freq:1400, freq2:280, q:0.5 });
+  playTone({ freq:200, freq2:95, type:'sine', gain:0.06, attack:.04, sustain:.15, release:.28, cutoff:600 });
 }
 
-/* 🔢 OTP digit pop */
+/* 🔢 OTP digit — soft gentle blip, rising per digit */
 function sfx_otpdig(i) {
-  const freqs = [660, 740, 820, 920];
-  playTone({ freq:freqs[i], type:'sine', gain:0.11, attack:.008, sustain:.03, release:.15 });
-  playNoise({ duration:.02, gain:.06, freq:1800, q:5 });
+  const f = [523, 587, 659, 784][i] || 600;
+  playTone({ freq:f, type:'sine', gain:0.055, attack:.008, sustain:.025, release:.18, cutoff:2200 });
 }
 
-/* 🟢 OTP complete — unlock sound */
+/* 🟢 OTP complete — soft pleasant resolve */
 function sfx_unlock() {
-  playTone({ freq:440, type:'sine', gain:0.12, attack:.01, sustain:.05, release:.2 });
-  playTone({ freq:554, type:'sine', gain:0.10, attack:.01, sustain:.05, release:.18, delay:.07 });
-  playTone({ freq:659, type:'sine', gain:0.08, attack:.01, sustain:.05, release:.22, delay:.14 });
-  playTone({ freq:880, type:'sine', gain:0.14, attack:.01, sustain:.08, release:.35, delay:.22 });
+  [{f:523,d:0},{f:784,d:.09},{f:1047,d:.19}].forEach((n,i) =>
+    playTone({ freq:n.f, type:'sine', gain:0.07-i*.013, attack:.015, sustain:.05, release:.42, delay:n.d, cutoff:2600 }));
 }
 
-/* 🌆 City skyline reveal */
+/* 🌆 City skyline reveal — low soft pad */
 function sfx_city() {
-  playTone({ freq:80, freq2:160, type:'sine', gain:0.06, attack:.2, sustain:.4, release:.5 });
+  playTone({ freq:90, freq2:140, type:'sine', gain:0.045, attack:.3, sustain:.5, release:.7, cutoff:500 });
 }
 
 /* init audio on first user interaction */
