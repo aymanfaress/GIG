@@ -293,6 +293,61 @@ html, body {
 #s4-back { text-align:left; font-size:13px; font-weight:700; color:#1a1464; opacity:0; direction:rtl; padding-bottom:20px; }
 
 #s4-sidebar { width:240px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:36px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
+
+/* ══════════════════════════════
+   SCENE 5 — ESTIMATE & BANK DETAILS
+══════════════════════════════ */
+#s5 { background:#f5f5f7; }
+#s5-body { flex:1; display:flex; overflow:hidden; }
+#s5-leftpanel { width:240px; flex-shrink:0; padding:32px 22px 0; opacity:0; z-index:25; position:relative; direction:rtl; text-align:right; }
+#s5-content { flex:1; display:flex; align-items:flex-start; justify-content:center; padding:28px 40px 0; overflow:hidden; position:relative; z-index:25; }
+#s5-form { width:100%; max-width:560px; opacity:0; position:relative; transform-origin:top center; will-change:transform; }
+#s5-flash { position:absolute; inset:-12px; border-radius:16px; background:rgba(39,174,96,0); pointer-events:none; z-index:50; }
+#s5-title { font-size:25px; font-weight:900; color:#1a1464; text-align:center; margin-bottom:20px; opacity:0; direction:rtl; }
+#s5-sidebar { width:240px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:36px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
+#s5-btn { width:100%; padding:15px; background:#1a1464; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Cairo',sans-serif; cursor:pointer; margin-top:8px; margin-bottom:26px; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .25s; }
+#s5-btn:hover { background:#2530a8; }
+
+/* vehicle card */
+.veh-card { border:1px solid #e6e6e6; border-radius:12px; background:#fff; padding:18px 18px 16px; margin-bottom:22px; direction:rtl; }
+.veh-top { display:flex; direction:rtl; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px dashed #e0e0e0; }
+.veh-name { font-size:17px; font-weight:900; color:#222; letter-spacing:.5px; }
+.veh-logo { width:30px; height:30px; border-radius:50%; background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; color:#b00; }
+.veh-bot { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:14px; padding-top:12px; }
+.veh-serial-lbl { font-size:12px; color:#666; direction:rtl; text-align:right; }
+.veh-serial-num { font-size:14px; font-weight:700; color:#1a1464; margin-top:3px; }
+.plate { border:1.5px solid #222; border-radius:5px; overflow:hidden; display:flex; flex-direction:column; min-width:96px; }
+.plate-top { display:flex; }
+.plate-cell { flex:1; text-align:center; font-size:11px; font-weight:700; padding:2px 4px; border-left:1px solid #ccc; }
+.plate-ar { background:#fff; color:#222; }
+.plate-bot { display:flex; border-top:1.5px solid #222; }
+.plate-en { flex:1; text-align:center; font-size:11px; font-weight:700; padding:2px 4px; border-left:1px solid #ccc; color:#222; }
+
+/* prefixed input (DA / SA on the left) + optional verify button */
+.pfx-wrap { display:flex; direction:rtl; width:100%; position:relative; z-index:1; }
+.pfx-input { flex:1; border:1.5px solid #e0e0e0; border-radius:8px 0 0 8px; padding:12px 15px; font-size:13.5px; font-family:'Cairo',sans-serif; color:#1a1464; text-align:right; direction:rtl; background:#fff; outline:none; transition:border-color .25s,box-shadow .25s,background .4s; caret-color:#e8874a; }
+.pfx-input::placeholder { color:#c8c8c8; font-size:12.5px; }
+.pfx-input.focused { border-color:#e8874a; box-shadow:0 0 0 3.5px rgba(232,135,74,.14); }
+.pfx-input.filled { border-color:#c8d8ff; background:#fafbff; }
+.pfx-input.pulse { animation:tPulse .38s ease; }
+.pfx-box { background:#f1f1f1; border:1.5px solid #e0e0e0; border-right:none; padding:0 13px; font-size:13px; font-weight:700; color:#444; display:flex; align-items:center; flex-shrink:0; }
+.vrf-btn { background:#c2997c; color:#fff; border:none; border-radius:8px 0 0 8px; padding:0 18px; font-size:13px; font-weight:700; font-family:'Cairo',sans-serif; flex-shrink:0; cursor:pointer; transition:background .2s,transform .1s; }
+.vrf-btn.pressed { background:#a87a5c; }
+.pfx-box.mid { border-radius:0; }
+
+/* file upload chip */
+.file-up { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:10px; border:1.5px solid #e0e0e0; border-radius:8px; padding:9px 12px; background:#fff; position:relative; z-index:1; min-height:46px; }
+.file-up.attached { border-color:#c8d8ff; background:#fafbff; }
+.fu-file { display:flex; direction:rtl; align-items:center; gap:9px; opacity:0; transition:opacity .35s; }
+.file-up.attached .fu-file { opacity:1; }
+.fu-ic { width:26px; height:30px; border-radius:4px; background:#e63946; color:#fff; font-size:8px; font-weight:900; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.fu-name { font-size:12.5px; color:#333; direction:rtl; }
+.fu-btns { display:flex; direction:rtl; gap:8px; opacity:0; transition:opacity .35s; }
+.file-up.attached .fu-btns { opacity:1; }
+.fu-change { background:#caa184; color:#fff; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; }
+.fu-del { background:#e63946; color:#fff; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; }
+.fu-empty { font-size:12.5px; color:#bbb; direction:rtl; }
+.file-up.attached .fu-empty { display:none; }
 </style>
 </head>
 <body>
@@ -701,6 +756,163 @@ html, body {
         <div class="stp-line" id="s4-line2"></div>
         <div class="stp-row"><div class="stp-num">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
         <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
+      </aside>
+    </div>
+
+    <footer class="site-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+  </div>
+
+  <!-- ══════════════ SCREEN 5 — ESTIMATE & BANK DETAILS ══════════════ -->
+  <div class="screen" id="s5">
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a1464" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s5-body">
+      <aside id="s5-leftpanel">
+        <div class="lp-welcome">مرحبًا بك</div>
+        <div class="lp-card">
+          <div class="lp-head">
+            <span>البيانات الشخصية</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a5a28" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </div>
+          <div class="lp-row"><span class="lp-k">الاسم</span><span class="lp-v">سعد علي ابن حسين العريشي</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الهوية</span><span class="lp-v">7008230976</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الجوال</span><span class="lp-v">537077897</span></div>
+        </div>
+      </aside>
+
+      <div id="s5-content">
+        <div id="s5-form">
+          <div id="s5-flash"></div>
+          <div id="s5-title">التقدير و البيانات البنكية</div>
+
+          <!-- vehicle card -->
+          <div class="veh-card" id="veh-card">
+            <div class="veh-top">
+              <div class="veh-name">MITSUBISHI 2020</div>
+              <div class="veh-logo">▲</div>
+            </div>
+            <div class="veh-bot">
+              <div>
+                <div class="veh-serial-lbl">الرقم التسلسلي / رقم البطاقة الجمركية</div>
+                <div class="veh-serial-num">244751810</div>
+              </div>
+              <div class="plate">
+                <div class="plate-top">
+                  <div class="plate-cell plate-ar">٢١٣٦</div>
+                  <div class="plate-cell plate-ar">ح ه د</div>
+                </div>
+                <div class="plate-bot">
+                  <div class="plate-en">2136</div>
+                  <div class="plate-en">JHD</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- نوع تقييم الأضرار -->
+          <div class="acc-sec" id="sec-evaltype">
+            <div class="acc-spot" id="spot-evaltype"></div>
+            <div class="acc-h">نوع تقييم الأضرار <span style="color:#e8874a">*</span></div>
+            <div class="card-row">
+              <div class="opt-card" id="eval-est"><div class="oc-lbl">تقدير</div></div>
+              <div class="opt-card" id="eval-other"><div class="oc-lbl">أخرى</div></div>
+            </div>
+          </div>
+
+          <!-- رقم تقييم الأضرار + تحقق -->
+          <div class="acc-sec" id="sec-evalnum">
+            <div class="acc-spot" id="spot-evalnum"></div>
+            <div class="fld-top" style="display:flex;flex-direction:row-reverse;align-items:center;gap:7px;margin-bottom:7px;">
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              <span class="acc-fld-lbl" id="lbl-evalnum"><span style="color:#e8874a;font-weight:700;">*</span> رقم تقييم الأضرار</span>
+            </div>
+            <div class="pfx-wrap">
+              <input class="pfx-input" id="inp-evalnum" placeholder="رقم تقييم الأضرار" readonly>
+              <div class="pfx-box mid">DA</div>
+              <button class="vrf-btn" id="vrf-eval">تحقق</button>
+              <div class="chk" id="chk-evalnum"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+          </div>
+
+          <!-- مستند التقدير -->
+          <div class="acc-sec" id="sec-doc1">
+            <div class="acc-spot" id="spot-doc1"></div>
+            <div class="fld-top" style="display:flex;flex-direction:row-reverse;align-items:center;gap:7px;margin-bottom:7px;">
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              <span class="acc-fld-lbl"><span style="color:#e8874a;font-weight:700;">*</span> مستند التقدير</span>
+            </div>
+            <div class="file-up" id="file-doc1">
+              <div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">تقرير مختصر.pdf</span></div>
+              <span class="fu-empty">إرفاق ملف…</span>
+              <div class="fu-btns"><span class="fu-change">تغيير الملف</span><span class="fu-del">حذف</span></div>
+            </div>
+          </div>
+
+          <!-- نوع تسوية المطالبة -->
+          <div class="acc-sec" id="sec-settle">
+            <div class="acc-spot" id="spot-settle"></div>
+            <div class="acc-h">نوع تسوية المطالبة <span style="color:#e8874a">*</span></div>
+            <div class="card-row">
+              <div class="opt-card" id="settle-comp"><div class="oc-lbl">تعويض</div></div>
+              <div class="opt-card" id="settle-fix"><div class="oc-lbl">إصلاح</div></div>
+            </div>
+          </div>
+
+          <!-- IBAN -->
+          <div class="acc-sec" id="sec-iban">
+            <div class="acc-spot" id="spot-iban"></div>
+            <div class="fld-top" style="display:flex;flex-direction:row-reverse;align-items:center;gap:7px;margin-bottom:7px;">
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              <span class="acc-fld-lbl" id="lbl-iban"><span style="color:#e8874a;font-weight:700;">*</span> رقم الحساب البنكي (IBAN)</span>
+            </div>
+            <div class="pfx-wrap">
+              <input class="pfx-input" id="inp-iban" placeholder="رقم الحساب البنكي" readonly>
+              <div class="pfx-box">SA</div>
+              <div class="chk" id="chk-iban"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+          </div>
+
+          <!-- شهادة الآيبان -->
+          <div class="acc-sec" id="sec-doc2">
+            <div class="acc-spot" id="spot-doc2"></div>
+            <div class="fld-top" style="display:flex;flex-direction:row-reverse;align-items:center;gap:7px;margin-bottom:7px;">
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              <span class="acc-fld-lbl"><span style="color:#e8874a;font-weight:700;">*</span> شهادة الآيبان الخاص بالمالك</span>
+            </div>
+            <div class="file-up" id="file-doc2">
+              <div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">تقرير مختصر.pdf</span></div>
+              <span class="fu-empty">إرفاق ملف…</span>
+              <div class="fu-btns"><span class="fu-change">تغيير الملف</span><span class="fu-del">حذف</span></div>
+            </div>
+          </div>
+
+          <button id="s5-btn" class="shimmable">التالي</button>
+        </div>
+      </div>
+
+      <aside id="s5-sidebar">
+        <div class="stp-row"><div class="stp-num">1</div><div class="stp-lbl">بيانات مقدم المطالبة</div></div>
+        <div class="stp-line done"></div>
+        <div class="stp-row"><div class="stp-num">2</div><div class="stp-lbl">تفاصيل الحادث</div></div>
+        <div class="stp-line done"></div>
+        <div class="stp-row active"><div class="stp-num" id="s5-stp3">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
+        <div class="stp-line" id="s5-line3"></div>
         <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
       </aside>
     </div>
@@ -1315,8 +1527,144 @@ async function runScene4(){
     onComplete:()=>setTimeout(()=>{ $('s4-btn').style.background='#1a1464'; shimBtn('s4-btn'); },200)
   });
 
-  setP(100); await sleep(500);
+  setP(70); await sleep(450);
   sfx_success(); await successFlash($('s4-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+}
+
+/* ══════════════════════════════════════════
+   SCENE 5 — ESTIMATE & BANK DETAILS
+══════════════════════════════════════════ */
+let s5y = 0;
+async function s5scroll(targetEl, dur=0.65, frac=0.45){
+  const f=$('s5-form'), c=$('s5-content');
+  const sc=curScale();
+  const cont=c.getBoundingClientRect(), tgt=targetEl.getBoundingClientRect();
+  s5y += (cont.top + cont.height*frac - (tgt.top + tgt.height/2))/sc;
+  if(s5y>0) s5y=0;
+  const maxScroll=Math.max(0, f.offsetHeight - c.clientHeight + 30);
+  if(s5y < -maxScroll) s5y=-maxScroll;
+  return new Promise(res=>gsap.to(f,{y:s5y,duration:dur,ease:'power2.inOut',onComplete:res}));
+}
+
+async function runScene5(){
+  const f=$('s5-form'), c=$('s5-content');
+  s5y=0;
+
+  /* init */
+  gsap.set($('s5-sidebar'),{x:32,opacity:0});
+  gsap.set($('s5-leftpanel'),{x:-32,opacity:0});
+  gsap.set($('s5-form'),{y:20,opacity:0,scale:1,x:0});
+  gsap.set($('s5-title'),{y:-16,opacity:0});
+  gsap.set('#veh-card',{y:16,opacity:0});
+  gsap.set(['#sec-evaltype','#sec-evalnum','#sec-doc1','#sec-settle','#sec-iban','#sec-doc2','#s5-btn'],{y:16,opacity:0});
+
+  setP(72);
+
+  /* build in */
+  gsap.to($('s5-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(420);
+  gsap.to($('s5-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(340);
+  gsap.to($('s5-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(300);
+  gsap.to($('s5-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(240);
+  gsap.to('#veh-card',{y:0,opacity:1,duration:.55,ease:'power3.out'}); await sleep(260);
+  gsap.to('#sec-evaltype',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-evalnum',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-doc1',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-settle',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-iban',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-doc2',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#s5-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  setP(74);
+
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  pingOn('s5-stp3');
+
+  /* glance at the vehicle card */
+  await s5scroll($('veh-card'),.6,.45); await sleep(420);
+
+  /* ── 1) EVALUATION TYPE = تقدير ── */
+  await s5scroll($('sec-evaltype'),.6,.5);
+  accSpot('spot-evaltype',true); await sleep(140);
+  const re=$('eval-est').getBoundingClientRect();
+  await moveTo(re.left+re.width/2,re.top+re.height/2,.85);
+  sfx_confirm(); await clickAt(re.left+re.width/2,re.top+re.height/2);
+  selCard('eval-est'); sfx_check(); await sleep(320);
+  accSpot('spot-evaltype',false); setP(78); await sleep(220);
+
+  /* ── 2) EVALUATION NUMBER + تحقق ── */
+  await s5scroll($('sec-evalnum'),.65,.45);
+  accSpot('spot-evalnum',true); $('lbl-evalnum').classList.add('active'); await sleep(120);
+  const ren=$('inp-evalnum').getBoundingClientRect();
+  await moveTo(ren.left+ren.width*.5,ren.top+ren.height*.5,.7);
+  await clickAt(ren.left+ren.width*.5,ren.top+ren.height*.5);
+  await sleep(150);
+  await typeIn($('inp-evalnum'),'1004267894',64);
+  $('lbl-evalnum').classList.remove('active');
+  /* press تحقق */
+  const rv=$('vrf-eval').getBoundingClientRect();
+  await moveTo(rv.left+rv.width/2,rv.top+rv.height/2,.55);
+  sfx_confirm(); $('vrf-eval').classList.add('pressed');
+  await clickAt(rv.left+rv.width/2,rv.top+rv.height/2);
+  setTimeout(()=>$('vrf-eval').classList.remove('pressed'),220);
+  await sleep(160); $('chk-evalnum').classList.add('show'); sfx_check(); await sleep(320);
+  accSpot('spot-evalnum',false); setP(82); await sleep(220);
+
+  /* ── 3) ESTIMATE DOCUMENT (upload) ── */
+  await s5scroll($('sec-doc1'),.6,.5);
+  accSpot('spot-doc1',true); await sleep(120);
+  const rd1=$('file-doc1').getBoundingClientRect();
+  await moveTo(rd1.left+rd1.width*.5,rd1.top+rd1.height*.5,.7);
+  sfx_click(); await clickAt(rd1.left+rd1.width*.5,rd1.top+rd1.height*.5);
+  await sleep(240); $('file-doc1').classList.add('attached'); sfx_check(); await sleep(360);
+  accSpot('spot-doc1',false); setP(86); await sleep(220);
+
+  /* ── 4) SETTLEMENT TYPE = تعويض ── */
+  await s5scroll($('sec-settle'),.6,.5);
+  accSpot('spot-settle',true); await sleep(140);
+  const rc=$('settle-comp').getBoundingClientRect();
+  await moveTo(rc.left+rc.width/2,rc.top+rc.height/2,.8);
+  sfx_confirm(); await clickAt(rc.left+rc.width/2,rc.top+rc.height/2);
+  selCard('settle-comp'); sfx_check(); await sleep(320);
+  accSpot('spot-settle',false); setP(90); await sleep(220);
+
+  /* ── 5) IBAN ── */
+  await s5scroll($('sec-iban'),.65,.45);
+  accSpot('spot-iban',true); $('lbl-iban').classList.add('active'); await sleep(120);
+  const ri=$('inp-iban').getBoundingClientRect();
+  await moveTo(ri.left+ri.width*.5,ri.top+ri.height*.5,.7);
+  await clickAt(ri.left+ri.width*.5,ri.top+ri.height*.5);
+  await sleep(150);
+  await typeIn($('inp-iban'),'1875647962498888745555',46);
+  $('lbl-iban').classList.remove('active'); $('chk-iban').classList.add('show'); sfx_check(); await sleep(320);
+  accSpot('spot-iban',false); setP(94); await sleep(220);
+
+  /* ── 6) IBAN CERTIFICATE (upload) ── */
+  await s5scroll($('sec-doc2'),.6,.5);
+  accSpot('spot-doc2',true); await sleep(120);
+  const rd2=$('file-doc2').getBoundingClientRect();
+  await moveTo(rd2.left+rd2.width*.5,rd2.top+rd2.height*.5,.7);
+  sfx_click(); await clickAt(rd2.left+rd2.width*.5,rd2.top+rd2.height*.5);
+  await sleep(240); $('file-doc2').classList.add('attached'); sfx_check(); await sleep(360);
+  accSpot('spot-doc2',false); setP(97); await sleep(220);
+
+  /* step 3 line completes */
+  pingOff('s5-stp3');
+  $('s5-line3').classList.add('done'); await sleep(320);
+
+  /* ── BUTTON ── */
+  await s5scroll($('s5-btn'),.6,.5);
+  sfx_btnpop(); shimBtn('s5-btn'); await sleep(360);
+  const rb=$('s5-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(260); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s5-btn'),{scale:.97,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s5-btn').style.background='#2530a8',
+    onComplete:()=>setTimeout(()=>{ $('s5-btn').style.background='#1a1464'; shimBtn('s5-btn'); },200)
+  });
+
+  setP(100); await sleep(500);
+  sfx_success(); await successFlash($('s5-flash'));
 
   /* cinematic close */
   stopTrail();
@@ -1340,9 +1688,13 @@ async function run(){
   await transitionTo('s3','s2');
   await runScene2(false);
 
-  /* ── Part C: accident details — najm (standalone segment) ── */
+  /* ── Part C: accident details — najm ── */
   await transitionTo('s2','s4');
   await runScene4();
+
+  /* ── Part D: estimate & bank details ── */
+  await transitionTo('s4','s5');
+  await runScene5();
 }
 
 
