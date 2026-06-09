@@ -323,17 +323,17 @@ html, body {
 .plate-bot { display:flex; border-top:1.5px solid #222; }
 .plate-en { flex:1; text-align:center; font-size:11px; font-weight:700; padding:2px 4px; border-left:1px solid #ccc; color:#222; }
 
-/* prefixed input (DA / SA on the left) + optional verify button */
+/* prefixed input — DA / SA box fixed on the RIGHT, value to its left, verify button far left */
 .pfx-wrap { display:flex; direction:rtl; width:100%; position:relative; z-index:1; }
 .pfx-input { flex:1; border:1.5px solid #e0e0e0; border-radius:8px 0 0 8px; padding:12px 15px; font-size:13.5px; font-family:'Cairo',sans-serif; color:#1a1464; text-align:right; direction:rtl; background:#fff; outline:none; transition:border-color .25s,box-shadow .25s,background .4s; caret-color:#e8874a; }
+.pfx-input.pfx-mid { border-radius:0; }
 .pfx-input::placeholder { color:#c8c8c8; font-size:12.5px; }
-.pfx-input.focused { border-color:#e8874a; box-shadow:0 0 0 3.5px rgba(232,135,74,.14); }
+.pfx-input.focused { border-color:#e8874a; box-shadow:0 0 0 3.5px rgba(232,135,74,.14); z-index:2; }
 .pfx-input.filled { border-color:#c8d8ff; background:#fafbff; }
 .pfx-input.pulse { animation:tPulse .38s ease; }
-.pfx-box { background:#f1f1f1; border:1.5px solid #e0e0e0; border-right:none; padding:0 13px; font-size:13px; font-weight:700; color:#444; display:flex; align-items:center; flex-shrink:0; }
+.pfx-box { background:#f1f1f1; border:1.5px solid #e0e0e0; border-left:none; border-radius:0 8px 8px 0; padding:0 14px; font-size:13px; font-weight:700; color:#444; display:flex; align-items:center; flex-shrink:0; }
 .vrf-btn { background:#c2997c; color:#fff; border:none; border-radius:8px 0 0 8px; padding:0 18px; font-size:13px; font-weight:700; font-family:'Cairo',sans-serif; flex-shrink:0; cursor:pointer; transition:background .2s,transform .1s; }
 .vrf-btn.pressed { background:#a87a5c; }
-.pfx-box.mid { border-radius:0; }
 
 /* file upload chip */
 .file-up { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:10px; border:1.5px solid #e0e0e0; border-radius:8px; padding:9px 12px; background:#fff; position:relative; z-index:1; min-height:46px; }
@@ -838,24 +838,24 @@ html, body {
           <!-- رقم تقييم الأضرار + تحقق -->
           <div class="acc-sec" id="sec-evalnum">
             <div class="acc-spot" id="spot-evalnum"></div>
-            <div class="fld-top" style="display:flex;flex-direction:row-reverse;align-items:center;gap:7px;margin-bottom:7px;">
-              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            <div class="fld-top" style="display:flex;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
               <span class="acc-fld-lbl" id="lbl-evalnum"><span style="color:#e8874a;font-weight:700;">*</span> رقم تقييم الأضرار</span>
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
             </div>
             <div class="pfx-wrap">
-              <input class="pfx-input" id="inp-evalnum" placeholder="رقم تقييم الأضرار" readonly>
-              <div class="pfx-box mid">DA</div>
+              <div class="pfx-box">DA</div>
+              <input class="pfx-input pfx-mid" id="inp-evalnum" placeholder="رقم تقييم الأضرار" readonly>
               <button class="vrf-btn" id="vrf-eval">تحقق</button>
-              <div class="chk" id="chk-evalnum"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+              <div class="chk" id="chk-evalnum" style="right:auto;left:-42px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
             </div>
           </div>
 
           <!-- مستند التقدير -->
           <div class="acc-sec" id="sec-doc1">
             <div class="acc-spot" id="spot-doc1"></div>
-            <div class="fld-top" style="display:flex;flex-direction:row-reverse;align-items:center;gap:7px;margin-bottom:7px;">
-              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            <div class="fld-top" style="display:flex;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
               <span class="acc-fld-lbl"><span style="color:#e8874a;font-weight:700;">*</span> مستند التقدير</span>
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
             </div>
             <div class="file-up" id="file-doc1">
               <div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">تقرير مختصر.pdf</span></div>
@@ -869,31 +869,31 @@ html, body {
             <div class="acc-spot" id="spot-settle"></div>
             <div class="acc-h">نوع تسوية المطالبة <span style="color:#e8874a">*</span></div>
             <div class="card-row">
-              <div class="opt-card" id="settle-comp"><div class="oc-lbl">تعويض</div></div>
               <div class="opt-card" id="settle-fix"><div class="oc-lbl">إصلاح</div></div>
+              <div class="opt-card" id="settle-comp"><div class="oc-lbl">تعويض</div></div>
             </div>
           </div>
 
           <!-- IBAN -->
           <div class="acc-sec" id="sec-iban">
             <div class="acc-spot" id="spot-iban"></div>
-            <div class="fld-top" style="display:flex;flex-direction:row-reverse;align-items:center;gap:7px;margin-bottom:7px;">
-              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            <div class="fld-top" style="display:flex;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
               <span class="acc-fld-lbl" id="lbl-iban"><span style="color:#e8874a;font-weight:700;">*</span> رقم الحساب البنكي (IBAN)</span>
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
             </div>
             <div class="pfx-wrap">
-              <input class="pfx-input" id="inp-iban" placeholder="رقم الحساب البنكي" readonly>
               <div class="pfx-box">SA</div>
-              <div class="chk" id="chk-iban"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+              <input class="pfx-input" id="inp-iban" placeholder="رقم الحساب البنكي" readonly>
+              <div class="chk" id="chk-iban" style="right:auto;left:-42px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
             </div>
           </div>
 
           <!-- شهادة الآيبان -->
           <div class="acc-sec" id="sec-doc2">
             <div class="acc-spot" id="spot-doc2"></div>
-            <div class="fld-top" style="display:flex;flex-direction:row-reverse;align-items:center;gap:7px;margin-bottom:7px;">
-              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            <div class="fld-top" style="display:flex;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
               <span class="acc-fld-lbl"><span style="color:#e8874a;font-weight:700;">*</span> شهادة الآيبان الخاص بالمالك</span>
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
             </div>
             <div class="file-up" id="file-doc2">
               <div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">تقرير مختصر.pdf</span></div>
