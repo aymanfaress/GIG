@@ -478,6 +478,7 @@ html, body {
               <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
             </div>
             <input class="fld-input" id="inp7" placeholder="البريد الإلكتروني" readonly>
+            <div class="chk" id="chk7"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
           </div>
 
           <div style="height:18px;"></div>
@@ -760,6 +761,7 @@ async function runScene1(){
   setP(82); await sleep(500);
   await zoomOut(s1form,0.85); await sleep(180);
   sfx_success(); await successFlash($('s1-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
 
 /* ══════════════════════════════════════════
@@ -901,7 +903,7 @@ async function runScene3(){
   await typeIn($('inp4'),'7001689913',70);
   lblOff(4); showChk(4); sfx_check(); await sleep(340);
   spotOff(4); pingOff('stp1c'); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.9); setP(34); await sleep(340);
+  sfx_zoomout(); await zoomOut(f,0.9); setP(30); await sleep(340);
 
   /* ── FIELD 5 — driver ID ── */
   pingOn('stp1c'); dim.classList.add('on');
@@ -914,7 +916,7 @@ async function runScene3(){
   await typeIn($('inp5'),'2341968192',70);
   lblOff(5); showChk(5); sfx_check(); await sleep(340);
   spotOff(5); pingOff('stp1c'); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.9); setP(52); await sleep(340);
+  sfx_zoomout(); await zoomOut(f,0.9); setP(44); await sleep(340);
 
   /* ── FIELD 6 — mobile ── */
   pingOn('stp1c'); dim.classList.add('on');
@@ -929,7 +931,21 @@ async function runScene3(){
   $('phcode3').style.borderColor='#c8d8ff';
   lblOff(6); showChk(6); sfx_check(); await sleep(340);
   spotOff(6); pingOff('stp1c'); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.9); setP(70); await sleep(360);
+  sfx_zoomout(); await zoomOut(f,0.9); setP(58); await sleep(360);
+
+  /* ── FIELD 7 — email (same as Scene 1) ── */
+  pingOn('stp1c'); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(f,c,$('fg7'),1.55,0.95);
+  spotOn(7); lblOn(7);
+  const r7=$('inp7').getBoundingClientRect();
+  await moveTo(r7.left+r7.width*.55,r7.top+r7.height*.5,.55);
+  await clickAt(r7.left+r7.width*.55,r7.top+r7.height*.5);
+  $('inp7').focus(); $('inp7').classList.add('focused');
+  await sleep(180);
+  await typeIn($('inp7'),'ahmed@example.com',62);
+  lblOff(7); showChk(7); sfx_check(); await sleep(340);
+  spotOff(7); pingOff('stp1c'); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(f,0.9); setP(72); await sleep(360);
 
   /* sidebar progress line */
   $('line1c').classList.add('done'); await sleep(400);
