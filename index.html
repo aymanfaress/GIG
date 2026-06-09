@@ -237,11 +237,11 @@ html, body {
 #s4 { background:#f5f5f7; }
 #s4-body { flex:1; display:flex; overflow:hidden; }
 
-#s4-leftpanel { width:240px; flex-shrink:0; padding:32px 22px 0; opacity:0; z-index:25; position:relative; }
+#s4-leftpanel { width:240px; flex-shrink:0; padding:32px 22px 0; opacity:0; z-index:25; position:relative; direction:rtl; text-align:right; }
 .lp-welcome { font-size:13px; font-weight:700; color:#1a1464; text-align:right; direction:rtl; margin-bottom:14px; }
 .lp-card { background:#fff; border:1px solid #ececec; border-radius:10px; overflow:hidden; }
-.lp-head { display:flex; flex-direction:row-reverse; align-items:center; justify-content:space-between; gap:8px; background:#f3d9c4; color:#9a5a28; font-size:13px; font-weight:700; padding:11px 14px; direction:rtl; }
-.lp-row { display:flex; flex-direction:column; align-items:flex-end; gap:3px; padding:11px 14px; border-top:1px solid #f2f2f2; direction:rtl; }
+.lp-head { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:8px; background:#f3d9c4; color:#9a5a28; font-size:13px; font-weight:700; padding:11px 14px; }
+.lp-row { display:flex; flex-direction:column; align-items:flex-end; gap:3px; padding:11px 14px; border-top:1px solid #f2f2f2; direction:rtl; text-align:right; }
 .lp-k { font-size:12px; font-weight:700; color:#444; }
 .lp-v { font-size:13px; color:#777; }
 
@@ -1197,7 +1197,6 @@ async function scrollToEl(formEl, contEl, targetEl, dur=0.7, frac=0.42){
 }
 
 async function runScene4(){
-  const dim=$('dim4');
   const f=$('s4-form'), c=$('s4-content');
   s4y=0;
 
@@ -1227,17 +1226,14 @@ async function runScene4(){
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
 
-  /* ── 1) SOURCE = نجم ── */
+  /* ── 1) SOURCE = نجم (cursor goes straight to نجم) ── */
   await scrollToEl(f,c,$('sec-source'),.6,.5);
-  dim.classList.add('on'); accSpot('spot-src',true); await sleep(120);
-  const rbash=$('src-basher').getBoundingClientRect();
-  await moveTo(rbash.left+rbash.width/2,rbash.top+rbash.height/2,.9);
-  await sleep(220);
+  accSpot('spot-src',true); await sleep(160);
   const rnajm=$('src-najm').getBoundingClientRect();
-  await moveTo(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2,.5);
+  await moveTo(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2,.95);
   sfx_confirm(); await clickAt(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2);
   selCard('src-najm'); sfx_check(); await sleep(340);
-  accSpot('spot-src',false); dim.classList.remove('on'); await sleep(220);
+  accSpot('spot-src',false); await sleep(220);
 
   /* reveal the rest of the form */
   gsap.to('#sec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
@@ -1249,16 +1245,16 @@ async function runScene4(){
 
   /* ── 2) TYPE = أضرار في المركبة ── */
   await scrollToEl(f,c,$('sec-type'),.7,.45);
-  dim.classList.add('on'); accSpot('spot-type',true); await sleep(140);
+  accSpot('spot-type',true); await sleep(140);
   const rveh=$('type-veh').getBoundingClientRect();
   await moveTo(rveh.left+rveh.width/2,rveh.top+rveh.height/2,.7);
   sfx_confirm(); await clickAt(rveh.left+rveh.width/2,rveh.top+rveh.height/2);
   selCard('type-veh'); sfx_check(); await sleep(340);
-  accSpot('spot-type',false); dim.classList.remove('on'); setP(42); await sleep(240);
+  accSpot('spot-type',false); setP(42); await sleep(240);
 
   /* ── 3) OWNER = لا → driver identity ── */
   await scrollToEl(f,c,$('sec-owner'),.7,.4);
-  dim.classList.add('on'); accSpot('spot-owner',true); await sleep(140);
+  accSpot('spot-owner',true); await sleep(140);
   const rno=$('own-no').getBoundingClientRect();
   await moveTo(rno.left+rno.width/2,rno.top+rno.height/2,.7);
   sfx_click(); await clickAt(rno.left+rno.width/2,rno.top+rno.height/2);
@@ -1276,11 +1272,11 @@ async function runScene4(){
   await sleep(160);
   await typeIn($('inp-driver'),'2094309909',68);
   $('lbl-driver').classList.remove('active'); $('chk-driver').classList.add('show'); sfx_check(); await sleep(340);
-  accSpot('spot-owner',false); dim.classList.remove('on'); setP(58); await sleep(240);
+  accSpot('spot-owner',false); setP(58); await sleep(240);
 
   /* ── 4) NAJM REPORT NUMBER ── */
   await scrollToEl(f,c,$('fld-najm'),.7,.45);
-  dim.classList.add('on'); accSpot('spot-najm',true);
+  accSpot('spot-najm',true);
   $('lbl-najm').classList.add('active'); await sleep(120);
   const rn=$('inp-najm').getBoundingClientRect();
   await moveTo(rn.left+rn.width*.55,rn.top+rn.height*.5,.7);
@@ -1288,11 +1284,11 @@ async function runScene4(){
   await sleep(160);
   await typeIn($('inp-najm'),'RD1805262256',58);
   $('lbl-najm').classList.remove('active'); $('chk-najm').classList.add('show'); sfx_check(); await sleep(340);
-  accSpot('spot-najm',false); dim.classList.remove('on'); setP(72); await sleep(220);
+  accSpot('spot-najm',false); setP(72); await sleep(220);
 
   /* ── 5) SERIAL / CUSTOMS NUMBER ── */
   await scrollToEl(f,c,$('fld-serial'),.6,.45);
-  dim.classList.add('on'); accSpot('spot-serial',true);
+  accSpot('spot-serial',true);
   $('lbl-serial').classList.add('active'); await sleep(120);
   const rs=$('inp-serial').getBoundingClientRect();
   await moveTo(rs.left+rs.width*.55,rs.top+rs.height*.5,.7);
@@ -1300,7 +1296,7 @@ async function runScene4(){
   await sleep(160);
   await typeIn($('inp-serial'),'956423220',62);
   $('lbl-serial').classList.remove('active'); $('chk-serial').classList.add('show'); sfx_check(); await sleep(340);
-  accSpot('spot-serial',false); dim.classList.remove('on'); setP(86); await sleep(240);
+  accSpot('spot-serial',false); setP(86); await sleep(240);
 
   /* step 2 line completes */
   $('s4-line2').classList.add('done'); await sleep(320);
