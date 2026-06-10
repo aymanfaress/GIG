@@ -2095,7 +2095,7 @@ async function runScene5(){
   await clickAt(rv.left+rv.width/2,rv.top+rv.height/2);
   setTimeout(()=>$('vrf-eval').classList.remove('pressed'),220);
   await sleep(160); $('chk-evalnum').classList.add('show'); sfx_check(); await sleep(320);
-  accSpot('spot-evalnum',false); setP(82); await sleep(220);
+  accSpot('spot-evalnum',false); setP(80); await sleep(220);
 
   /* ── 3) ESTIMATE DOCUMENT (upload) ── */
   await s5scroll($('sec-doc1'),.6,.5);
@@ -2104,7 +2104,7 @@ async function runScene5(){
   await moveTo(rd1.left+rd1.width*.5,rd1.top+rd1.height*.5,.7);
   sfx_click(); await clickAt(rd1.left+rd1.width*.5,rd1.top+rd1.height*.5);
   await sleep(240); $('file-doc1').classList.add('attached'); sfx_check(); await sleep(360);
-  accSpot('spot-doc1',false); setP(86); await sleep(220);
+  accSpot('spot-doc1',false); setP(82); await sleep(220);
 
   /* ── 4) SETTLEMENT TYPE = تعويض ── */
   await s5scroll($('sec-settle'),.6,.5);
@@ -2113,7 +2113,7 @@ async function runScene5(){
   await moveTo(rc.left+rc.width/2,rc.top+rc.height/2,.8);
   sfx_confirm(); await clickAt(rc.left+rc.width/2,rc.top+rc.height/2);
   selCard('settle-comp'); sfx_check(); await sleep(320);
-  accSpot('spot-settle',false); setP(90); await sleep(220);
+  accSpot('spot-settle',false); setP(84); await sleep(220);
 
   /* ── 5) IBAN ── */
   await s5scroll($('sec-iban'),.65,.45);
@@ -2124,7 +2124,7 @@ async function runScene5(){
   await sleep(150);
   await typeIn($('inp-iban'),'1875647962498888745555',46);
   $('lbl-iban').classList.remove('active'); $('chk-iban').classList.add('show'); sfx_check(); await sleep(320);
-  accSpot('spot-iban',false); setP(94); await sleep(220);
+  accSpot('spot-iban',false); setP(86); await sleep(220);
 
   /* ── 6) IBAN CERTIFICATE (upload) ── */
   await s5scroll($('sec-doc2'),.6,.5);
@@ -2133,7 +2133,7 @@ async function runScene5(){
   await moveTo(rd2.left+rd2.width*.5,rd2.top+rd2.height*.5,.7);
   sfx_click(); await clickAt(rd2.left+rd2.width*.5,rd2.top+rd2.height*.5);
   await sleep(240); $('file-doc2').classList.add('attached'); sfx_check(); await sleep(360);
-  accSpot('spot-doc2',false); setP(97); await sleep(220);
+  accSpot('spot-doc2',false); setP(88); await sleep(220);
 
   /* step 3 line completes */
   pingOff('s5-stp3');
@@ -2228,10 +2228,13 @@ async function runScene6(){
   gsap.to('#s6-success',{opacity:1,duration:.4,ease:'power2.out'});
   gsap.to('.suc-card',{scale:1,duration:.55,ease:'back.out(1.6)'});
   sfx_success();
-  await sleep(1700);
-  /* hide success overlay before moving to the final (أخرى) variant */
-  gsap.to('#s6-success',{opacity:0,duration:.4,onComplete:()=>$('s6-success').classList.remove('show')});
-  await sleep(300);
+  await sleep(1900);
+
+  /* cinematic close — final */
+  const end = document.createElement('div');
+  end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#1a1464 0%,#2d3fa8 40%,#e8874a 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
+  document.body.appendChild(end);
+  gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
 }
 
 /* ══════════════════════════════════════════
@@ -2422,7 +2425,7 @@ async function runScene8(){
   $('csel-city').classList.add('focused'); await sleep(260);
   $('csel-city-val').textContent='الرياض'; $('csel-city').classList.remove('focused'); $('csel-city').classList.add('filled');
   sfx_check(); await sleep(280);
-  accSpot('cspot-city',false); setP(50); await sleep(160);
+  accSpot('cspot-city',false); setP(46); await sleep(160);
 
   /* 5) accident date */
   accSpot('cspot-date',true); $('clbl-date').classList.add('active'); await sleep(120);
@@ -2431,7 +2434,7 @@ async function runScene8(){
   await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
   await typeIn($('cinp-date'),'14/05/2026',72);
   $('clbl-date').classList.remove('active'); $('cchk-date').classList.add('show'); sfx_check(); await sleep(280);
-  accSpot('cspot-date',false); setP(58); await sleep(180);
+  accSpot('cspot-date',false); setP(52); await sleep(180);
 
   /* 6) accident description */
   await scrollToEl(f,c,$('cfld-desc'),.6,.4);
@@ -2441,10 +2444,10 @@ async function runScene8(){
   await clickAt(r.left+r.width*.5,r.top+r.height*.4); await sleep(150);
   await typeIn($('cinp-desc'),'تعرّض زجاج المركبة الأمامي للكسر نتيجة الأمطار والسيول في موقع الحادث.',34);
   $('clbl-desc').classList.remove('active'); sfx_check(); await sleep(300);
-  accSpot('cspot-desc',false); setP(68); await sleep(180);
+  accSpot('cspot-desc',false); setP(57); await sleep(180);
 
   /* 7) required documents (3 required uploads) */
-  const docs=[['cfld-doc1','cspot-doc1','cfile-photos',76],['cfld-doc2','cspot-doc2','cfile-form',83],['cfld-doc3','cspot-doc3','cfile-license',90]];
+  const docs=[['cfld-doc1','cspot-doc1','cfile-photos',60],['cfld-doc2','cspot-doc2','cfile-form',64],['cfld-doc3','cspot-doc3','cfile-license',68]];
   for(const [fld,spot,file,p] of docs){
     await scrollToEl(f,c,$(fld),.55,.45);
     accSpot(spot,true); await sleep(120);
@@ -2470,16 +2473,9 @@ async function runScene8(){
     onStart:()=>$('s8-btn').style.background='#2530a8',
     onComplete:()=>setTimeout(()=>{ $('s8-btn').style.background='#1a1464'; shimBtn('s8-btn'); },200)
   });
-  setP(100); await sleep(480);
+  setP(70); await sleep(450);
   sfx_success(); await successFlash($('s8-flash'));
-
-  /* cinematic close — final */
-  stopTrail();
-  const end = document.createElement('div');
-  end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#1a1464 0%,#2d3fa8 40%,#e8874a 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
-  document.body.appendChild(end);
-  gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
-  gsap.to(cur, { opacity:0, duration:.5 });
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
 
 /* ══ MASTER SEQUENCE ══ */
@@ -2495,25 +2491,21 @@ async function run(){
   await transitionTo('s3','s2');
   await runScene2(false);
 
-  /* ── Part C: accident details — najm ── */
+  /* ── Part C: accident details — three source variants ── */
   await transitionTo('s2','s4');
-  await runScene4();
-
-  /* ── Part C2: accident details — باشر / المرور ── */
+  await runScene4();          /* نجم */
   await transitionTo('s4','s7');
-  await runScene7();
+  await runScene7();          /* باشر / المرور */
+  await transitionTo('s7','s8');
+  await runScene8();          /* أخرى — عملاء GIG */
 
   /* ── Part D: estimate & bank details ── */
-  await transitionTo('s7','s5');
+  await transitionTo('s8','s5');
   await runScene5();
 
-  /* ── Part E: review & submit ── */
+  /* ── Part E: review & submit — finale ── */
   await transitionTo('s5','s6');
   await runScene6();
-
-  /* ── Part F: accident details — أخرى (GIG customers) — finale ── */
-  await transitionTo('s6','s8');
-  await runScene8();
 }
 
 
