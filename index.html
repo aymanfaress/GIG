@@ -348,6 +348,44 @@ html, body {
 .fu-del { background:#e63946; color:#fff; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; }
 .fu-empty { font-size:12.5px; color:#bbb; direction:rtl; }
 .file-up.attached .fu-empty { display:none; }
+
+/* ══════════════════════════════
+   SCENE 6 — REVIEW & SUBMIT
+══════════════════════════════ */
+#s6 { background:#f5f5f7; display:flex; flex-direction:column; }
+#s6-banner { background:#1a1464; padding:24px 60px 64px; flex-shrink:0; opacity:0; position:relative; z-index:10; }
+#s6-btitle { font-size:27px; font-weight:900; color:#fff; text-align:right; direction:rtl; letter-spacing:-.5px; }
+#s6-bsub { font-size:13px; color:rgba(255,255,255,.8); text-align:right; direction:rtl; margin-top:7px; }
+#s6-body { flex:1; overflow:hidden; position:relative; z-index:25; }
+#s6-grid { display:flex; direction:rtl; align-items:flex-start; gap:20px; max-width:1040px; margin:-46px auto 0; padding:0 30px; will-change:transform; }
+#s6-right { flex:1.55; }
+#s6-left { flex:1; display:flex; flex-direction:column; gap:18px; }
+.rev-card { background:#fff; border:1px solid #ececec; border-radius:12px; overflow:hidden; box-shadow:0 6px 22px rgba(0,0,0,.06); transition:box-shadow .35s; opacity:0; }
+.rev-card.hl { box-shadow:0 0 0 2.5px rgba(232,135,74,.4), 0 12px 32px rgba(232,135,74,.16); }
+.rev-head { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:8px; background:#e9b486; color:#7a4a22; font-size:13px; font-weight:700; padding:11px 16px; }
+.rev-row { display:flex; flex-direction:column; align-items:flex-start; gap:3px; padding:11px 16px; border-top:1px solid #f4f4f4; direction:rtl; text-align:right; }
+.rev-k { font-size:12px; font-weight:700; color:#444; }
+.rev-v { font-size:13px; color:#777; }
+.cl-veh-top { display:flex; direction:rtl; align-items:center; justify-content:space-between; padding:15px 18px 12px; }
+.cl-veh-bot { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:14px; padding:0 18px 14px; border-bottom:1px solid #f0f0f0; }
+.cl-sec-h { font-size:13px; font-weight:700; color:#1a1464; background:#f5f5f8; padding:9px 18px; direction:rtl; text-align:right; }
+.cl-row { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:12px; padding:9px 18px; border-top:1px solid #f4f4f4; }
+.cl-k { font-size:12.5px; color:#555; font-weight:600; }
+.cl-v { font-size:12.5px; color:#222; font-weight:700; direction:ltr; }
+.cl-legal { padding:14px 18px 4px; direction:rtl; text-align:right; }
+.cl-legal p { font-size:10.5px; color:#8a8a8a; line-height:1.75; margin-bottom:8px; }
+#s6-submit { width:calc(100% - 36px); margin:8px 18px 0; padding:14px; background:#1a1464; color:#fff; border:none; border-radius:8px; font-size:15px; font-weight:700; font-family:'Cairo',sans-serif; cursor:pointer; position:relative; overflow:hidden; transition:background .25s; }
+#s6-submit:hover { background:#2530a8; }
+#s6-back { text-align:left; font-size:13px; font-weight:700; color:#1a1464; padding:12px 18px 22px; direction:rtl; }
+#s6-success { position:fixed; inset:0; background:rgba(20,16,60,.55); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; z-index:8600; }
+.suc-card { background:#fff; border-radius:18px; padding:40px 54px; text-align:center; transform:scale(.9); box-shadow:0 24px 64px rgba(0,0,0,.32); }
+.suc-ring { width:74px; height:74px; border-radius:50%; background:#27ae60; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow:0 6px 22px rgba(39,174,96,.45); }
+.suc-ring svg .cp2 { stroke-dasharray:30; stroke-dashoffset:30; transition:stroke-dashoffset .5s ease .25s; }
+#s6-success.show .suc-ring svg .cp2 { stroke-dashoffset:0; }
+.suc-title { font-size:21px; font-weight:900; color:#1a1464; direction:rtl; margin-bottom:10px; }
+.suc-sub { font-size:14px; color:#555; direction:rtl; margin-bottom:6px; }
+.suc-sub strong { color:#e8874a; }
+.suc-note { font-size:12.5px; color:#999; direction:rtl; }
 </style>
 </head>
 <body>
@@ -921,6 +959,98 @@ html, body {
       <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
       <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
     </footer>
+  </div>
+
+  <!-- ══════════════ SCREEN 6 — REVIEW & SUBMIT ══════════════ -->
+  <div class="screen" id="s6">
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a1464" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s6-banner">
+      <div id="s6-btitle">مطالبة مركبات</div>
+      <div id="s6-bsub">الرجاء التأكد من صحة البيانات أدناه ومتابعة تقديم الطلب.</div>
+    </div>
+
+    <div id="s6-body">
+      <div id="s6-grid">
+        <!-- claim card (right) -->
+        <div id="s6-right">
+          <div class="rev-card" id="rev-claim">
+            <div class="cl-veh-top">
+              <div class="veh-name" style="font-size:17px;">MG</div>
+              <div class="veh-logo" style="color:#c0392b;">MG</div>
+            </div>
+            <div class="cl-veh-bot">
+              <div>
+                <div class="veh-serial-lbl">الرقم التسلسلي / رقم البطاقة الجمركية</div>
+                <div class="veh-serial-num">956423220</div>
+              </div>
+              <div class="plate">
+                <div class="plate-top"><div class="plate-cell plate-ar">٢٢٨٤</div><div class="plate-cell plate-ar">ي ب س</div></div>
+                <div class="plate-bot"><div class="plate-en">2284</div><div class="plate-en">VBS</div></div>
+              </div>
+            </div>
+            <div class="cl-sec-h">تفاصيل الحادث</div>
+            <div class="cl-row"><span class="cl-k">رقم تقرير الحادث</span><span class="cl-v">RD1805262256</span></div>
+            <div class="cl-row"><span class="cl-k">التاريخ</span><span class="cl-v">18/05/2026</span></div>
+            <div class="cl-row"><span class="cl-k">نوع الأضرار</span><span class="cl-v">Vehicle Damage</span></div>
+            <div class="cl-sec-h">البيانات البنكية</div>
+            <div class="cl-row"><span class="cl-k">رقم الآيبان</span><span class="cl-v">SA1245793631546464646846</span></div>
+            <div class="cl-row"><span class="cl-k">اسم البنك</span><span class="cl-v">Saudi National Bank</span></div>
+            <div class="cl-row"><span class="cl-k">اسم المستفيد</span><span class="cl-v">JUANITO REY BROSOTO LUMAGUE-T</span></div>
+            <div class="cl-legal">
+              <p>بالنقر على "تقديم"، أقر بأنه عند استلام مبلغ التعويض المستحق لي وفقًا للتقديرات المرفقة وطبقًا لشروط وأحكام الوثيقة، وذلك من خلال تحويل المبلغ إلى حسابي المصرفي المذكور أعلاه، فإنني أبرئ ذمة شركة التأمين إبراءً تامًا ونهائيًا من جميع الالتزامات التي قد تنشأ عن هذه المطالبة في الوقت الحالي أو في المستقبل.</p>
+              <p>أقر بصحة المعلومات المدخلة أعلاه، وبأن أي خطأ في إدخال رقم الآيبان يقع على عاتق مقدم المطالبة وتحت مسؤوليته.</p>
+              <p>أقر بمنحي جي آي جي موافقتي الطوعية على مشاركة معلوماتي الشخصية، ولا سيما اسمي الكامل ورقم تواصلي وبيانات مركبتي، مع ورش الإصلاح أو أي أطراف أخرى ذات صلة، وذلك بالقدر اللازم لمعالجة مطالبتي.</p>
+            </div>
+            <button id="s6-submit" class="shimmable">تقديم المطالبة</button>
+            <div id="s6-back">→ رجوع</div>
+          </div>
+        </div>
+
+        <!-- personal + policy (left) -->
+        <div id="s6-left">
+          <div class="rev-card" id="rev-personal">
+            <div class="rev-head"><span>البيانات الشخصية</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+            <div class="rev-row"><span class="rev-k">الاسم</span><span class="rev-v">رضوان محمد سليم العطار</span></div>
+            <div class="rev-row"><span class="rev-k">رقم الهوية</span><span class="rev-v">7001689913</span></div>
+            <div class="rev-row"><span class="rev-k">رقم الجوال</span><span class="rev-v">537077897</span></div>
+          </div>
+          <div class="rev-card" id="rev-policy">
+            <div class="rev-head"><span>تفاصيل الوثيقة</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+            <div class="rev-row"><span class="rev-k">رقم الوثيقة</span><span class="rev-v">1/VF/41210/0/0</span></div>
+            <div class="rev-row"><span class="rev-k">تاريخ السريان</span><span class="rev-v">01/03/2026</span></div>
+            <div class="rev-row"><span class="rev-k">تاريخ الانتهاء</span><span class="rev-v">28/02/2027</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+
+    <!-- success overlay -->
+    <div id="s6-success">
+      <div class="suc-card">
+        <div class="suc-ring"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp2" points="20 6 9 17 4 12"/></svg></div>
+        <div class="suc-title">تم تقديم مطالبتك بنجاح</div>
+        <div class="suc-sub">رقم المطالبة: <strong>MC0500100008801</strong></div>
+        <div class="suc-note">ستصلك رسالة نصية بتفاصيل المطالبة</div>
+      </div>
+    </div>
   </div>
 
 </div><!-- /scene -->
@@ -1663,16 +1793,90 @@ async function runScene5(){
     onComplete:()=>setTimeout(()=>{ $('s5-btn').style.background='#1a1464'; shimBtn('s5-btn'); },200)
   });
 
-  setP(100); await sleep(500);
+  setP(90); await sleep(450);
   sfx_success(); await successFlash($('s5-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+}
+
+/* ══════════════════════════════════════════
+   SCENE 6 — REVIEW & SUBMIT
+══════════════════════════════════════════ */
+let s6y = 0;
+async function s6scroll(targetEl, dur=0.7, frac=0.5){
+  const body=$('s6-body'), grid=$('s6-grid');
+  const sc=curScale();
+  const cont=body.getBoundingClientRect(), tgt=targetEl.getBoundingClientRect();
+  s6y += (cont.top + cont.height*frac - (tgt.top + tgt.height/2))/sc;
+  if(s6y>0) s6y=0;
+  const maxScroll=Math.max(0, grid.offsetHeight - body.clientHeight + 30);
+  if(s6y < -maxScroll) s6y=-maxScroll;
+  return new Promise(res=>gsap.to(grid,{y:s6y,duration:dur,ease:'power2.inOut',onComplete:res}));
+}
+const hl=(id,on)=>$(id).classList[on?'add':'remove']('hl');
+
+async function runScene6(){
+  s6y=0;
+
+  /* init */
+  gsap.set('#s6-banner',{opacity:0,y:-20});
+  gsap.set('#s6-grid',{y:0});
+  gsap.set(['#rev-claim','#rev-personal','#rev-policy'],{opacity:0,y:22});
+  gsap.set('#s6-success',{opacity:0});
+  gsap.set('.suc-card',{scale:.9});
+
+  setP(92);
+
+  /* build in */
+  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(440);
+  gsap.to('#rev-claim',{opacity:1,y:0,duration:.6,ease:'power3.out'}); await sleep(240);
+  gsap.to('#rev-personal',{opacity:1,y:0,duration:.55,ease:'power3.out'}); await sleep(170);
+  gsap.to('#rev-policy',{opacity:1,y:0,duration:.55,ease:'power3.out'}); await sleep(420);
+
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+
+  /* review the data — gentle highlights */
+  const rp=$('rev-personal').getBoundingClientRect();
+  await moveTo(rp.left+rp.width*.5,rp.top+rp.height*.5,1.0);
+  hl('rev-personal',true); await sleep(680); hl('rev-personal',false);
+  const rpo=$('rev-policy').getBoundingClientRect();
+  await moveTo(rpo.left+rpo.width*.5,rpo.top+rpo.height*.5,.55);
+  hl('rev-policy',true); await sleep(680); hl('rev-policy',false);
+  setP(95);
+
+  /* glance over the claim card, scrolling to the bank section */
+  hl('rev-claim',true);
+  const rc=$('rev-claim').getBoundingClientRect();
+  await moveTo(rc.left+rc.width*.5,rc.top+rc.height*.4,.7);
+  await sleep(500);
+  await s6scroll($('s6-submit'),.9,.62); await sleep(300);
+  hl('rev-claim',false);
+  setP(98);
+
+  /* ── SUBMIT ── */
+  sfx_btnpop(); shimBtn('s6-submit'); await sleep(360);
+  const rb=$('s6-submit').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s6-submit'),{scale:.97,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s6-submit').style.background='#2530a8',
+    onComplete:()=>setTimeout(()=>{ $('s6-submit').style.background='#1a1464'; },200)
+  });
+  setP(100); await sleep(420);
+
+  /* ── SUCCESS MESSAGE ── */
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.35});
+  $('s6-success').classList.add('show');
+  gsap.to('#s6-success',{opacity:1,duration:.4,ease:'power2.out'});
+  gsap.to('.suc-card',{scale:1,duration:.55,ease:'back.out(1.6)'});
+  sfx_success();
+  await sleep(1900);
 
   /* cinematic close */
-  stopTrail();
   const end = document.createElement('div');
   end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#1a1464 0%,#2d3fa8 40%,#e8874a 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
   document.body.appendChild(end);
   gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
-  gsap.to(cur, { opacity:0, duration:.5 });
 }
 
 /* ══ MASTER SEQUENCE ══ */
@@ -1695,6 +1899,10 @@ async function run(){
   /* ── Part D: estimate & bank details ── */
   await transitionTo('s4','s5');
   await runScene5();
+
+  /* ── Part E: review & submit ── */
+  await transitionTo('s5','s6');
+  await runScene6();
 }
 
 
