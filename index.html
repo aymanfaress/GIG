@@ -353,11 +353,11 @@ html, body {
    SCENE 6 — REVIEW & SUBMIT
 ══════════════════════════════ */
 #s6 { background:#f5f5f7; display:flex; flex-direction:column; }
-#s6-banner { background:#1a1464; padding:24px 60px 42px; flex-shrink:0; opacity:0; position:relative; z-index:10; margin-bottom:-30px; }
+#s6-banner { background:#1a1464; padding:24px 60px 34px; flex-shrink:0; opacity:0; position:relative; z-index:10; }
 #s6-btitle { font-size:27px; font-weight:900; color:#fff; text-align:right; direction:rtl; letter-spacing:-.5px; }
 #s6-bsub { font-size:13px; color:rgba(255,255,255,.8); text-align:right; direction:rtl; margin-top:7px; }
 #s6-body { flex:1; overflow:hidden; position:relative; z-index:25; }
-#s6-grid { display:flex; direction:rtl; align-items:flex-start; gap:20px; max-width:1040px; margin:0 auto; padding:0 30px; position:relative; z-index:2; will-change:transform; }
+#s6-grid { display:flex; direction:rtl; align-items:flex-start; gap:20px; max-width:1040px; margin:22px auto 0; padding:0 30px; position:relative; z-index:2; will-change:transform; }
 #s6-right { flex:1.55; }
 #s6-left { flex:1; display:flex; flex-direction:column; gap:18px; }
 .rev-card { background:#fff; border:1px solid #ececec; border-radius:12px; overflow:hidden; box-shadow:0 6px 22px rgba(0,0,0,.06); transition:box-shadow .35s; opacity:0; }
@@ -1350,10 +1350,8 @@ async function runScene2(isFinal=true){
 
   const s2form=$('s2-form'), s2cont=$('s2-main');
 
-  /* ── OTP BOXES ── */
-  dim.classList.add('on');
-  sfx_zoomin(); await zoomTo(s2form,s2cont,$('otp-wrap'),1.5,0.95);
-  gsap.to($('otp-spot'),{opacity:1,duration:.28}); await sleep(240);
+  /* ── OTP BOXES (no dim / no zoom — clean, nothing gets clipped) ── */
+  gsap.to($('otp-spot'),{opacity:1,duration:.28}); await sleep(220);
 
   const b1r=$('b1').getBoundingClientRect();
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
@@ -1373,14 +1371,10 @@ async function runScene2(isFinal=true){
     await sleep(150);
   }
 
-  gsap.to($('otp-spot'),{opacity:0,duration:.28});
-  dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(s2form,0.9); await sleep(360);
+  gsap.to($('otp-spot'),{opacity:0,duration:.28}); await sleep(340);
 
   /* ── BUTTON ACTIVATES ── */
-  sfx_unlock(); $('s2-btn').classList.add('ready'); shimBtn('s2-btn'); await sleep(420);
-  sfx_zoomin(); await zoomTo(s2form,s2cont,$('s2-btn'),1.3,0.85,60);
-  await sleep(300);
+  sfx_unlock(); $('s2-btn').classList.add('ready'); shimBtn('s2-btn'); await sleep(480);
   const rb=$('s2-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
@@ -1392,7 +1386,6 @@ async function runScene2(isFinal=true){
 
   clearInterval(timerIv);
   setP(100); await sleep(500);
-  await zoomOut(s2form,0.85); await sleep(180);
   sfx_success(); await successFlash($('s2-flash'));
 
   stopTrail();
