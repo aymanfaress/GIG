@@ -353,19 +353,20 @@ html, body {
    SCENE 6 — REVIEW & SUBMIT
 ══════════════════════════════ */
 #s6 { background:#f5f5f7; display:flex; flex-direction:column; }
-#s6-banner { background:#1a1464; padding:24px 60px 64px; flex-shrink:0; opacity:0; position:relative; z-index:10; }
+#s6-banner { background:#1a1464; padding:24px 60px 42px; flex-shrink:0; opacity:0; position:relative; z-index:10; margin-bottom:-30px; }
 #s6-btitle { font-size:27px; font-weight:900; color:#fff; text-align:right; direction:rtl; letter-spacing:-.5px; }
 #s6-bsub { font-size:13px; color:rgba(255,255,255,.8); text-align:right; direction:rtl; margin-top:7px; }
 #s6-body { flex:1; overflow:hidden; position:relative; z-index:25; }
-#s6-grid { display:flex; direction:rtl; align-items:flex-start; gap:20px; max-width:1040px; margin:-46px auto 0; padding:0 30px; will-change:transform; }
+#s6-grid { display:flex; direction:rtl; align-items:flex-start; gap:20px; max-width:1040px; margin:0 auto; padding:0 30px; position:relative; z-index:2; will-change:transform; }
 #s6-right { flex:1.55; }
 #s6-left { flex:1; display:flex; flex-direction:column; gap:18px; }
 .rev-card { background:#fff; border:1px solid #ececec; border-radius:12px; overflow:hidden; box-shadow:0 6px 22px rgba(0,0,0,.06); transition:box-shadow .35s; opacity:0; }
 .rev-card.hl { box-shadow:0 0 0 2.5px rgba(232,135,74,.4), 0 12px 32px rgba(232,135,74,.16); }
 .rev-head { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:8px; background:#e9b486; color:#7a4a22; font-size:13px; font-weight:700; padding:11px 16px; }
+.rev-head .rh-l { display:flex; direction:rtl; align-items:center; gap:8px; }
 .rev-row { display:flex; flex-direction:column; align-items:flex-start; gap:3px; padding:11px 16px; border-top:1px solid #f4f4f4; direction:rtl; text-align:right; }
 .rev-k { font-size:12px; font-weight:700; color:#444; }
-.rev-v { font-size:13px; color:#777; }
+.rev-v { font-size:13px; color:#777; direction:ltr; text-align:right; }
 .cl-veh-top { display:flex; direction:rtl; align-items:center; justify-content:space-between; padding:15px 18px 12px; }
 .cl-veh-bot { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:14px; padding:0 18px 14px; border-bottom:1px solid #f0f0f0; }
 .cl-sec-h { font-size:13px; font-weight:700; color:#1a1464; background:#f5f5f8; padding:9px 18px; direction:rtl; text-align:right; }
@@ -1022,13 +1023,13 @@ html, body {
         <!-- personal + policy (left) -->
         <div id="s6-left">
           <div class="rev-card" id="rev-personal">
-            <div class="rev-head"><span>البيانات الشخصية</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
-            <div class="rev-row"><span class="rev-k">الاسم</span><span class="rev-v">رضوان محمد سليم العطار</span></div>
+            <div class="rev-head"><div class="rh-l"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span>البيانات الشخصية</span></div><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+            <div class="rev-row"><span class="rev-k">الاسم</span><span class="rev-v" style="direction:rtl;">رضوان محمد سليم العطار</span></div>
             <div class="rev-row"><span class="rev-k">رقم الهوية</span><span class="rev-v">7001689913</span></div>
             <div class="rev-row"><span class="rev-k">رقم الجوال</span><span class="rev-v">537077897</span></div>
           </div>
           <div class="rev-card" id="rev-policy">
-            <div class="rev-head"><span>تفاصيل الوثيقة</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+            <div class="rev-head"><div class="rh-l"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/></svg><span>تفاصيل الوثيقة</span></div><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
             <div class="rev-row"><span class="rev-k">رقم الوثيقة</span><span class="rev-v">1/VF/41210/0/0</span></div>
             <div class="rev-row"><span class="rev-k">تاريخ السريان</span><span class="rev-v">01/03/2026</span></div>
             <div class="rev-row"><span class="rev-k">تاريخ الانتهاء</span><span class="rev-v">28/02/2027</span></div>
