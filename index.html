@@ -387,6 +387,24 @@ html, body {
 .suc-sub { font-size:14px; color:#555; direction:rtl; margin-bottom:6px; }
 .suc-sub strong { color:#e8874a; }
 .suc-note { font-size:12.5px; color:#999; direction:rtl; }
+
+/* ══════════════════════════════
+   SCENE 7 — ACCIDENT DETAILS (باشر / المرور)
+══════════════════════════════ */
+#s7 { background:#f5f5f7; }
+#s7-body { flex:1; display:flex; overflow:hidden; }
+#s7-leftpanel { width:240px; flex-shrink:0; padding:32px 22px 0; opacity:0; z-index:25; position:relative; direction:rtl; text-align:right; }
+#s7-content { flex:1; display:flex; align-items:flex-start; justify-content:center; padding:28px 40px 0; overflow:hidden; position:relative; z-index:25; }
+#s7-form { width:100%; max-width:560px; opacity:0; position:relative; transform-origin:top center; will-change:transform; }
+#s7-flash { position:absolute; inset:-12px; border-radius:16px; background:rgba(39,174,96,0); pointer-events:none; z-index:50; }
+#s7-title { font-size:26px; font-weight:900; color:#1a1464; text-align:center; margin-bottom:22px; opacity:0; direction:rtl; }
+#s7-sidebar { width:240px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:36px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
+#s7-btn { width:100%; padding:15px; background:#1a1464; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Cairo',sans-serif; cursor:pointer; margin-top:6px; margin-bottom:26px; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .25s; }
+#s7-btn:hover { background:#2530a8; }
+.fld-2col { display:flex; direction:rtl; gap:14px; }
+.fld-2col > .acc-fld { flex:1; margin-bottom:16px; }
+.date-fld { position:relative; }
+.date-fld > svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none; }
 </style>
 </head>
 <body>
@@ -1052,6 +1070,173 @@ html, body {
         <div class="suc-note">ستصلك رسالة نصية بتفاصيل المطالبة</div>
       </div>
     </div>
+  </div>
+
+  <!-- ══════════════ SCREEN 7 — ACCIDENT DETAILS (باشر / المرور) ══════════════ -->
+  <div class="screen" id="s7">
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1a1464" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s7-body">
+      <aside id="s7-leftpanel">
+        <div class="lp-welcome">مرحبًا بك</div>
+        <div class="lp-card">
+          <div class="lp-head"><span>البيانات الشخصية</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a5a28" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+          <div class="lp-row"><span class="lp-k">الاسم</span><span class="lp-v">رضوان محمد سليم العطار</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الهوية</span><span class="lp-v">7001689913</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الجوال</span><span class="lp-v">537077897</span></div>
+        </div>
+      </aside>
+
+      <div id="s7-content">
+        <div id="s7-form">
+          <div id="s7-flash"></div>
+          <div id="s7-title">من فضلك أدخل تفاصيل الحادث</div>
+
+          <!-- مصدر تقرير الحادث -->
+          <div class="acc-sec" id="bsec-source">
+            <div class="acc-spot" id="bspot-source"></div>
+            <div class="acc-h">مصدر تقرير الحادث</div>
+            <div class="card-row">
+              <div class="opt-card" id="bsrc-najm">
+                <div class="oc-ic"><div style="width:30px;height:30px;border-radius:50%;background:#00a651;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:900;">نجم</div></div>
+                <div class="oc-lbl">نجم</div>
+              </div>
+              <div class="opt-card" id="bsrc-basher">
+                <div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                <div class="oc-lbl">باشر / المرور</div>
+              </div>
+              <div class="opt-card" id="bsrc-other">
+                <div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1a1464" stroke-width="1.8" stroke-linecap="round"><path d="M12 2 4 7v10l8 5 8-5V7z"/></svg></div>
+                <div class="oc-lbl">أخرى</div>
+                <div class="oc-sub">(العملاء جي آي جي فقط)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- نوع الحادث (4 خيارات) -->
+          <div class="acc-sec" id="bsec-type">
+            <div class="acc-spot" id="bspot-type"></div>
+            <div class="acc-h">نوع الحادث</div>
+            <div class="card-row">
+              <div class="opt-card" id="btype-death"><div class="oc-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round"><path d="M9 9h.01M15 9h.01M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="12" r="10"/></svg></div><div class="oc-lbl">وفاة</div></div>
+              <div class="opt-card" id="btype-injury"><div class="oc-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v20M2 12h20"/></svg></div><div class="oc-lbl">إصابة</div></div>
+              <div class="opt-card" id="btype-veh"><div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.5" r="1"/><circle cx="16.5" cy="14.5" r="1"/></svg></div><div class="oc-lbl">أضرار في المركبة</div></div>
+              <div class="opt-card" id="btype-prop"><div class="oc-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></div><div class="oc-lbl">أضرار في الممتلكات</div></div>
+            </div>
+          </div>
+
+          <!-- معلومات وتفاصيل الحادث -->
+          <div class="acc-sec" id="bsec-info">
+            <div class="acc-h">معلومات وتفاصيل الحادث</div>
+            <div class="acc-fld" id="bfld-report" style="opacity:1;">
+              <div class="acc-spot" id="bspot-report"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl" id="blbl-report"><span style="color:#e8874a;font-weight:700;">*</span> رقم تقرير باشر / المرور</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <input class="acc-input" id="binp-report" placeholder="رقم تقرير باشر / المرور" readonly>
+              <div class="chk" id="bchk-report"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="fld-2col">
+              <div class="acc-fld" id="bfld-serial" style="opacity:1;">
+                <div class="acc-spot" id="bspot-serial"></div>
+                <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                  <span class="acc-fld-lbl" id="blbl-serial"><span style="color:#e8874a;font-weight:700;">*</span> الرقم التسلسلي / رقم البطاقة الجمركية</span>
+                  <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+                </div>
+                <input class="acc-input" id="binp-serial" placeholder="الرقم التسلسلي" readonly>
+                <div class="chk" id="bchk-serial"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+              </div>
+              <div class="acc-fld" id="bfld-date" style="opacity:1;">
+                <div class="acc-spot" id="bspot-date"></div>
+                <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                  <span class="acc-fld-lbl" id="blbl-date"><span style="color:#e8874a;font-weight:700;">*</span> تاريخ وقوع الحادث</span>
+                  <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+                </div>
+                <div class="date-fld">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <input class="acc-input" id="binp-date" style="padding-left:36px;direction:ltr;" placeholder="DD/MM/YYYY" readonly>
+                </div>
+                <div class="chk" id="bchk-date"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- هل سيارتك مؤمنة لدى GIG -->
+          <div class="acc-sec" id="bsec-ins">
+            <div class="acc-spot" id="bspot-ins"></div>
+            <div class="q-row">
+              <div class="q-lblwrap">
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+                <span class="q-lbl"><span class="q-req">*</span> هل سيارتك مؤمنة لدى شركة GIG؟</span>
+              </div>
+              <div class="rad-grp">
+                <div class="rad-opt" id="bins-yes"><span class="rad-dot"></span><span class="rad-txt">نعم</span></div>
+                <div class="rad-opt" id="bins-no"><span class="rad-dot"></span><span class="rad-txt">لا</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- المستند المطلوب -->
+          <div class="acc-sec" id="bsec-docs">
+            <div class="acc-h">المستند المطلوب</div>
+            <div class="acc-fld" id="bfld-doc1" style="opacity:1;margin-bottom:13px;">
+              <div class="acc-spot" id="bspot-doc1"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl"><span style="color:#e8874a;font-weight:700;">*</span> تقرير الحادث</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="bfile-report"><div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">تقرير الحادث.pdf</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+            <div class="acc-fld" id="bfld-doc2" style="opacity:1;margin-bottom:13px;">
+              <div class="acc-spot" id="bspot-doc2"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl"><span style="color:#e8874a;font-weight:700;">*</span> رخصة القيادة</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="bfile-license"><div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">رخصة القيادة.pdf</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+            <div class="acc-fld" id="bfld-doc3" style="opacity:1;margin-bottom:13px;">
+              <div class="acc-spot" id="bspot-doc3"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl"><span style="color:#e8874a;font-weight:700;">*</span> رخصة السير (الاستمارة)</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="bfile-form"><div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">الاستمارة.pdf</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+          </div>
+
+          <button id="s7-btn" class="shimmable">التالي</button>
+        </div>
+      </div>
+
+      <aside id="s7-sidebar">
+        <div class="stp-row"><div class="stp-num">1</div><div class="stp-lbl">بيانات مقدم المطالبة</div></div>
+        <div class="stp-line done"></div>
+        <div class="stp-row active"><div class="stp-num" id="s7-stp2">2</div><div class="stp-lbl">تفاصيل الحادث</div></div>
+        <div class="stp-line" id="s7-line2"></div>
+        <div class="stp-row"><div class="stp-num">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
+      </aside>
+    </div>
+
+    <footer class="site-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
   </div>
 
 </div><!-- /scene -->
@@ -1873,6 +2058,126 @@ async function runScene6(){
   gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
 }
 
+/* ══════════════════════════════════════════
+   SCENE 7 — ACCIDENT DETAILS (باشر / المرور)
+══════════════════════════════════════════ */
+async function runScene7(){
+  const f=$('s7-form'), c=$('s7-content');
+  s4y=0;
+
+  gsap.set($('s7-sidebar'),{x:32,opacity:0});
+  gsap.set($('s7-leftpanel'),{x:-32,opacity:0});
+  gsap.set($('s7-form'),{y:20,opacity:0,scale:1,x:0});
+  gsap.set($('s7-title'),{y:-16,opacity:0});
+  gsap.set('#bsec-source',{y:16,opacity:0});
+  gsap.set(['#bsec-type','#bsec-info','#bsec-ins','#bsec-docs','#s7-btn'],{y:16,opacity:0});
+
+  setP(2);
+  gsap.to($('s7-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(420);
+  gsap.to($('s7-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(340);
+  gsap.to($('s7-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(320);
+  gsap.to($('s7-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(260);
+  gsap.to('#bsec-source',{y:0,opacity:1,duration:.55,ease:'power2.out'}); await sleep(360);
+  setP(12);
+
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  pingOn('s7-stp2');
+
+  /* 1) SOURCE = باشر / المرور */
+  await scrollToEl(f,c,$('bsec-source'),.6,.5);
+  accSpot('bspot-source',true); await sleep(160);
+  let r=$('bsrc-basher').getBoundingClientRect();
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.95);
+  sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
+  selCard('bsrc-basher'); sfx_check(); await sleep(320);
+  accSpot('bspot-source',false); await sleep(200);
+
+  gsap.to('#bsec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
+  gsap.to('#bsec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
+  gsap.to('#bsec-ins',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
+  gsap.to('#bsec-docs',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(60);
+  gsap.to('#s7-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  setP(22);
+
+  /* 2) TYPE = أضرار في المركبة */
+  await scrollToEl(f,c,$('bsec-type'),.65,.45);
+  accSpot('bspot-type',true); await sleep(140);
+  r=$('btype-veh').getBoundingClientRect();
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.8);
+  sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
+  selCard('btype-veh'); sfx_check(); await sleep(320);
+  accSpot('bspot-type',false); setP(34); await sleep(220);
+
+  /* 3) باشر report number */
+  await scrollToEl(f,c,$('bfld-report'),.6,.45);
+  accSpot('bspot-report',true); $('blbl-report').classList.add('active'); await sleep(120);
+  r=$('binp-report').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.7);
+  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
+  await typeIn($('binp-report'),'6000000000',60);
+  $('blbl-report').classList.remove('active'); $('bchk-report').classList.add('show'); sfx_check(); await sleep(320);
+  accSpot('bspot-report',false); setP(46); await sleep(200);
+
+  /* 4) serial number */
+  await scrollToEl(f,c,$('bfld-serial'),.6,.42);
+  accSpot('bspot-serial',true); $('blbl-serial').classList.add('active'); await sleep(120);
+  r=$('binp-serial').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
+  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
+  await typeIn($('binp-serial'),'187987410',62);
+  $('blbl-serial').classList.remove('active'); $('bchk-serial').classList.add('show'); sfx_check(); await sleep(280);
+  accSpot('bspot-serial',false); setP(55); await sleep(160);
+
+  /* 5) accident date */
+  accSpot('bspot-date',true); $('blbl-date').classList.add('active'); await sleep(120);
+  r=$('binp-date').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.55);
+  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
+  await typeIn($('binp-date'),'14/05/2026',72);
+  $('blbl-date').classList.remove('active'); $('bchk-date').classList.add('show'); sfx_check(); await sleep(300);
+  accSpot('bspot-date',false); setP(63); await sleep(200);
+
+  /* 6) insured by GIG = لا */
+  await scrollToEl(f,c,$('bsec-ins'),.6,.5);
+  accSpot('bspot-ins',true); await sleep(140);
+  r=$('bins-no').getBoundingClientRect();
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.7);
+  sfx_click(); await clickAt(r.left+r.width/2,r.top+r.height/2);
+  $('bins-no').classList.add('sel'); sfx_check(); await sleep(300);
+  accSpot('bspot-ins',false); setP(70); await sleep(200);
+
+  /* 7) required documents (3 uploads) */
+  const docs=[['bfld-doc1','bspot-doc1','bfile-report',78],['bfld-doc2','bspot-doc2','bfile-license',85],['bfld-doc3','bspot-doc3','bfile-form',92]];
+  for(const [fld,spot,file,p] of docs){
+    await scrollToEl(f,c,$(fld),.55,.45);
+    accSpot(spot,true); await sleep(120);
+    r=$(file).getBoundingClientRect();
+    await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
+    sfx_click(); await clickAt(r.left+r.width*.5,r.top+r.height*.5);
+    await sleep(220); $(file).classList.add('attached'); sfx_check(); await sleep(300);
+    accSpot(spot,false); setP(p); await sleep(150);
+  }
+
+  /* step 2 line completes */
+  pingOff('s7-stp2');
+  $('s7-line2').classList.add('done'); await sleep(320);
+
+  /* BUTTON */
+  await scrollToEl(f,c,$('s7-btn'),.6,.55);
+  sfx_btnpop(); shimBtn('s7-btn'); await sleep(360);
+  const rb=$('s7-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(260); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s7-btn'),{scale:.97,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s7-btn').style.background='#2530a8',
+    onComplete:()=>setTimeout(()=>{ $('s7-btn').style.background='#1a1464'; shimBtn('s7-btn'); },200)
+  });
+  setP(98); await sleep(450);
+  sfx_success(); await successFlash($('s7-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+}
+
 /* ══ MASTER SEQUENCE ══ */
 async function run(){
   /* ── Part A: individual claimant ── */
@@ -1890,8 +2195,12 @@ async function run(){
   await transitionTo('s2','s4');
   await runScene4();
 
+  /* ── Part C2: accident details — باشر / المرور ── */
+  await transitionTo('s4','s7');
+  await runScene7();
+
   /* ── Part D: estimate & bank details ── */
-  await transitionTo('s4','s5');
+  await transitionTo('s7','s5');
   await runScene5();
 
   /* ── Part E: review & submit ── */
