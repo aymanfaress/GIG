@@ -2483,13 +2483,13 @@ async function run(){
   /* ── Part C: accident details — three source variants ── */
   await transitionTo('s2','s4');
   await runScene4();          /* نجم */
-  await transitionTo('s4','s7');
-  await runScene7();          /* باشر / المرور */
-  await transitionTo('s7','s8');
+  await transitionTo('s4','s8');
   await runScene8();          /* أخرى — عملاء GIG */
+  await transitionTo('s8','s7');
+  await runScene7();          /* باشر / المرور */
 
-  /* ── Part D: estimate & bank details ── */
-  await transitionTo('s8','s5');
+  /* ── Part D: estimate & bank details (follows باشر path) ── */
+  await transitionTo('s7','s5');
   await runScene5();
 
   /* ── Part E: review & submit — finale ── */
