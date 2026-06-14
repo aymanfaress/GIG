@@ -210,7 +210,8 @@ html, body {
 
 #back-link { font-size:13.5px; font-weight:700; color:#1a1464; margin-top:18px; cursor:pointer; opacity:0; display:flex; align-items:center; gap:6px; direction:rtl; }
 
-#city { position:absolute; bottom:0; left:0; right:0; height:130px; opacity:0; pointer-events:none; z-index:0; }
+#city { position:absolute; bottom:0; left:0; right:0; height:160px; opacity:0; pointer-events:none; z-index:0; overflow:hidden; }
+#city img { width:100%; height:100%; object-fit:cover; object-position:bottom; display:block; }
 
 /* ══ SHARED SHIMMER ══ */
 .shimmable { position:relative; overflow:hidden; }
@@ -549,20 +550,7 @@ html, body {
 
     <div id="s2-main">
       <div id="city">
-        <svg width="100%" height="130" viewBox="0 0 1280 130" preserveAspectRatio="xMidYMax meet">
-          <g fill="none" stroke="#d8d8d8" stroke-width="1.2" opacity=".7">
-            <rect x="18" y="65" width="32" height="75"/><rect x="22" y="70" width="7" height="9"/><rect x="33" y="70" width="7" height="9"/>
-            <path d="M90 22L100 32L100 140L80 140L80 32Z"/><path d="M85 22L90 12L95 22"/><line x1="90" y1="12" x2="90" y2="5"/>
-            <path d="M150 140L150 72Q177 46 204 72L204 140"/><path d="M163 72Q177 56 191 72"/><line x1="177" y1="46" x2="177" y2="36"/><path d="M174 36L177 30L180 36"/>
-            <rect x="224" y="48" width="42" height="92"/><rect x="228" y="54" width="7" height="9"/><rect x="239" y="54" width="7" height="9"/><rect x="250" y="54" width="7" height="9"/>
-            <line x1="312" y1="140" x2="312" y2="78"/><path d="M312 78Q300 66 288 70"/><path d="M312 78Q324 66 336 70"/>
-            <rect x="760" y="32" width="30" height="108"/><path d="M775 32L775 24L781 30"/><rect x="765" y="40" width="5" height="7"/><rect x="775" y="40" width="5" height="7"/>
-            <path d="M860 122L866 110L882 104L900 104L916 110L922 122L860 122"/><circle cx="874" cy="122" r="8"/><circle cx="908" cy="122" r="8"/>
-            <path d="M980 140L980 76Q1002 52 1024 76L1024 140"/><path d="M993 76Q1002 60 1011 76"/><line x1="1002" y1="52" x2="1002" y2="42"/>
-            <rect x="1090" y="36" width="26" height="104"/><circle cx="1103" cy="52" r="10"/><line x1="1103" y1="44" x2="1103" y2="52"/><line x1="1103" y1="52" x2="1109" y2="52"/>
-            <line x1="1200" y1="140" x2="1200" y2="82"/><path d="M1200 82Q1188 70 1176 74"/><path d="M1200 82Q1212 70 1224 74"/>
-          </g>
-        </svg>
+        <img src="https://motorclaims.gig.sa/Claim/images/background.png" alt="">
       </div>
 
       <div id="s2-form">
