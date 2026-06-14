@@ -81,8 +81,13 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 /* ── address-bar intro ── */
 #addrbar{
   position:absolute;inset:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:18px;z-index:20;pointer-events:none;opacity:0;
+  z-index:20;pointer-events:none;opacity:0;
+}
+#addrbar-center{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;gap:18px;
 }
 #ab-glow{
   position:absolute;width:1100px;height:1100px;border-radius:50%;
@@ -150,18 +155,20 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   <!-- address-bar intro overlay -->
   <div id="addrbar">
     <div id="ab-glow"></div>
-    <div id="addrbar-pill">
-      <span id="ab-lock">
-        <svg width="20" height="22" viewBox="0 0 18 20" fill="none">
-          <rect x="1.5" y="8.5" width="15" height="11" rx="2.5" stroke="#19058c" stroke-width="1.6" fill="none"/>
-          <path d="M4.5 8.5V6A4.5 4.5 0 0 1 13.5 6v2.5" stroke="#19058c" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-          <circle cx="9" cy="14" r="1.8" fill="#19058c"/>
-        </svg>
-      </span>
-      <span id="ab-url"></span>
-      <span id="ab-cursor"></span>
+    <div id="addrbar-center">
+      <div id="addrbar-pill">
+        <span id="ab-lock">
+          <svg width="20" height="22" viewBox="0 0 18 20" fill="none">
+            <rect x="1.5" y="8.5" width="15" height="11" rx="2.5" stroke="#19058c" stroke-width="1.6" fill="none"/>
+            <path d="M4.5 8.5V6A4.5 4.5 0 0 1 13.5 6v2.5" stroke="#19058c" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            <circle cx="9" cy="14" r="1.8" fill="#19058c"/>
+          </svg>
+        </span>
+        <span id="ab-url"></span>
+        <span id="ab-cursor"></span>
+      </div>
+      <div id="ab-loadbar"><div id="ab-loadfill"></div></div>
     </div>
-    <div id="ab-loadbar"><div id="ab-loadfill"></div></div>
   </div>
   <div id="ab-flash"></div>
 
@@ -359,20 +366,18 @@ async function addressBarIntro(){
   const urlEl=$('ab-url'), curEl=$('ab-cursor'), fillEl=$('ab-loadfill');
   const a=getAudio();
 
-  gsap.set('#addrbar',{display:'flex',opacity:0,scale:1});
-  gsap.set('#addrbar-pill',{y:46,scale:.86,opacity:0});
+  gsap.set('#addrbar',{display:'block',opacity:0});
+  gsap.set('#addrbar-center',{y:36,scale:.9,opacity:0});
   gsap.set('#ab-glow',{opacity:0,scale:.7});
-  gsap.set('#ab-loadbar',{opacity:0,y:8});
   gsap.set('#ab-flash',{opacity:0});
 
-  /* pill glides in (clean tech appear sound) */
+  /* center block glides in from below */
   if(a) sfxAppear(a);
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
     tl.to('#addrbar',{opacity:1,duration:.01})
       .to('#ab-glow',{opacity:1,scale:1,duration:1,ease:'power2.out'},0)
-      .to('#addrbar-pill',{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.6)'})
-      .to('#ab-loadbar',{opacity:1,y:0,duration:.3,ease:'power2.out'},'-=.2');
+      .to('#addrbar-center',{y:0,scale:1,opacity:1,duration:.75,ease:'back.out(1.6)'});
   });
 
   /* cursor blink */
@@ -399,7 +404,8 @@ async function addressBarIntro(){
   if(a) sfxLaunch(a);
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
-    tl.to('#addrbar',{opacity:0,scale:1.18,duration:.7,ease:'power2.in'},0)
+    tl.to('#addrbar-center',{scale:1.12,opacity:0,duration:.6,ease:'power2.in'},0)
+      .to('#addrbar',{opacity:0,duration:.55,ease:'power2.in'},.05)
       .to('#ab-flash',{opacity:.85,duration:.18,ease:'power2.out'},.12)
       .to('#ab-flash',{opacity:0,duration:.5,ease:'power2.in'},'>');
   });
