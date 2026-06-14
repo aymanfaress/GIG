@@ -74,8 +74,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   font-family:'Almarai',sans-serif;font-weight:300;font-size:24px;
   line-height:1.6;color:rgba(25,5,140,.58);margin-top:20px;opacity:0;
   width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
-  min-height:44px;          /* reserves space so it never pushes title up */
-}
+  min-height:44px;
 }
 
 /* ── address-bar intro ── */
@@ -83,16 +82,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   position:absolute;inset:0;
   z-index:20;pointer-events:none;opacity:0;
 }
+#ab-glow{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:1000px;height:560px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(210,140,100,.22) 0%,rgba(25,5,140,.12) 38%,rgba(25,5,140,0) 70%);
+  filter:blur(36px);opacity:0;pointer-events:none;z-index:1;
+}
 #addrbar-center{
   position:absolute;
   left:50%;top:50%;
   transform:translate(-50%,-50%);
-  display:flex;flex-direction:column;align-items:center;gap:18px;
-}
-#ab-glow{
-  position:absolute;width:1100px;height:1100px;border-radius:50%;
-  background:radial-gradient(circle,rgba(210,140,100,.28) 0%,rgba(25,5,140,.14) 34%,rgba(25,5,140,0) 68%);
-  filter:blur(30px);opacity:0;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  z-index:2;
 }
 #addrbar-pill{
   position:relative;z-index:2;
@@ -366,48 +368,63 @@ async function addressBarIntro(){
   const urlEl=$('ab-url'), curEl=$('ab-cursor'), fillEl=$('ab-loadfill');
   const a=getAudio();
 
-  gsap.set('#addrbar',{display:'block',opacity:0});
-  gsap.set('#addrbar-center',{y:36,scale:.9,opacity:0});
-  gsap.set('#ab-glow',{opacity:0,scale:.7});
+  /* reset everything */
+  urlEl.textContent='';
+  gsap.set('#addrbar',{display:'block',opacity:1});
+  gsap.set('#addrbar-center',{y:50,scale:.88,opacity:0});
+  gsap.set('#ab-glow',{opacity:0,scale:.6});
+  gsap.set('#ab-loadbar',{opacity:0,y:0});
+  gsap.set('#ab-loadfill',{width:'0%'});
+  gsap.set(curEl,{opacity:1});
   gsap.set('#ab-flash',{opacity:0});
 
-  /* center block glides in from below */
+  /* 1. glow builds slowly in background */
+  gsap.to('#ab-glow',{opacity:1,scale:1,duration:2.2,ease:'power2.out'});
+
+  /* 2. pill glides in from below */
+  await delay(150);
   if(a) sfxAppear(a);
-  await new Promise(res=>{
-    const tl=gsap.timeline({onComplete:res});
-    tl.to('#addrbar',{opacity:1,duration:.01})
-      .to('#ab-glow',{opacity:1,scale:1,duration:1,ease:'power2.out'},0)
-      .to('#addrbar-center',{y:0,scale:1,opacity:1,duration:.75,ease:'back.out(1.6)'});
-  });
+  await new Promise(res=>gsap.to('#addrbar-center',{
+    y:0,scale:1,opacity:1,duration:.85,ease:'back.out(1.4)',onComplete:res
+  }));
 
-  /* cursor blink */
+  await delay(280);
+
+  /* 3. cursor blinks, then URL types character by character */
   const blinkTween=gsap.to(curEl,{opacity:0,duration:.45,repeat:-1,yoyo:true,ease:'power1.inOut'});
-
-  /* typewriter with keystroke clicks */
   const url='www.gig.sa';
   for(let i=0;i<=url.length;i++){
     urlEl.textContent=url.slice(0,i);
     if(a && i>0) sfxKey(a);
-    await delay(i===0?200:80);
+    await delay(i===0?320:78);
   }
 
-  await delay(350);
-  blinkTween.kill(); gsap.set(curEl,{opacity:0});
+  /* 4. pause after typing completes, cursor stops */
+  await delay(480);
+  blinkTween.kill();
+  gsap.set(curEl,{opacity:0});
 
-  /* loading bar fills — chime at start */
+  /* 5. loadbar slides in below pill — only NOW, after typing */
+  await new Promise(res=>gsap.fromTo('#ab-loadbar',
+    {opacity:0,y:-8},
+    {opacity:1,y:0,duration:.42,ease:'power3.out',onComplete:res}
+  ));
+  await delay(140);
+
+  /* 6. fill loadbar with chime */
   if(a) sfxChime(a);
-  await new Promise(res=>gsap.to(fillEl,{width:'100%',duration:1.2,ease:'power2.inOut',onComplete:res}));
+  await new Promise(res=>gsap.to(fillEl,{width:'100%',duration:1.15,ease:'power2.inOut',onComplete:res}));
 
-  await delay(280);
+  await delay(360);
 
-  /* launch — cinematic enter: sound + flash + expand through */
+  /* 7. cinematic exit: scale up + fade, then flash */
   if(a) sfxLaunch(a);
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
-    tl.to('#addrbar-center',{scale:1.12,opacity:0,duration:.6,ease:'power2.in'},0)
-      .to('#addrbar',{opacity:0,duration:.55,ease:'power2.in'},.05)
-      .to('#ab-flash',{opacity:.85,duration:.18,ease:'power2.out'},.12)
-      .to('#ab-flash',{opacity:0,duration:.5,ease:'power2.in'},'>');
+    tl.to('#addrbar-center',{scale:1.1,opacity:0,duration:.6,ease:'power2.in'},0)
+      .to('#ab-glow',{scale:1.45,opacity:0,duration:.65,ease:'power2.in'},0)
+      .to('#ab-flash',{opacity:.8,duration:.16,ease:'power2.out'},.1)
+      .to('#ab-flash',{opacity:0,duration:.55,ease:'power2.in'},'>');
   });
   gsap.set('#addrbar',{display:'none'});
 }
