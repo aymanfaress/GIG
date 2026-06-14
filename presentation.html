@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>GIG — Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Kufam:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-family:'Almarai',sans-serif;}
+
+/* ── 1920×1080 stage, scaled to fit ── */
+#stage{
+  width:1920px;height:1080px;position:fixed;top:0;left:0;
+  transform-origin:top left;overflow:hidden;
+}
+#bg{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+
+/* ── 3D tablet ── */
+#tablet-wrap{
+  position:absolute;left:120px;top:152px;
+  width:1024px;height:776px;
+  perspective:1800px;perspective-origin:60% 50%;
+}
+#tablet{
+  width:100%;height:100%;position:relative;
+  transform-style:preserve-3d;
+  border-radius:34px;
+  background:linear-gradient(155deg,#15151c 0%,#26262f 48%,#15151c 100%);
+  box-shadow:
+    0 60px 120px -30px rgba(10,8,40,.55),
+    0 30px 60px -20px rgba(10,8,40,.4),
+    inset 0 0 0 2px rgba(255,255,255,.05);
+  padding:26px;
+}
+/* subtle camera bump / front speaker */
+#tablet::before{
+  content:'';position:absolute;top:50%;right:11px;transform:translateY(-50%);
+  width:7px;height:7px;border-radius:50%;
+  background:radial-gradient(circle,#3a3a45,#15151c);
+}
+#screen{
+  width:100%;height:100%;border-radius:14px;overflow:hidden;
+  background:#fff;position:relative;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.35);
+}
+#screen iframe{
+  width:100%;height:100%;border:0;display:block;background:#fff;
+}
+/* soft screen glare */
+#glare{
+  position:absolute;inset:0;pointer-events:none;border-radius:14px;
+  background:linear-gradient(115deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 28%);
+  opacity:.6;
+}
+
+/* ── right-side headlines ── */
+#head{
+  position:absolute;right:150px;top:0;height:1080px;width:660px;
+  display:flex;flex-direction:column;justify-content:center;
+  align-items:flex-end;text-align:right;direction:rtl;
+}
+#eyebrow{
+  font-family:'Almarai',sans-serif;font-weight:700;font-size:30px;
+  color:#d28c64;letter-spacing:.5px;margin-bottom:18px;opacity:0;
+}
+#title{
+  font-family:'Kufam',sans-serif;font-weight:900;font-size:72px;
+  line-height:1.18;color:#19058c;opacity:0;
+}
+#dot{
+  width:26px;height:26px;background:#19058c;border-radius:4px;
+  margin-top:40px;opacity:0;
+}
+
+/* ── controls ── */
+.pbtn{
+  position:fixed;z-index:99999;border:none;border-radius:10px;cursor:pointer;
+  font:700 15px Almarai,sans-serif;color:#fff;padding:12px 20px;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+}
+#playBtn{top:14px;left:14px;background:#19058c;}
+#recBtn {top:14px;left:150px;background:#c0392b;}
+.pbtn.hide{display:none;}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <img id="bg" src="images/bg-presentation.png" alt="">
+
+  <div id="tablet-wrap">
+    <div id="tablet">
+      <div id="screen">
+        <iframe id="frame" src="index-tablet.html?embed" title="GIG"></iframe>
+        <div id="glare"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="head">
+    <div id="eyebrow"></div>
+    <div id="title"></div>
+    <div id="dot"></div>
+  </div>
+</div>
+
+<button id="playBtn" class="pbtn">▶ تشغيل العرض</button>
+<button id="recBtn"  class="pbtn">● تسجيل وحفظ</button>
+
+<script>
+const $ = id => document.getElementById(id);
+const stage = $('stage'), frame = $('frame');
+
+/* ── headline copy per scene (easy to edit) ── */
+const HEAD = {
+  s1:       { eye:'آلية تقديم المطالبات', t:'التحقق من هوية الأفراد' },
+  otp:      { eye:'آلية تقديم المطالبات', t:'رمز التحقق الأمني' },
+  s3:       { eye:'آلية تقديم المطالبات', t:'التحقق — الشركات والبنوك' },
+  najm:     { eye:'تفاصيل الحادث',        t:'المطالبة عبر تقرير نجم' },
+  basher:   { eye:'تفاصيل الحادث',        t:'المطالبة عبر باشر / المرور' },
+  other:    { eye:'تفاصيل الحادث',        t:'المطالبة لعملاء جي آي جي' },
+  estimate: { eye:'تقدير الأضرار',        t:'التقدير والبيانات البنكية' },
+  review:   { eye:'الخطوة الأخيرة',       t:'مراجعة وتقديم المطالبة' },
+  end:      { eye:'',                      t:'' }
+};
+
+/* ── scale stage to viewport (contain) ── */
+function scaleStage(){
+  const sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+  const tx = (window.innerWidth-1920*sc)/2, ty=(window.innerHeight-1080*sc)/2;
+  stage.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`;
+}
+scaleStage(); window.addEventListener('resize',scaleStage);
+
+/* ── tablet resting pose + hidden start ── */
+function setTabletStart(){
+  gsap.set('#tablet',{rotationY:-58, rotationX:9, x:1200, z:-520, scale:.82, opacity:0, transformOrigin:'50% 50%'});
+  gsap.set(['#eyebrow','#title','#dot'],{opacity:0});
+}
+setTabletStart();
+
+function tabletEnter(){
+  return new Promise(res=>{
+    const tl = gsap.timeline({onComplete:res});
+    tl.to('#tablet',{rotationY:-7, rotationX:2.5, x:0, z:0, scale:1, opacity:1,
+        duration:1.7, ease:'power3.out'})
+      .to('#tablet',{rotationY:-5, rotationX:1.5, duration:1.2, ease:'sine.inOut'},'-=0.2');
+  });
+}
+
+/* ── headline switching ── */
+let curKey=null;
+function showHead(key){
+  if(key===curKey) return; curKey=key;
+  const h = HEAD[key]; if(!h) return;
+  const tl = gsap.timeline();
+  tl.to(['#eyebrow','#title','#dot'],{opacity:0, y:-14, duration:.3, ease:'power2.in'})
+    .add(()=>{ $('eyebrow').textContent=h.eye; $('title').innerHTML=h.t; })
+    .fromTo('#eyebrow',{opacity:0,y:18},{opacity:1,y:0,duration:.45,ease:'power3.out'})
+    .fromTo('#title',  {opacity:0,y:22},{opacity: (h.t?1:0), y:0,duration:.55,ease:'power3.out'},'-=0.3')
+    .fromTo('#dot',    {opacity:0,scale:.4},{opacity:(h.t?1:0),scale:1,duration:.4,ease:'back.out(2)'},'-=0.35');
+}
+
+window.addEventListener('message', e=>{
+  if(e.data && e.data.gigScene) showHead(e.data.gigScene);
+});
+
+/* ── start the show (with optional recording) ── */
+let mediaRec=null, recChunks=[], recTap=null;
+
+async function start(record, btn){
+  $('playBtn').classList.add('hide'); $('recBtn').classList.add('hide');
+
+  const fw = frame.contentWindow;
+
+  /* resume the iframe's audio engine on this user gesture */
+  try{ const c = fw.getACtx(); if(c.state==='suspended') await c.resume(); }catch(e){}
+
+  if(record){
+    try{
+      const display = await navigator.mediaDevices.getDisplayMedia({
+        video:{ frameRate:60, width:1920, height:1080 }, audio:false });
+      const ctx = fw.getACtx(); fw.getMaster();
+      if(!recTap){ recTap = ctx.createMediaStreamDestination(); fw._softBus.connect(recTap); }
+      const stream = new MediaStream([...display.getVideoTracks(), ...recTap.stream.getAudioTracks()]);
+      const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+        ? 'video/webm;codecs=vp9,opus' : 'video/webm';
+      mediaRec = new MediaRecorder(stream,{mimeType:mime, videoBitsPerSecond:16000000});
+      recChunks=[];
+      mediaRec.ondataavailable=ev=>{ if(ev.data.size) recChunks.push(ev.data); };
+      mediaRec.onstop=()=>{
+        const blob=new Blob(recChunks,{type:'video/webm'});
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(blob); a.download='gig-presentation.webm'; a.click();
+        display.getTracks().forEach(t=>t.stop());
+      };
+      mediaRec.start();
+    }catch(err){ alert('تعذّر بدء التسجيل: '+err.message); }
+  }
+
+  /* 1) tablet flies in, 2) intro headline, 3) run animation */
+  showHead('s1');
+  await tabletEnter();
+  await new Promise(r=>setTimeout(r,300));
+  try{ fw.run(); }catch(e){}
+}
+
+/* auto-stop recording when the iframe signals the end */
+window.addEventListener('message', e=>{
+  if(e.data && e.data.gigScene==='end'){
+    setTimeout(()=>{ if(mediaRec && mediaRec.state!=='inactive') mediaRec.stop(); }, 1200);
+  }
+});
+
+$('playBtn').onclick = ()=>start(false);
+$('recBtn').onclick  = ()=>start(true);
+</script>
+</body>
+</html>

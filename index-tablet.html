@@ -2476,37 +2476,41 @@ async function runScene8(){
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
 
+/* ── tell a parent presentation page which scene is on screen ── */
+function sig(key){ try{ parent.postMessage({gigScene:key}, '*'); }catch(e){} }
+
 /* ══ MASTER SEQUENCE ══ */
 async function run(){
   /* ── Part A: individual claimant ── */
-  await runScene1();
+  sig('s1');  await runScene1();
   await transitionTo('s1','s2');
-  await runScene2(false);
+  sig('otp'); await runScene2(false);
 
   /* ── Part B: company / bank claimant ── */
   await transitionTo('s2','s3');
-  await runScene3();
+  sig('s3');  await runScene3();
   resetScene2();
   await transitionTo('s3','s2');
-  await runScene2(false);
+  sig('otp'); await runScene2(false);
 
   /* ── Part C: نجم → التقدير → المراجعة ── */
   await transitionTo('s2','s4');
-  await runScene4();
-  await transitionTo('s4','s5');  await runScene5();
-  await transitionTo('s5','s6');  await runScene6(false);
+  sig('najm'); await runScene4();
+  await transitionTo('s4','s5');  sig('estimate'); await runScene5();
+  await transitionTo('s5','s6');  sig('review');   await runScene6(false);
 
   /* ── Part D: باشر → التقدير → المراجعة ── */
   await transitionTo('s6','s7');
-  await runScene7();
-  await transitionTo('s7','s5');  await runScene5();
-  await transitionTo('s5','s6');  await runScene6(false);
+  sig('basher'); await runScene7();
+  await transitionTo('s7','s5');  sig('estimate'); await runScene5();
+  await transitionTo('s5','s6');  sig('review');   await runScene6(false);
 
   /* ── Part E: أخرى → التقدير → المراجعة (finale) ── */
   await transitionTo('s6','s8');
-  await runScene8();
-  await transitionTo('s8','s5');  await runScene5();
-  await transitionTo('s5','s6');  await runScene6(true);
+  sig('other'); await runScene8();
+  await transitionTo('s8','s5');  sig('estimate'); await runScene5();
+  await transitionTo('s5','s6');  sig('review');   await runScene6(true);
+  sig('end');
 }
 
 
@@ -2728,6 +2732,8 @@ async function startRecording(btn){
 }
 
 const IS_RECORD = location.search.includes('record');
+const IS_EMBED  = location.search.includes('embed');
+window.run = run;                       /* allow a parent page to start it */
 
 if(IS_RECORD){
   window.addEventListener('load',()=>{
@@ -2743,7 +2749,12 @@ if(IS_RECORD){
   });
 }
 
-if(!IS_RECORD){
+if(IS_EMBED){
+  /* embedded inside presentation.html — scale only, parent calls run() */
+  window.addEventListener('load',()=>{ scaleScene(); });
+}
+
+if(!IS_RECORD && !IS_EMBED){
   window.addEventListener('load',()=>{ scaleScene(); setTimeout(run,200); });
 }
 </script>
