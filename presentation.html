@@ -58,21 +58,17 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 #head{
   position:absolute;right:75px;top:0;height:1080px;width:560px;
   display:flex;flex-direction:column;justify-content:center;
-  align-items:flex-end;text-align:right;direction:rtl;
+  align-items:flex-end;
 }
 #eyebrow{
   font-family:'Almarai',sans-serif;font-weight:700;font-size:21px;
   color:#d28c64;letter-spacing:.5px;margin-bottom:12px;opacity:0;
-  direction:rtl;text-align:right;unicode-bidi:embed;
+  width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
 }
 #title{
   font-family:'Kufam',sans-serif;font-weight:900;font-size:52px;
   line-height:1.2;color:#19058c;opacity:0;
-  direction:rtl;text-align:right;unicode-bidi:embed;
-}
-#dot{
-  width:16px;height:16px;background:#19058c;border-radius:3px;
-  margin-top:26px;opacity:0;
+  width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
 }
 
 /* ── controls ── */
@@ -103,7 +99,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   <div id="head">
     <div id="eyebrow"></div>
     <div id="title"></div>
-    <div id="dot"></div>
   </div>
 </div>
 
@@ -138,7 +133,7 @@ scaleStage(); window.addEventListener('resize',scaleStage);
 /* ── tablet resting pose + hidden start ── */
 function setTabletStart(){
   gsap.set('#tablet',{y:920, rotationY:0, rotationX:0, x:0, z:0, scale:1, opacity:0, transformOrigin:'50% 50%'});
-  gsap.set(['#eyebrow','#title','#dot'],{opacity:0});
+  gsap.set(['#eyebrow','#title'],{opacity:0});
 }
 setTabletStart();
 
@@ -157,11 +152,10 @@ function showHead(key){
   if(key===curKey) return; curKey=key;
   const h = HEAD[key]; if(!h) return;
   const tl = gsap.timeline();
-  tl.to(['#eyebrow','#title','#dot'],{opacity:0, y:-14, duration:.3, ease:'power2.in'})
-    .add(()=>{ $('eyebrow').textContent=h.eye; $('title').innerHTML=h.t; })
+  tl.to(['#eyebrow','#title'],{opacity:0, y:-14, duration:.3, ease:'power2.in'})
+    .add(()=>{ $('eyebrow').textContent=h.eye; $('title').textContent=h.t; })
     .fromTo('#eyebrow',{opacity:0,y:18},{opacity:1,y:0,duration:.45,ease:'power3.out'})
-    .fromTo('#title',  {opacity:0,y:22},{opacity: (h.t?1:0), y:0,duration:.55,ease:'power3.out'},'-=0.3')
-    .fromTo('#dot',    {opacity:0,scale:.4},{opacity:(h.t?1:0),scale:1,duration:.4,ease:'back.out(2)'},'-=0.35');
+    .fromTo('#title',  {opacity:0,y:22},{opacity: (h.t?1:0), y:0,duration:.55,ease:'power3.out'},'-=0.3');
 }
 
 window.addEventListener('message', e=>{
