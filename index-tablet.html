@@ -1669,17 +1669,12 @@ async function runScene1(){
 /* ══════════════════════════════════════════
    SCENE 2 — OTP
 ══════════════════════════════════════════ */
-async function runScene2(isFinal=true){
-  const dim=$('dim2');
-
-  /* reset (so the screen can be replayed for the company flow) */
+function resetScene2(){
   ['b1','b2','b3','b4'].forEach(id=>{ const b=$(id); b.classList.remove('filled','active'); const d=b.querySelector('.digit'); if(d) d.textContent=''; });
   $('s2-btn').classList.remove('ready'); $('s2-btn').style.background='';
   $('timer-txt').textContent='0:56';
   gsap.set($('otp-spot'),{opacity:0});
-  dim.classList.remove('on');
-
-  /* init s2 elements */
+  $('dim2').classList.remove('on');
   gsap.set($('s2-form'),{y:24,scale:.97,opacity:0});
   gsap.set($('otp-title'),{y:-16,opacity:0});
   gsap.set($('otp-sub'),{y:10,opacity:0});
@@ -1688,6 +1683,11 @@ async function runScene2(isFinal=true){
   gsap.set($('s2-btn'),{y:14,scale:.95,opacity:0});
   gsap.set($('back-link'),{opacity:0});
   gsap.set($('city'),{opacity:0});
+}
+
+async function runScene2(isFinal=true){
+  const dim=$('dim2');
+  resetScene2();
 
   /* page builds */
   setP(85);
@@ -2486,6 +2486,7 @@ async function run(){
   /* ── Part B: company / bank claimant ── */
   await transitionTo('s2','s3');
   await runScene3();
+  resetScene2();
   await transitionTo('s3','s2');
   await runScene2(false);
 
