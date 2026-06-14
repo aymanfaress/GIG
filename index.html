@@ -2162,7 +2162,7 @@ async function s6scroll(targetEl, dur=0.7, frac=0.5){
 }
 const hl=(id,on)=>$(id).classList[on?'add':'remove']('hl');
 
-async function runScene6(){
+async function runScene6(isFinal=false){
   s6y=0;
 
   /* init */
@@ -2220,11 +2220,19 @@ async function runScene6(){
   sfx_success();
   await sleep(1900);
 
-  /* cinematic close — final */
-  const end = document.createElement('div');
-  end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
-  document.body.appendChild(end);
-  gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
+  /* cinematic close — only on the very last run */
+  if(isFinal){
+    const end = document.createElement('div');
+    end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
+    document.body.appendChild(end);
+    gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
+  } else {
+    /* hide success overlay and reset for next round */
+    await sleep(400);
+    $('s6-success').classList.remove('show');
+    gsap.set('#s6-success',{opacity:0});
+    gsap.set('.suc-card',{scale:.9});
+  }
 }
 
 /* ══════════════════════════════════════════
@@ -2481,21 +2489,23 @@ async function run(){
   await transitionTo('s3','s2');
   await runScene2(false);
 
-  /* ── Part C: accident details — three source variants ── */
+  /* ── Part C: نجم → التقدير → المراجعة ── */
   await transitionTo('s2','s4');
-  await runScene4();          /* نجم */
-  await transitionTo('s4','s8');
-  await runScene8();          /* أخرى — عملاء GIG */
-  await transitionTo('s8','s7');
-  await runScene7();          /* باشر / المرور */
+  await runScene4();
+  await transitionTo('s4','s5');  await runScene5();
+  await transitionTo('s5','s6');  await runScene6(false);
 
-  /* ── Part D: estimate & bank details (follows باشر path) ── */
-  await transitionTo('s7','s5');
-  await runScene5();
+  /* ── Part D: باشر → التقدير → المراجعة ── */
+  await transitionTo('s6','s7');
+  await runScene7();
+  await transitionTo('s7','s5');  await runScene5();
+  await transitionTo('s5','s6');  await runScene6(false);
 
-  /* ── Part E: review & submit — finale ── */
-  await transitionTo('s5','s6');
-  await runScene6();
+  /* ── Part E: أخرى → التقدير → المراجعة (finale) ── */
+  await transitionTo('s6','s8');
+  await runScene8();
+  await transitionTo('s8','s5');  await runScene5();
+  await transitionTo('s5','s6');  await runScene6(true);
 }
 
 
