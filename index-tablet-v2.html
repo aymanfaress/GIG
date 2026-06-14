@@ -1413,7 +1413,8 @@ html, body {
 
 <script>
 const $ = id => document.getElementById(id);
-const sleep = ms => new Promise(r => setTimeout(r, ms / 1.35));
+const SPEED = (typeof window!=='undefined' && window.__SPEED__) ? window.__SPEED__ : 2.39;
+const sleep = ms => new Promise(r => setTimeout(r, ms / SPEED));
 const scene = $('scene');
 const cur   = $('cursor');
 
@@ -2525,27 +2526,27 @@ function sig(key){ try{ parent.postMessage({gigScene:key}, '*'); }catch(e){} }
 /* ── live action caption: updates the parent's subtitle per micro-step ── */
 function act(txt){ try{ parent.postMessage({gigAction:txt}, '*'); }catch(e){} }
 
-/* ══ MASTER SEQUENCE — V2 (≈ 2 دقيقة) ══
+/* ══ MASTER SEQUENCE — V2 (دقيقتان بالضبط) ══
    التغييرات عن النسخة الأصلية:
-   • السرعة: 1.35× أسرع (sleep + GSAP timeScale)
-   • حُذف OTP الثاني (بعد المنشأة)
+   • السرعة: 1.40× أسرع (sleep + GSAP timeScale)
+   • OTP مرة واحدة فقط — بعد مشهد الشركة مباشرةً
    • حُذفت E+R الخاصة بباشر — الباشر يتحول مباشرة لـ "أخرى"
    • بقي مسار كامل (نجم) + مسار نهائي (أخرى) مع التقدير والمراجعة
 ════════════════════════════════════════════ */
 async function run(){
-  gsap.globalTimeline.timeScale(1.35);
+  gsap.globalTimeline.timeScale(SPEED);
 
-  /* ── الجزء A: عميل فرد — التحقق + OTP ── */
+  /* ── الجزء A: عميل فرد — التحقق ── */
   sig('s1');  await runScene1();
-  await transitionTo('s1','s2');
+
+  /* ── الجزء B: منشأة / بنك — التحقق ثم OTP (مرة واحدة فقط) ── */
+  await transitionTo('s1','s3');
+  sig('s3');  await runScene3();
+  await transitionTo('s3','s2');
   sig('otp'); await runScene2(false);
 
-  /* ── الجزء B: منشأة / بنك — التحقق (بدون OTP ثانٍ) ── */
-  await transitionTo('s2','s3');
-  sig('s3');  await runScene3();
-
   /* ── الجزء C: نجم ← تقرير الحادث ← التقدير ← المراجعة ── */
-  await transitionTo('s3','s4');
+  await transitionTo('s2','s4');
   sig('najm'); await runScene4();
   await transitionTo('s4','s5');  sig('estimate'); await runScene5();
   await transitionTo('s5','s6');  sig('review');   await runScene6(false);
