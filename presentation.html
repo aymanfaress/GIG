@@ -185,23 +185,15 @@ const stage = $('stage'), frame = $('frame');
 
 /* ── headline copy per scene (easy to edit) ── */
 const HEAD = {
-  s1:       { eye:'آلية تقديم المطالبات', t:'التحقق من هوية الأفراد',
-              sub:'أدخل رقم الجوال والبريد الإلكتروني للتحقق من هويتك' },
-  otp:      { eye:'آلية تقديم المطالبات', t:'رمز التحقق الأمني',
-              sub:'أدخل رمز التحقق المُرسَل إلى جوالك المسجّل' },
-  s3:       { eye:'آلية تقديم المطالبات', t:'التحقق — الشركات والبنوك',
-              sub:'حدّد نوع المطالب وأدخل رقم السجل أو تراخيص الجهة' },
-  najm:     { eye:'تفاصيل الحادث',        t:'المطالبة عبر تقرير نجم',
-              sub:'أدخل رقم تقرير نجم واختر نوع الحادث وموقعه وتاريخه' },
-  basher:   { eye:'تفاصيل الحادث',        t:'المطالبة عبر باشر / المرور',
-              sub:'أدخل رقم محضر المرور أو بلاغ باشر وتفاصيل الحادث' },
-  other:    { eye:'تفاصيل الحادث',        t:'المطالبة لعملاء جي آي جي',
-              sub:'اختر نوع الحادث وأدخل الرقم التسلسلي للمركبة وبياناتها' },
-  estimate: { eye:'تقدير الأضرار',        t:'التقدير والبيانات البنكية',
-              sub:'أدخل بيانات ملكية المركبة ورقم الآيبان البنكي للتعويض' },
-  review:   { eye:'الخطوة الأخيرة',       t:'مراجعة وتقديم المطالبة',
-              sub:'راجع جميع بياناتك وأرسل مطالبتك بنقرة واحدة' },
-  end:      { eye:'', t:'', sub:'' }
+  s1:       { eye:'آلية تقديم المطالبات', t:'التحقق من هوية الأفراد' },
+  otp:      { eye:'آلية تقديم المطالبات', t:'رمز التحقق الأمني' },
+  s3:       { eye:'آلية تقديم المطالبات', t:'التحقق — الشركات والبنوك' },
+  najm:     { eye:'تفاصيل الحادث',        t:'المطالبة عبر تقرير نجم' },
+  basher:   { eye:'تفاصيل الحادث',        t:'المطالبة عبر باشر / المرور' },
+  other:    { eye:'تفاصيل الحادث',        t:'المطالبة لعملاء جي آي جي' },
+  estimate: { eye:'تقدير الأضرار',        t:'التقدير والبيانات البنكية' },
+  review:   { eye:'الخطوة الأخيرة',       t:'مراجعة وتقديم المطالبة' },
+  end:      { eye:'',                      t:'' }
 };
 
 /* ── scale stage to viewport (contain) ── */
@@ -236,14 +228,14 @@ function showHead(key){
   const tl = gsap.timeline();
   tl.to(['#eyebrow','#title','#subtitle'],{opacity:0, y:-14, duration:.3, ease:'power2.in'})
     .add(()=>{
-      $('eyebrow').textContent = h.eye;
-      $('title').textContent   = h.t;
-      $('subtitle').textContent= h.sub||'';
-      curAction = h.sub||'';     /* keep action tracker in sync on scene change */
+      $('eyebrow').textContent  = h.eye;
+      $('title').textContent    = h.t;
+      $('subtitle').textContent = '';   /* cleared; live act() fills it */
+      curAction = null;
     })
     .fromTo('#eyebrow', {opacity:0,y:18},{opacity:1,y:0,duration:.45,ease:'power3.out'})
     .fromTo('#title',   {opacity:0,y:22},{opacity:(h.t?1:0),y:0,duration:.55,ease:'power3.out'},'-=0.3')
-    .fromTo('#subtitle',{opacity:0,y:16},{opacity:(h.sub?1:0),y:0,duration:.5,ease:'power3.out'},'-=0.3');
+    .set('#subtitle',{opacity:0});
 }
 
 /* ── live action caption: updates ONLY the subtitle, in sync with each step ── */
