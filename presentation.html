@@ -384,94 +384,6 @@ function sfxLaunch(a){
   });
 }
 
-/* ────────────────────────────────────────────────────────────────
-   AMBIENT BACKGROUND MUSIC — procedural, 100% royalty-free
-   Cmaj7 pad  ·  detuned chorus pairs  ·  evolving filter sweep
-   ·  simulated reverb  ·  air shimmer layer
-   ──────────────────────────────────────────────────────────────── */
-let _ambGain=null, _ambOscs=[];
-
-function startAmbient(a){
-  if(_ambGain) return;
-  const {ctx,dest}=a, t=ctx.currentTime;
-
-  /* ── master bus — slow 5.5 s fade-in ── */
-  _ambGain=ctx.createGain();
-  _ambGain.gain.setValueAtTime(0.0001,t);
-  _ambGain.gain.exponentialRampToValueAtTime(0.15, t+5.5);
-  _ambGain.connect(dest);
-
-  /* ── warm low-pass filter — very slow sweep adds evolution ── */
-  const filt=ctx.createBiquadFilter();
-  filt.type='lowpass'; filt.frequency.value=820; filt.Q.value=0.42;
-  /* filter LFO: 30-s cycle, ±300 Hz sweep */
-  const fLFO=ctx.createOscillator(); fLFO.type='sine'; fLFO.frequency.value=0.033;
-  const fLFOG=ctx.createGain(); fLFOG.gain.value=300;
-  fLFO.connect(fLFOG); fLFOG.connect(filt.frequency);
-  fLFO.start(t); _ambOscs.push(fLFO);
-
-  /* ── reverb simulation: short delay + feedback ── */
-  const delN=ctx.createDelay(0.5); delN.delayTime.value=0.26;
-  const fbG=ctx.createGain(); fbG.gain.value=0.20;
-  const wetG=ctx.createGain(); wetG.gain.value=0.26;
-  delN.connect(fbG); fbG.connect(delN);   /* feedback loop */
-  delN.connect(wetG); wetG.connect(_ambGain);
-
-  /* route: oscs → filt → dry (ambGain) + wet (delay) */
-  filt.connect(_ambGain);
-  filt.connect(delN);
-
-  /* ── Cmaj7 pad: 6 notes × 2 detuned triangle oscs = 12 voices ──
-     [frequency Hz, gain, detune cents, attack s]                   */
-  [
-    [130.81, 0.050, 1.8, 3.0],   /* C3  — bass root      */
-    [196.00, 0.040, 2.2, 2.6],   /* G3  — fifth          */
-    [261.63, 0.034, 1.6, 2.4],   /* C4  — octave         */
-    [329.63, 0.027, 1.9, 2.9],   /* E4  — major third    */
-    [392.00, 0.021, 1.5, 3.3],   /* G4  — fifth          */
-    [493.88, 0.015, 1.8, 3.7],   /* B4  — major seventh  */
-  ].forEach(([freq,vol,det,atk],i)=>{
-    [+1,-1].forEach(side=>{
-      const osc=ctx.createOscillator();
-      osc.type='triangle';
-      /* slight pitch detune per side — creates lush chorus */
-      osc.frequency.value=freq*Math.pow(2,det*side/1200);
-      const env=ctx.createGain();
-      env.gain.setValueAtTime(0.0001,t);
-      env.gain.exponentialRampToValueAtTime(vol, t+atk+i*.12);
-      /* independent slow tremolo LFO on each voice */
-      const lfo=ctx.createOscillator(); lfo.type='sine';
-      lfo.frequency.value=0.040+i*.009+(side>0?0:.007);
-      const la=ctx.createGain(); la.gain.value=vol*.13;
-      lfo.connect(la); la.connect(env.gain);
-      lfo.start(t); _ambOscs.push(lfo);
-      osc.connect(env); env.connect(filt);
-      osc.start(t); _ambOscs.push(osc);
-    });
-  });
-
-  /* ── air shimmer: very high sine tones, barely audible ── */
-  [[2093,.011],[2637,.008]].forEach(([freq,vol])=>{
-    const osc=ctx.createOscillator(); osc.type='sine'; osc.frequency.value=freq;
-    const env=ctx.createGain();
-    env.gain.setValueAtTime(0.0001,t); env.gain.exponentialRampToValueAtTime(vol,t+7);
-    osc.connect(env); env.connect(_ambGain);
-    osc.start(t); _ambOscs.push(osc);
-  });
-}
-
-function stopAmbient(){
-  if(!_ambGain) return;
-  const ctx=_ambGain.context, t=ctx.currentTime;
-  _ambGain.gain.cancelScheduledValues(t);
-  _ambGain.gain.setValueAtTime(_ambGain.gain.value, t);
-  _ambGain.gain.linearRampToValueAtTime(0.0001, t+2.8);
-  setTimeout(()=>{
-    _ambOscs.forEach(n=>{try{n.stop();}catch(e){}});
-    _ambOscs=[]; _ambGain=null;
-  }, 3200);
-}
-
 /* ── tablet light sweep ── fires once after tablet finishes entering */
 function tabletShine(){
   gsap.set('#shine-beam',{xPercent:-120,opacity:1});
@@ -560,10 +472,6 @@ async function start(record, btn){
   /* resume the iframe's audio engine on this user gesture */
   try{ const c = fw.getACtx(); if(c.state==='suspended') await c.resume(); }catch(e){}
 
-  /* start ambient music — begins immediately, fades in slowly */
-  const ambA = getAudio();
-  if(ambA) startAmbient(ambA);
-
   if(record){
     try{
       const display = await navigator.mediaDevices.getDisplayMedia({
@@ -595,10 +503,9 @@ async function start(record, btn){
   try{ fw.run(); }catch(e){}
 }
 
-/* auto-stop recording + fade ambient when the iframe signals the end */
+/* auto-stop recording when the iframe signals the end */
 window.addEventListener('message', e=>{
   if(e.data && e.data.gigScene==='end'){
-    stopAmbient();
     setTimeout(()=>{ if(mediaRec && mediaRec.state!=='inactive') mediaRec.stop(); }, 1200);
   }
 });
