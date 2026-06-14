@@ -1418,7 +1418,7 @@ const cur   = $('cursor');
 /* ══ SCALE ══ */
 function scaleScene(){
   const sx=window.innerWidth/1024, sy=window.innerHeight/768;
-  const sc=Math.max(sx,sy);
+  const sc=Math.min(sx,sy);
   const tx=(window.innerWidth-1024*sc)/2, ty=(window.innerHeight-768*sc)/2;
   scene.style.transform=`translate(${tx}px,${ty}px) scale(${sc})`;
 }
@@ -1871,7 +1871,7 @@ function selCard(id){ const el=$(id); el.classList.remove('pop'); void el.offset
 
 /* smooth vertical scroll of the (tall) accident form so a target sits in view */
 let s4y = 0;
-function curScale(){ return Math.max(window.innerWidth/1024, window.innerHeight/768); }
+function curScale(){ return Math.min(window.innerWidth/1024, window.innerHeight/768); }
 async function scrollToEl(formEl, contEl, targetEl, dur=0.7, frac=0.42){
   const sc   = curScale();
   const cont = contEl.getBoundingClientRect();
