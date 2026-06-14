@@ -18,9 +18,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 
 /* ── 3D tablet ── */
 #tablet-wrap{
-  position:absolute;left:120px;top:152px;
-  width:1024px;height:776px;
-  perspective:1800px;perspective-origin:60% 50%;
+  position:absolute;left:100px;top:185px;
+  width:880px;height:668px;
+  perspective:1800px;perspective-origin:50% 50%;
 }
 #tablet{
   width:100%;height:100%;position:relative;
@@ -135,7 +135,7 @@ scaleStage(); window.addEventListener('resize',scaleStage);
 
 /* ── tablet resting pose + hidden start ── */
 function setTabletStart(){
-  gsap.set('#tablet',{rotationY:-58, rotationX:9, x:1200, z:-520, scale:.82, opacity:0, transformOrigin:'50% 50%'});
+  gsap.set('#tablet',{y:920, rotationY:0, rotationX:0, x:0, z:0, scale:1, opacity:0, transformOrigin:'50% 50%'});
   gsap.set(['#eyebrow','#title','#dot'],{opacity:0});
 }
 setTabletStart();
@@ -143,9 +143,9 @@ setTabletStart();
 function tabletEnter(){
   return new Promise(res=>{
     const tl = gsap.timeline({onComplete:res});
-    tl.to('#tablet',{rotationY:-7, rotationX:2.5, x:0, z:0, scale:1, opacity:1,
-        duration:1.7, ease:'power3.out'})
-      .to('#tablet',{rotationY:-5, rotationX:1.5, duration:1.2, ease:'sine.inOut'},'-=0.2');
+    tl.to('#tablet',{y:0, opacity:1, duration:1.6, ease:'power3.out'})
+      .to('#tablet',{y:-6, duration:0.6, ease:'sine.inOut'},'-=0.1')
+      .to('#tablet',{y:0,  duration:0.5, ease:'sine.inOut'});
   });
 }
 
