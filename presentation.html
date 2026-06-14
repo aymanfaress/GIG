@@ -89,7 +89,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   -webkit-backdrop-filter:blur(22px) saturate(140%);
   backdrop-filter:blur(22px) saturate(140%);
   border-radius:60px;
-  padding:24px 46px;width:780px;
+  padding:24px 46px;width:780px;height:88px;
   box-shadow:
     0 44px 110px rgba(10,8,40,.26),
     0 10px 34px rgba(10,8,40,.14),
@@ -230,7 +230,7 @@ window.addEventListener('message', e=>{
   if(e.data && e.data.gigScene) showHead(e.data.gigScene);
 });
 
-/* ── intro sound effects (routed through iframe bus so they record) ── */
+/* ── premium tech sound design (Apple-inspired — pure sine, subtle, precise) ── */
 function getAudio(){
   try{
     const fw=frame.contentWindow;
@@ -239,76 +239,75 @@ function getAudio(){
     return {ctx,dest};
   }catch(e){ return null; }
 }
-function sfxWhoosh(a,{dur=.5,vol=.18,from=300,to=2400}={}){
-  const {ctx,dest}=a, t=ctx.currentTime;
-  const buf=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*dur),ctx.sampleRate);
-  const d=buf.getChannelData(0);
-  for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
-  const src=ctx.createBufferSource(); src.buffer=buf;
-  const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=.9;
-  bp.frequency.setValueAtTime(from,t);
-  bp.frequency.exponentialRampToValueAtTime(to,t+dur);
-  const g=ctx.createGain();
-  g.gain.setValueAtTime(.0001,t);
-  g.gain.exponentialRampToValueAtTime(vol,t+dur*.35);
-  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  src.connect(bp); bp.connect(g); g.connect(dest);
-  src.start(t); src.stop(t+dur);
-}
-function sfxKey(a){
-  const {ctx,dest}=a, t=ctx.currentTime;
-  const o=ctx.createOscillator(); o.type='triangle';
-  const f=1500+Math.random()*700;
-  o.frequency.setValueAtTime(f,t);
-  o.frequency.exponentialRampToValueAtTime(f*.55,t+.03);
-  const g=ctx.createGain();
-  g.gain.setValueAtTime(.0001,t);
-  g.gain.exponentialRampToValueAtTime(.05,t+.004);
-  g.gain.exponentialRampToValueAtTime(.0001,t+.05);
-  o.connect(g); g.connect(dest);
-  o.start(t); o.stop(t+.06);
-}
-function sfxThud(a,{freq=120,vol=.25,dur=.4}={}){
+
+/* soft sine sweep — clean modal "appear" feel */
+function sfxAppear(a){
   const {ctx,dest}=a, t=ctx.currentTime;
   const o=ctx.createOscillator(); o.type='sine';
-  o.frequency.setValueAtTime(freq*1.7,t);
-  o.frequency.exponentialRampToValueAtTime(freq,t+.12);
+  o.frequency.setValueAtTime(1800,t);
+  o.frequency.exponentialRampToValueAtTime(3200,t+.28);
   const g=ctx.createGain();
   g.gain.setValueAtTime(.0001,t);
-  g.gain.exponentialRampToValueAtTime(vol,t+.02);
-  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  g.gain.exponentialRampToValueAtTime(.045,t+.05);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.28);
   o.connect(g); g.connect(dest);
-  o.start(t); o.stop(t+dur+.05);
+  o.start(t); o.stop(t+.3);
 }
-function sfxRise(a,{dur=1.2,vol=.06}={}){
+
+/* ultra-clean keyboard tock — MacBook-style */
+function sfxKey(a){
   const {ctx,dest}=a, t=ctx.currentTime;
-  const mk=(f0,f1)=>{
-    const o=ctx.createOscillator(); o.type='sine';
-    o.frequency.setValueAtTime(f0,t);
-    o.frequency.exponentialRampToValueAtTime(f1,t+dur);
-    return o;
-  };
-  const o1=mk(220,640), o2=mk(330,960);
-  const g=ctx.createGain();
-  g.gain.setValueAtTime(.0001,t);
-  g.gain.exponentialRampToValueAtTime(vol,t+dur*.4);
-  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  o1.connect(g); o2.connect(g); g.connect(dest);
-  o1.start(t); o2.start(t); o1.stop(t+dur); o2.stop(t+dur);
+  /* mechanical body (low transient) */
+  const lo=ctx.createOscillator(); lo.type='sine';
+  lo.frequency.setValueAtTime(340,t);
+  lo.frequency.exponentialRampToValueAtTime(180,t+.022);
+  const lg=ctx.createGain();
+  lg.gain.setValueAtTime(.0001,t); lg.gain.exponentialRampToValueAtTime(.038,t+.003);
+  lg.gain.exponentialRampToValueAtTime(.0001,t+.022);
+  lo.connect(lg); lg.connect(dest); lo.start(t); lo.stop(t+.025);
+  /* click transient (high sine) */
+  const hi=ctx.createOscillator(); hi.type='sine';
+  hi.frequency.setValueAtTime(3800,t);
+  hi.frequency.exponentialRampToValueAtTime(2600,t+.018);
+  const hg=ctx.createGain();
+  hg.gain.setValueAtTime(.0001,t); hg.gain.exponentialRampToValueAtTime(.022,t+.002);
+  hg.gain.exponentialRampToValueAtTime(.0001,t+.018);
+  hi.connect(hg); hg.connect(dest); hi.start(t); hi.stop(t+.02);
 }
+
+/* two-tone ascending chime — Apple notification quality */
+function sfxChime(a){
+  const {ctx,dest}=a, t=ctx.currentTime;
+  [[1047,.0],[1319,.09],[1568,.18]].forEach(([f,dt])=>{
+    const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f;
+    const g=ctx.createGain(); const st=t+dt;
+    g.gain.setValueAtTime(.0001,st);
+    g.gain.exponentialRampToValueAtTime(.055,st+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,st+.55);
+    o.connect(g); g.connect(dest); o.start(st); o.stop(st+.6);
+  });
+}
+
+/* launch — clean ascending sweep + gentle arpeggio (iOS/macOS quality) */
 function sfxLaunch(a){
   const {ctx,dest}=a, t=ctx.currentTime;
-  sfxWhoosh(a,{dur:.7,vol:.2,from:600,to:80});   /* downward whoosh */
-  sfxThud(a,{freq:72,vol:.3,dur:.7});             /* sub boom */
-  const notes=[440,554.37,659.25,880];            /* uplifting A-major chord */
-  notes.forEach((f,i)=>{
+  /* clean pitch sweep */
+  const sw=ctx.createOscillator(); sw.type='sine';
+  sw.frequency.setValueAtTime(520,t);
+  sw.frequency.exponentialRampToValueAtTime(2080,t+.38);
+  const sg=ctx.createGain();
+  sg.gain.setValueAtTime(.0001,t);
+  sg.gain.exponentialRampToValueAtTime(.055,t+.04);
+  sg.gain.exponentialRampToValueAtTime(.0001,t+.38);
+  sw.connect(sg); sg.connect(dest); sw.start(t); sw.stop(t+.4);
+  /* staggered arpeggio — C major (clean, universal, uplifting) */
+  [[523.25,.06],[659.25,.13],[783.99,.20],[1046.5,.28]].forEach(([f,dt])=>{
     const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f;
-    const g=ctx.createGain(); const st=t+.05+i*.045;
+    const g=ctx.createGain(); const st=t+dt;
     g.gain.setValueAtTime(.0001,st);
-    g.gain.exponentialRampToValueAtTime(.09,st+.06);
-    g.gain.exponentialRampToValueAtTime(.0001,st+1.15);
-    o.connect(g); g.connect(dest);
-    o.start(st); o.stop(st+1.25);
+    g.gain.exponentialRampToValueAtTime(.05,st+.015);
+    g.gain.exponentialRampToValueAtTime(.0001,st+.75);
+    o.connect(g); g.connect(dest); o.start(st); o.stop(st+.8);
   });
 }
 
@@ -325,14 +324,13 @@ async function addressBarIntro(){
   gsap.set('#ab-loadbar',{opacity:0,y:8});
   gsap.set('#ab-flash',{opacity:0});
 
-  /* pill drops in (with whoosh + landing thud) */
-  if(a) sfxWhoosh(a,{dur:.55,vol:.16,from:280,to:1900});
+  /* pill glides in (clean tech appear sound) */
+  if(a) sfxAppear(a);
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
     tl.to('#addrbar',{opacity:1,duration:.01})
-      .to('#ab-glow',{opacity:1,scale:1,duration:.9,ease:'power2.out'},0)
-      .to('#addrbar-pill',{y:0,scale:1,opacity:1,duration:.8,ease:'back.out(2)',
-          onStart:()=>{ if(a) setTimeout(()=>sfxThud(a,{freq:150,vol:.18,dur:.3}),360); }})
+      .to('#ab-glow',{opacity:1,scale:1,duration:1,ease:'power2.out'},0)
+      .to('#addrbar-pill',{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.6)'})
       .to('#ab-loadbar',{opacity:1,y:0,duration:.3,ease:'power2.out'},'-=.2');
   });
 
@@ -350,8 +348,8 @@ async function addressBarIntro(){
   await delay(350);
   blinkTween.kill(); gsap.set(curEl,{opacity:0});
 
-  /* loading bar fills (rising hum) */
-  if(a) sfxRise(a,{dur:1.2,vol:.06});
+  /* loading bar fills — chime at start */
+  if(a) sfxChime(a);
   await new Promise(res=>gsap.to(fillEl,{width:'100%',duration:1.2,ease:'power2.inOut',onComplete:res}));
 
   await delay(280);
