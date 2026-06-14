@@ -1,0 +1,2811 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>GIG — Tablet Version</title>
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Kufam:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100vw; height:100vh;
+  overflow:hidden; background:#000;
+  font-family:'Almarai', sans-serif;
+}
+
+/* ══ SCENE WRAPPER ══ */
+#scene {
+  width:1024px; height:768px;
+  position:fixed; transform-origin:top left;
+  overflow:hidden;
+}
+
+/* ══ EACH SCREEN ══ */
+.screen {
+  width:1024px; height:768px;
+  position:absolute; top:0; left:0;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+  opacity:0; pointer-events:none;
+}
+.screen.active { opacity:1; pointer-events:all; }
+
+/* ══ TRANSITION OVERLAY — slide + white flash ══ */
+#trans {
+  position:fixed; inset:0;
+  background:transparent;
+  opacity:0; pointer-events:none; z-index:8000;
+  overflow:hidden;
+}
+/* sliding curtain element */
+#trans-curtain {
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, #19058c 0%, #2a1aaa 40%, #d28c64 100%);
+  transform:translateX(-100%);
+}
+/* shine layer */
+#trans-shine {
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse at center, rgba(255,255,255,0.35) 0%, transparent 70%);
+  opacity:0;
+}
+
+/* ══ CINEMATIC OPEN ══ */
+#cin {
+  position:fixed; inset:0;
+  background:linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);
+  z-index:9000; pointer-events:none;
+  transform:translateX(0%);
+}
+
+/* ══ DIM ══ */
+.dim-layer {
+  position:absolute; inset:0;
+  background:rgba(0,0,0,0); pointer-events:none; z-index:20;
+  transition:background .45s ease;
+}
+.dim-layer.on { background:rgba(0,0,0,0.28); }
+
+/* ══════════════════════════════
+   SHARED: HEADER
+══════════════════════════════ */
+.site-hdr {
+  width:100%; height:58px; background:#fff;
+  border-bottom:1px solid #e8e8e8; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 44px; z-index:30; position:relative;
+}
+.hdr-left { display:flex; align-items:center; gap:22px; }
+.hdr-lang  { font-size:13px; font-weight:600; color:#19058c; }
+.hdr-contact {
+  display:flex; align-items:center; gap:6px;
+  font-size:13px; font-weight:700; color:#19058c;
+  padding:5px 12px; border:1.5px solid transparent; border-radius:20px;
+  transition:border-color .25s, background .25s;
+}
+.hdr-help  { font-size:13px; color:#888; }
+.hdr-right { display:flex; align-items:center; gap:3px; }
+.gig-word  { font-size:27px; font-weight:900; color:#19058c; letter-spacing:-1px; }
+
+/* ══════════════════════════════
+   SHARED: FOOTER
+══════════════════════════════ */
+.site-ftr {
+  background:#19058c; padding:10px 44px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0; position:relative; z-index:30;
+}
+.ftr-r { font-size:11px; color:rgba(255,255,255,.65); }
+.ftr-l { display:flex; gap:14px; font-size:11px; color:rgba(255,255,255,.6); }
+.ftr-sep { color:rgba(255,255,255,.25); }
+
+/* ══════════════════════════════
+   SCENE 1 — VERIFICATION FORM
+══════════════════════════════ */
+#s1, #s3 { background:#f5f5f7; }
+
+#s1-body, #s3-body { flex:1; display:flex; overflow:hidden; }
+
+#s1-content, #s3-content {
+  flex:1; display:flex; align-items:flex-start; justify-content:center;
+  padding:48px 70px 40px 80px;
+  background:#f5f5f7; overflow:hidden; position:relative; z-index:25;
+}
+/* scene 3 has one extra field — tighten spacing so all 4 fit */
+#s3-content { padding:28px 70px 24px 80px; }
+#s3-title   { margin-bottom:22px; }
+#s3 .fld    { margin-bottom:14px; }
+
+#s1-form, #s3-form {
+  width:100%; max-width:440px;
+  display:flex; flex-direction:column;
+  opacity:0; position:relative;
+  transform-origin:top center; will-change:transform;
+}
+#s1-flash, #s3-flash { position:absolute; inset:-12px; border-radius:16px; background:rgba(39,174,96,0); pointer-events:none; z-index:50; }
+
+#s1-title, #s3-title { font-size:30px; font-weight:900; color:#19058c; text-align:right; margin-bottom:32px; opacity:0; font-family:'Kufam',sans-serif; }
+
+.fld { margin-bottom:20px; opacity:0; position:relative; }
+.fld-spot { position:absolute; inset:-8px -12px; border-radius:12px; background:rgba(210,140,100,.07); box-shadow:0 0 0 2.5px rgba(210,140,100,.2),0 6px 28px rgba(210,140,100,.12); pointer-events:none; opacity:0; transition:opacity .3s; z-index:0; }
+.fld-top { display:flex; flex-direction:row-reverse; align-items:center; gap:7px; margin-bottom:8px; position:relative; z-index:1; }
+.fld-req { color:#d28c64; font-size:15px; font-weight:700; line-height:1; }
+.fld-lbl { font-size:13.5px; font-weight:600; color:#222; transition:color .25s,transform .25s; transform-origin:right center; display:inline-block; }
+.fld-lbl.active { color:#d28c64; transform:scale(1.03); }
+.fld-help { width:19px; height:19px; border-radius:50%; background:#efefef; display:flex; align-items:center; justify-content:center; cursor:help; flex-shrink:0; margin-right:auto; position:relative; z-index:1; }
+.fld-input { width:100%; border:1.5px solid #e0e0e0; border-radius:8px; padding:13px 16px; font-size:14px; font-family:'Almarai',sans-serif; color:#19058c; text-align:right; direction:rtl; background:#fff; outline:none; transition:border-color .25s,box-shadow .25s,background .4s; caret-color:#d28c64; position:relative; z-index:1; }
+.fld-input::placeholder { color:#c8c8c8; font-size:13px; }
+.fld-input.focused { border-color:#d28c64; box-shadow:0 0 0 3.5px rgba(210,140,100,.14); }
+.fld-input.filled  { border-color:#c8d8ff; background:#fafbff; }
+@keyframes tPulse { 0%,100%{box-shadow:0 0 0 3.5px rgba(210,140,100,.14)} 50%{box-shadow:0 0 0 6px rgba(210,140,100,.24)} }
+.fld-input.pulse { animation:tPulse .38s ease; }
+@keyframes fillFlash { 0%{background:#fff7f0} 100%{background:#fafbff} }
+.fld-input.fill-flash { animation:fillFlash .6s ease forwards; }
+
+.ph-wrap { display:flex; width:100%; position:relative; z-index:1; }
+.ph-code { display:flex; align-items:center; gap:7px; background:#f8f8f8; border:1.5px solid #e0e0e0; border-right:none; border-radius:8px 0 0 8px; padding:13px 14px; font-size:13px; font-family:'Almarai',sans-serif; font-weight:700; color:#333; flex-shrink:0; transition:border-color .25s; }
+.ph-inp { flex:1; border:1.5px solid #e0e0e0; border-radius:0 8px 8px 0; padding:13px 16px; font-size:14px; font-family:'Almarai',sans-serif; color:#19058c; text-align:right; direction:rtl; background:#fff; outline:none; transition:border-color .25s,box-shadow .25s,background .4s; caret-color:#d28c64; }
+.ph-inp::placeholder { color:#c8c8c8; font-size:13px; }
+.ph-inp.focused { border-color:#d28c64; box-shadow:0 0 0 3.5px rgba(210,140,100,.14); }
+.ph-inp.filled  { border-color:#c8d8ff; background:#fafbff; }
+
+.chk { position:absolute; right:-42px; top:50%; margin-top:10px; width:26px; height:26px; border-radius:50%; background:#27ae60; display:flex; align-items:center; justify-content:center; transform:translateY(-50%) scale(0) rotate(-45deg); transition:transform .42s cubic-bezier(.34,1.56,.64,1); pointer-events:none; box-shadow:0 2px 12px rgba(39,174,96,.45); }
+.chk.show { transform:translateY(-50%) scale(1) rotate(0deg); }
+.chk svg .cp { stroke-dasharray:24; stroke-dashoffset:24; transition:stroke-dashoffset .35s ease .2s; }
+.chk.show svg .cp { stroke-dashoffset:0; }
+
+#s1-btn, #s3-btn { width:100%; padding:15px; background:#19058c; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Almarai',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; margin-top:8px; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .25s,box-shadow .25s; }
+#s1-btn:hover, #s3-btn:hover { background:#2a1aaa; }
+
+/* sidebar */
+#s1-sidebar, #s3-sidebar { width:200px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:28px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
+.stp-row { display:flex; flex-direction:row-reverse; align-items:center; gap:14px; padding:10px 20px 10px 16px; }
+.stp-num { width:30px; height:30px; border-radius:50%; background:#efefef; color:#c0c0c0; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .5s ease; }
+.stp-lbl { font-size:13px; font-weight:500; color:#c0c0c0; text-align:right; direction:rtl; line-height:1.4; transition:all .4s; flex:1; }
+.stp-line { width:2px; height:28px; background:#efefef; margin-right:34px; transition:background .6s; }
+.stp-line.done { background:linear-gradient(to bottom,#d28c64,#efefef); }
+.stp-row.active .stp-num { background:#d28c64; color:#fff; box-shadow:0 0 0 6px rgba(210,140,100,.18); }
+.stp-row.active .stp-lbl { color:#d28c64; font-weight:700; font-size:13.5px; }
+@keyframes sPing { 0%,100%{box-shadow:0 0 0 6px rgba(210,140,100,.18)} 50%{box-shadow:0 0 0 14px rgba(210,140,100,.06)} }
+.stp-num.ping { animation:sPing 1.2s ease-in-out infinite; }
+
+/* ══════════════════════════════
+   SCENE 2 — OTP
+══════════════════════════════ */
+#s2 { background:#fff; }
+
+#s2-main {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:0 40px 30px; position:relative; overflow:hidden;
+}
+
+#s2-form {
+  width:100%; max-width:520px;
+  display:flex; flex-direction:column; align-items:center;
+  opacity:0; position:relative;
+  transform-origin:top center; will-change:transform;
+}
+#s2-flash { position:absolute; inset:-16px; border-radius:20px; background:rgba(39,174,96,0); pointer-events:none; z-index:50; }
+
+#otp-title { font-size:32px; font-weight:900; color:#19058c; text-align:center; line-height:1.35; margin-bottom:18px; opacity:0; direction:rtl; font-family:'Kufam',sans-serif; }
+#otp-sub   { font-size:13.5px; color:#666; text-align:center; line-height:1.85; max-width:480px; margin-bottom:36px; opacity:0; direction:rtl; }
+#otp-sub a { color:#19058c; text-decoration:underline; }
+
+#otp-wrap { display:flex; gap:14px; margin-bottom:20px; opacity:0; direction:ltr; position:relative; }
+#otp-spot { position:absolute; inset:-12px -20px; border-radius:16px; background:rgba(210,140,100,.07); box-shadow:0 0 0 2.5px rgba(210,140,100,.2),0 8px 32px rgba(210,140,100,.12); pointer-events:none; opacity:0; transition:opacity .3s; z-index:0; }
+
+.otp-box { width:68px; height:68px; border:2px solid #e0e0e0; border-radius:12px; background:#fff; font-size:28px; font-weight:900; color:#19058c; display:flex; align-items:center; justify-content:center; transition:border-color .25s,box-shadow .25s,transform .2s; position:relative; z-index:1; }
+.otp-box.active { border-color:#d28c64; box-shadow:0 0 0 4px rgba(210,140,100,.16); transform:scale(1.08); }
+.otp-box.filled { border-color:#19058c; background:#f0f3ff; }
+@keyframes digitPop { 0%{transform:scale(.6);opacity:0} 60%{transform:scale(1.12)} 100%{transform:scale(1);opacity:1} }
+.otp-box.filled .digit { animation:digitPop .28s cubic-bezier(.34,1.56,.64,1) forwards; }
+
+#otp-timer { font-size:13.5px; color:#999; margin-bottom:32px; opacity:0; direction:rtl; }
+#otp-timer strong { color:#d28c64; font-weight:700; }
+
+#s2-btn { width:100%; max-width:520px; padding:16px; background:#c8c8c8; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Almarai',sans-serif; cursor:not-allowed; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .4s,box-shadow .3s; }
+#s2-btn.ready { background:#19058c; cursor:pointer; box-shadow:0 4px 20px rgba(25,5,140,.2); }
+#s2-btn.ready:hover { background:#2a1aaa; }
+
+#back-link { font-size:13.5px; font-weight:700; color:#19058c; margin-top:18px; cursor:pointer; opacity:0; display:flex; align-items:center; gap:6px; direction:rtl; }
+
+#city { position:absolute; bottom:0; left:0; right:0; height:160px; opacity:0; pointer-events:none; z-index:0; overflow:hidden; }
+#city img { width:100%; height:100%; object-fit:cover; object-position:bottom; display:block; }
+
+/* ══ SHARED SHIMMER ══ */
+.shimmable { position:relative; overflow:hidden; }
+.shimmable::after { content:''; position:absolute; top:0; left:-100%; width:55%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent); transform:skewX(-20deg); }
+.shimmable.shim::after { animation:shim .7s ease forwards; }
+@keyframes shim { 0%{left:-100%} 100%{left:160%} }
+
+/* ══ CURSOR ══ */
+#cursor { position:fixed; pointer-events:none; z-index:9500; opacity:0; transform:translate(-4px,-3px); filter:drop-shadow(0 3px 8px rgba(25,5,140,.45)); }
+#cursor.clicking #csvg { animation:cClick .22s ease forwards; }
+@keyframes cClick { 0%{transform:scale(1) rotate(0deg)} 45%{transform:scale(.78) rotate(-8deg)} 100%{transform:scale(1) rotate(0deg)} }
+.tr { position:fixed; pointer-events:none; z-index:9490; border-radius:50%; background:rgba(25,5,140,.2); transform:translate(-50%,-50%); animation:trFade .5s ease forwards; }
+@keyframes trFade { 0%{opacity:.5;transform:translate(-50%,-50%) scale(1)} 100%{opacity:0;transform:translate(-50%,-50%) scale(.1)} }
+.ripple { position:fixed; pointer-events:none; z-index:9480; border-radius:50%; border:2.5px solid rgba(25,5,140,.45); transform:translate(-50%,-50%); animation:rGo .65s ease-out forwards; }
+@keyframes rGo { 0%{width:0;height:0;opacity:1} 100%{width:72px;height:72px;opacity:0} }
+
+/* ══ PROGRESS ══ */
+#prog { position:fixed; bottom:0; left:0; right:0; height:4px; background:rgba(0,0,0,.1); z-index:9999; }
+#pf   { height:100%; width:0%; background:linear-gradient(90deg,#19058c,#d28c64); border-radius:2px; transition:width .5s ease; }
+
+/* ══════════════════════════════
+   SCENE 4 — ACCIDENT DETAILS (NAJM)
+══════════════════════════════ */
+#s4 { background:#f5f5f7; }
+#s4-body { flex:1; display:flex; overflow:hidden; }
+
+#s4-leftpanel { width:200px; flex-shrink:0; padding:24px 16px 0; opacity:0; z-index:25; position:relative; direction:rtl; text-align:right; }
+.lp-welcome { font-size:13px; font-weight:700; color:#19058c; text-align:right; direction:rtl; margin-bottom:14px; }
+.lp-card { background:#fff; border:1px solid #ececec; border-radius:10px; overflow:hidden; }
+.lp-head { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:8px; background:#f3d9c4; color:#9a5a28; font-size:13px; font-weight:700; padding:11px 14px; }
+.lp-row { display:flex; flex-direction:column; align-items:flex-start; gap:3px; padding:11px 14px; border-top:1px solid #f2f2f2; direction:rtl; text-align:right; }
+.lp-k { font-size:12px; font-weight:700; color:#444; }
+.lp-v { font-size:13px; color:#777; }
+
+#s4-content { flex:1; display:flex; align-items:flex-start; justify-content:center; padding:30px 40px 0; overflow:hidden; position:relative; z-index:25; }
+#s4-form { width:100%; max-width:480px; opacity:0; position:relative; transform-origin:top center; will-change:transform; }
+#s4-flash { position:absolute; inset:-12px; border-radius:16px; background:rgba(39,174,96,0); pointer-events:none; z-index:50; }
+#s4-title { font-size:26px; font-weight:900; color:#19058c; text-align:center; margin-bottom:24px; opacity:0; direction:rtl; font-family:'Kufam',sans-serif; }
+
+.acc-sec { margin-bottom:24px; position:relative; }
+.acc-spot { position:absolute; inset:-10px -14px; border-radius:14px; background:rgba(210,140,100,.06); box-shadow:0 0 0 2.5px rgba(210,140,100,.2),0 8px 30px rgba(210,140,100,.12); pointer-events:none; opacity:0; transition:opacity .3s; z-index:0; }
+.acc-h { font-size:15px; font-weight:700; color:#19058c; text-align:right; margin-bottom:13px; direction:rtl; position:relative; z-index:1; font-family:'Kufam',sans-serif; }
+
+.card-row { display:flex; flex-direction:row-reverse; flex-wrap:wrap; gap:13px; position:relative; z-index:1; }
+.opt-card { flex:1; min-width:150px; border:1.5px solid #e2e2e2; border-radius:12px; padding:16px 12px; background:#fff; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; transition:border-color .25s,background .25s,box-shadow .25s,transform .2s; position:relative; }
+.opt-card .oc-ic { width:44px; height:44px; display:flex; align-items:center; justify-content:center; }
+.opt-card .oc-ic img { width:44px; height:44px; object-fit:contain; border-radius:10px; }
+.opt-card .oc-lbl { font-size:13px; font-weight:700; color:#333; text-align:center; direction:rtl; line-height:1.4; }
+.opt-card .oc-sub { font-size:10.5px; color:#aaa; direction:rtl; }
+.opt-card.sel { border-color:#d28c64; background:#fdf3ec; box-shadow:0 0 0 2px rgba(210,140,100,.25); }
+.opt-card.sel .oc-lbl { color:#d28c64; }
+@keyframes cardPop { 0%{transform:scale(1)} 45%{transform:scale(1.05)} 100%{transform:scale(1)} }
+.opt-card.pop { animation:cardPop .35s ease; }
+
+.q-row { display:flex; direction:rtl; align-items:center; gap:22px; margin-bottom:14px; position:relative; z-index:1; flex-wrap:wrap; }
+.q-lblwrap { display:flex; direction:rtl; align-items:center; gap:8px; }
+.q-help { width:19px; height:19px; border-radius:50%; background:#efefef; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.q-lbl { font-size:13px; font-weight:600; color:#222; }
+.q-req { color:#d28c64; font-weight:700; }
+.rad-grp { display:flex; direction:rtl; gap:26px; }
+.rad-opt { display:flex; direction:rtl; align-items:center; gap:7px; cursor:pointer; }
+.rad-dot { width:18px; height:18px; border-radius:50%; border:2px solid #c4c4c4; position:relative; transition:border-color .25s; flex-shrink:0; }
+.rad-dot::after { content:''; position:absolute; inset:3px; border-radius:50%; background:#19058c; transform:scale(0); transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.rad-opt.sel .rad-dot { border-color:#19058c; }
+.rad-opt.sel .rad-dot::after { transform:scale(1); }
+.rad-txt { font-size:13.5px; font-weight:600; color:#444; }
+
+.acc-fld { margin-bottom:16px; opacity:0; position:relative; z-index:1; }
+.acc-fld .fld-top { display:flex; flex-direction:row-reverse; align-items:center; gap:7px; margin-bottom:7px; }
+.acc-fld-lbl { font-size:13px; font-weight:600; color:#222; transition:color .25s; }
+.acc-fld-lbl.active { color:#d28c64; }
+.acc-input { width:100%; border:1.5px solid #e0e0e0; border-radius:8px; padding:12px 15px; font-size:13.5px; font-family:'Almarai',sans-serif; color:#19058c; text-align:right; direction:rtl; background:#fff; outline:none; transition:border-color .25s,box-shadow .25s,background .4s; caret-color:#d28c64; }
+.acc-input::placeholder { color:#c8c8c8; font-size:12.5px; }
+.acc-input.focused { border-color:#d28c64; box-shadow:0 0 0 3.5px rgba(210,140,100,.14); }
+.acc-input.filled { border-color:#c8d8ff; background:#fafbff; }
+.acc-input.pulse { animation:tPulse .38s ease; }
+.acc-input.fill-flash { animation:fillFlash .6s ease forwards; }
+
+#s4-btn { width:100%; padding:15px; background:#19058c; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Almarai',sans-serif; cursor:pointer; margin-top:6px; margin-bottom:26px; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .25s; }
+#s4-btn:hover { background:#2a1aaa; }
+#s4-back { text-align:left; font-size:13px; font-weight:700; color:#19058c; opacity:0; direction:rtl; padding-bottom:20px; }
+
+#s4-sidebar { width:200px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:28px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
+
+/* ══════════════════════════════
+   SCENE 5 — ESTIMATE & BANK DETAILS
+══════════════════════════════ */
+#s5 { background:#f5f5f7; }
+#s5-body { flex:1; display:flex; overflow:hidden; }
+#s5-leftpanel { width:200px; flex-shrink:0; padding:24px 16px 0; opacity:0; z-index:25; position:relative; direction:rtl; text-align:right; }
+#s5-content { flex:1; display:flex; align-items:flex-start; justify-content:center; padding:28px 40px 0; overflow:hidden; position:relative; z-index:25; }
+#s5-form { width:100%; max-width:480px; opacity:0; position:relative; transform-origin:top center; will-change:transform; }
+#s5-flash { position:absolute; inset:-12px; border-radius:16px; background:rgba(39,174,96,0); pointer-events:none; z-index:50; }
+#s5-title { font-size:25px; font-weight:900; color:#19058c; text-align:center; margin-bottom:20px; opacity:0; direction:rtl; font-family:'Kufam',sans-serif; }
+#s5-sidebar { width:200px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:28px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
+#s5-btn { width:100%; padding:15px; background:#19058c; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Almarai',sans-serif; cursor:pointer; margin-top:8px; margin-bottom:26px; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .25s; }
+#s5-btn:hover { background:#2a1aaa; }
+
+/* vehicle card */
+.veh-card { border:1px solid #e6e6e6; border-radius:12px; background:#fff; padding:18px 18px 16px; margin-bottom:22px; direction:rtl; }
+.veh-top { display:flex; direction:rtl; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px dashed #e0e0e0; }
+.veh-name { font-size:17px; font-weight:900; color:#222; letter-spacing:.5px; font-family:'Kufam',sans-serif; }
+.veh-logo { width:30px; height:30px; border-radius:50%; background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; color:#b00; }
+.veh-bot { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:14px; padding-top:12px; }
+.veh-serial-lbl { font-size:12px; color:#666; direction:rtl; text-align:right; }
+.veh-serial-num { font-size:14px; font-weight:700; color:#19058c; margin-top:3px; }
+.plate { border:1.5px solid #222; border-radius:5px; overflow:hidden; display:flex; flex-direction:column; min-width:96px; }
+.plate-top { display:flex; }
+.plate-cell { flex:1; text-align:center; font-size:11px; font-weight:700; padding:2px 4px; border-left:1px solid #ccc; }
+.plate-ar { background:#fff; color:#222; }
+.plate-bot { display:flex; border-top:1.5px solid #222; }
+.plate-en { flex:1; text-align:center; font-size:11px; font-weight:700; padding:2px 4px; border-left:1px solid #ccc; color:#222; }
+
+/* prefixed input — DA / SA box fixed on the RIGHT, value to its left, verify button far left */
+.pfx-wrap { display:flex; direction:rtl; width:100%; position:relative; z-index:1; }
+.pfx-input { flex:1; border:1.5px solid #e0e0e0; border-radius:8px 0 0 8px; padding:12px 15px; font-size:13.5px; font-family:'Almarai',sans-serif; color:#19058c; text-align:right; direction:rtl; background:#fff; outline:none; transition:border-color .25s,box-shadow .25s,background .4s; caret-color:#d28c64; }
+.pfx-input.pfx-mid { border-radius:0; }
+.pfx-input::placeholder { color:#c8c8c8; font-size:12.5px; }
+.pfx-input.focused { border-color:#d28c64; box-shadow:0 0 0 3.5px rgba(210,140,100,.14); z-index:2; }
+.pfx-input.filled { border-color:#c8d8ff; background:#fafbff; }
+.pfx-input.pulse { animation:tPulse .38s ease; }
+.pfx-box { background:#f1f1f1; border:1.5px solid #e0e0e0; border-left:none; border-radius:0 8px 8px 0; padding:0 14px; font-size:13px; font-weight:700; color:#444; display:flex; align-items:center; flex-shrink:0; }
+.vrf-btn { background:#c2997c; color:#fff; border:none; border-radius:8px 0 0 8px; padding:0 18px; font-size:13px; font-weight:700; font-family:'Almarai',sans-serif; flex-shrink:0; cursor:pointer; transition:background .2s,transform .1s; }
+.vrf-btn.pressed { background:#a87a5c; }
+
+/* file upload chip */
+.file-up { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:10px; border:1.5px solid #e0e0e0; border-radius:8px; padding:9px 12px; background:#fff; position:relative; z-index:1; min-height:46px; }
+.file-up.attached { border-color:#c8d8ff; background:#fafbff; }
+.fu-file { display:flex; direction:rtl; align-items:center; gap:9px; opacity:0; transition:opacity .35s; }
+.file-up.attached .fu-file { opacity:1; }
+.fu-ic { width:26px; height:30px; border-radius:4px; background:#e63946; color:#fff; font-size:8px; font-weight:900; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.fu-name { font-size:12.5px; color:#333; direction:rtl; }
+.fu-btns { display:flex; direction:rtl; gap:8px; opacity:0; transition:opacity .35s; }
+.file-up.attached .fu-btns { opacity:1; }
+.fu-change { background:#caa184; color:#fff; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; }
+.fu-del { background:#e63946; color:#fff; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; }
+.fu-empty { font-size:12.5px; color:#bbb; direction:rtl; }
+.file-up.attached .fu-empty { display:none; }
+
+/* ══════════════════════════════
+   SCENE 6 — REVIEW & SUBMIT
+══════════════════════════════ */
+#s6 { background:#f5f5f7; display:flex; flex-direction:column; }
+#s6-banner { background:#19058c; padding:24px 60px 34px; flex-shrink:0; opacity:0; position:relative; z-index:10; }
+#s6-btitle { font-size:27px; font-weight:900; color:#fff; text-align:right; direction:rtl; letter-spacing:-.5px; font-family:'Kufam',sans-serif; }
+#s6-bsub { font-size:13px; color:rgba(255,255,255,.8); text-align:right; direction:rtl; margin-top:7px; }
+#s6-body { flex:1; overflow:hidden; position:relative; z-index:25; }
+#s6-grid { display:flex; direction:rtl; align-items:flex-start; gap:20px; max-width:1040px; margin:22px auto 0; padding:0 30px; position:relative; z-index:2; will-change:transform; }
+#s6-right { flex:1.55; }
+#s6-left { flex:1; display:flex; flex-direction:column; gap:18px; }
+.rev-card { background:#fff; border:1px solid #ececec; border-radius:12px; overflow:hidden; box-shadow:0 6px 22px rgba(0,0,0,.06); transition:box-shadow .35s; opacity:0; }
+.rev-card.hl { box-shadow:0 0 0 2.5px rgba(210,140,100,.4), 0 12px 32px rgba(210,140,100,.16); }
+.rev-head { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:8px; background:#e9b486; color:#7a4a22; font-size:13px; font-weight:700; padding:11px 16px; }
+.rev-head .rh-l { display:flex; direction:rtl; align-items:center; gap:8px; }
+.rev-row { display:flex; flex-direction:column; align-items:flex-start; gap:3px; padding:11px 16px; border-top:1px solid #f4f4f4; direction:rtl; text-align:right; }
+.rev-k { font-size:12px; font-weight:700; color:#444; }
+.rev-v { font-size:13px; color:#777; direction:ltr; text-align:right; }
+.cl-veh-top { display:flex; direction:rtl; align-items:center; justify-content:space-between; padding:15px 18px 12px; }
+.cl-veh-bot { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:14px; padding:0 18px 14px; border-bottom:1px solid #f0f0f0; }
+.cl-sec-h { font-size:13px; font-weight:700; color:#19058c; background:#f5f5f8; padding:9px 18px; direction:rtl; text-align:right; font-family:'Kufam',sans-serif; }
+.cl-row { display:flex; direction:rtl; align-items:center; justify-content:space-between; gap:12px; padding:9px 18px; border-top:1px solid #f4f4f4; }
+.cl-k { font-size:12.5px; color:#555; font-weight:600; }
+.cl-v { font-size:12.5px; color:#222; font-weight:700; direction:ltr; }
+.cl-legal { padding:14px 18px 4px; direction:rtl; text-align:right; }
+.cl-legal p { font-size:10.5px; color:#8a8a8a; line-height:1.75; margin-bottom:8px; }
+#s6-submit { width:calc(100% - 36px); margin:8px 18px 0; padding:14px; background:#19058c; color:#fff; border:none; border-radius:8px; font-size:15px; font-weight:700; font-family:'Almarai',sans-serif; cursor:pointer; position:relative; overflow:hidden; transition:background .25s; }
+#s6-submit:hover { background:#2a1aaa; }
+#s6-back { text-align:left; font-size:13px; font-weight:700; color:#19058c; padding:12px 18px 22px; direction:rtl; }
+#s6-success { position:fixed; inset:0; background:rgba(20,16,60,.55); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; z-index:8600; }
+.suc-card { background:#fff; border-radius:18px; padding:40px 54px; text-align:center; transform:scale(.9); box-shadow:0 24px 64px rgba(0,0,0,.32); }
+.suc-ring { width:74px; height:74px; border-radius:50%; background:#27ae60; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow:0 6px 22px rgba(39,174,96,.45); }
+.suc-ring svg .cp2 { stroke-dasharray:30; stroke-dashoffset:30; transition:stroke-dashoffset .5s ease .25s; }
+#s6-success.show .suc-ring svg .cp2 { stroke-dashoffset:0; }
+.suc-title { font-size:21px; font-weight:900; color:#19058c; direction:rtl; margin-bottom:10px; }
+.suc-sub { font-size:14px; color:#555; direction:rtl; margin-bottom:6px; }
+.suc-sub strong { color:#d28c64; }
+.suc-note { font-size:12.5px; color:#999; direction:rtl; }
+
+/* ══════════════════════════════
+   SCENES 7 & 8 — ACCIDENT DETAILS (باشر / أخرى)
+══════════════════════════════ */
+#s7, #s8 { background:#f5f5f7; }
+#s7-body, #s8-body { flex:1; display:flex; overflow:hidden; }
+#s7-leftpanel, #s8-leftpanel { width:200px; flex-shrink:0; padding:24px 16px 0; opacity:0; z-index:25; position:relative; direction:rtl; text-align:right; }
+#s7-content, #s8-content { flex:1; display:flex; align-items:flex-start; justify-content:center; padding:28px 40px 0; overflow:hidden; position:relative; z-index:25; }
+#s7-form, #s8-form { width:100%; max-width:480px; opacity:0; position:relative; transform-origin:top center; will-change:transform; }
+#s7-flash, #s8-flash { position:absolute; inset:-12px; border-radius:16px; background:rgba(39,174,96,0); pointer-events:none; z-index:50; }
+#s7-title, #s8-title { font-size:26px; font-weight:900; color:#19058c; text-align:center; margin-bottom:22px; opacity:0; direction:rtl; font-family:'Kufam',sans-serif; }
+#s7-sidebar, #s8-sidebar { width:200px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:28px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
+#s7-btn, #s8-btn { width:100%; padding:15px; background:#19058c; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Almarai',sans-serif; cursor:pointer; margin-top:6px; margin-bottom:26px; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .25s; }
+#s7-btn:hover, #s8-btn:hover { background:#2a1aaa; }
+.fld-2col { display:flex; direction:rtl; gap:14px; align-items:flex-end; }
+.fld-2col > .acc-fld { flex:1; margin-bottom:16px; }
+/* date field chk goes to the outer-left so it doesn't clash with the adjacent field */
+#bfld-date .chk, #cfld-date .chk { right:auto; left:-38px; }
+.date-fld { position:relative; }
+.date-fld > svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none; }
+.acc-select { width:100%; border:1.5px solid #e0e0e0; border-radius:8px; padding:12px 15px; font-size:13.5px; font-family:'Almarai',sans-serif; color:#c8c8c8; background:#fff; display:flex; direction:rtl; align-items:center; justify-content:space-between; cursor:pointer; transition:border-color .25s,box-shadow .25s,color .25s,background .4s; }
+.acc-select.focused { border-color:#d28c64; box-shadow:0 0 0 3.5px rgba(210,140,100,.14); }
+.acc-select.filled { border-color:#c8d8ff; background:#fafbff; color:#19058c; font-weight:600; }
+.acc-textarea { width:100%; min-height:88px; border:1.5px solid #e0e0e0; border-radius:8px; padding:12px 15px; font-size:13.5px; font-family:'Almarai',sans-serif; color:#19058c; text-align:right; direction:rtl; background:#fff; outline:none; resize:none; transition:border-color .25s,box-shadow .25s,background .4s; caret-color:#d28c64; }
+.acc-textarea::placeholder { color:#c8c8c8; }
+.acc-textarea.focused { border-color:#d28c64; box-shadow:0 0 0 3.5px rgba(210,140,100,.14); }
+.acc-textarea.filled { border-color:#c8d8ff; background:#fafbff; }
+.acc-textarea.pulse { animation:tPulse .38s ease; }
+</style>
+</head>
+<body>
+
+<div id="cin"></div>
+<div id="trans"><div id="trans-curtain"></div><div id="trans-shine"></div></div>
+
+<div id="cursor">
+  <div id="csvg">
+    <svg width="46" height="46" viewBox="-35.62 -35.62 427.48 427.48">
+      <defs><filter id="cs"><feDropShadow dx="1" dy="3" stdDeviation="10" flood-color="rgba(25,5,140,.5)"/></filter></defs>
+      <g filter="url(#cs)">
+        <path d="M189.604,176.482l74.054-31.949c5.746-2.479,9.348-8.264,9.039-14.514c-0.312-6.25-4.467-11.652-10.43-13.551L19.553,39.166c-5.346-1.699-11.193-0.279-15.158,3.688c-3.967,3.965-5.389,9.813-3.688,15.158L78.01,300.725c1.898,5.963,7.301,10.119,13.551,10.43c6.25,0.312,12.035-3.295,14.514-9.039l31.949-74.053l101.691,101.691c2.813,2.812,6.627,4.393,10.605,4.393c3.978,0,7.795-1.58,10.606-4.393l30.367-30.369c5.857-5.857,5.857-15.355,0-21.213L189.604,176.482z"
+          stroke="white" stroke-width="26" stroke-linejoin="round" fill="none"/>
+        <path d="M189.604,176.482l74.054-31.949c5.746-2.479,9.348-8.264,9.039-14.514c-0.312-6.25-4.467-11.652-10.43-13.551L19.553,39.166c-5.346-1.699-11.193-0.279-15.158,3.688c-3.967,3.965-5.389,9.813-3.688,15.158L78.01,300.725c1.898,5.963,7.301,10.119,13.551,10.43c6.25,0.312,12.035-3.295,14.514-9.039l31.949-74.053l101.691,101.691c2.813,2.812,6.627,4.393,10.605,4.393c3.978,0,7.795-1.58,10.606-4.393l30.367-30.369c5.857-5.857,5.857-15.355,0-21.213L189.604,176.482z"
+          fill="#19058c"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div id="prog"><div id="pf"></div></div>
+
+<!-- ════════════════════════════════
+     SCENE WRAPPER
+════════════════════════════════ -->
+<div id="scene">
+
+  <!-- ══════════════ SCREEN 1 ══════════════ -->
+  <div class="screen active" id="s1">
+    <div class="dim-layer" id="dim1"></div>
+
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s1-body">
+      <div id="s1-content">
+        <div id="s1-form">
+          <div id="s1-flash"></div>
+          <div id="s1-title">التحقق</div>
+
+          <div class="fld" id="fg1">
+            <div class="fld-spot" id="spot1"></div>
+            <div class="fld-top">
+              <span class="fld-req">*</span>
+              <span class="fld-lbl" id="lbl1">رقم الهوية الوطنية / الإقامة / هوية المالك</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <input class="fld-input" id="inp1" placeholder="10 أرقام فقط" readonly>
+            <div class="chk" id="chk1"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div class="fld" id="fg2">
+            <div class="fld-spot" id="spot2"></div>
+            <div class="fld-top">
+              <span class="fld-req">*</span>
+              <span class="fld-lbl" id="lbl2">رقم الجوال</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <div class="ph-wrap">
+              <div class="ph-code" id="phcode">
+                <img src="images/saudi-flag.png" alt="السعودية" style="width:36px;height:24px;object-fit:contain;border-radius:3px;display:block;">
+                <span>966+</span>
+              </div>
+              <input class="ph-inp" id="inp2" placeholder="5xxxxxxxx" readonly>
+            </div>
+            <div class="chk" id="chk2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div class="fld" id="fg3">
+            <div class="fld-spot" id="spot3"></div>
+            <div class="fld-top">
+              <span class="fld-lbl" id="lbl3">البريد الإلكتروني</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <input class="fld-input" id="inp3" placeholder="البريد الإلكتروني" readonly>
+            <div class="chk" id="chk3"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div style="height:26px;"></div>
+
+          <button id="s1-btn" class="shimmable">
+            <span>التالي</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <aside id="s1-sidebar">
+        <div class="stp-row active"><div class="stp-num" id="stp1">1</div><div class="stp-lbl">بيانات مقدم المطالبة</div></div>
+        <div class="stp-line" id="line1"></div>
+        <div class="stp-row"><div class="stp-num">2</div><div class="stp-lbl">تفاصيل الحادث</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
+      </aside>
+    </div>
+
+    <footer class="site-ftr" id="s1-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+  </div>
+
+  <!-- ══════════════ SCREEN 2 ══════════════ -->
+  <div class="screen" id="s2">
+    <div class="dim-layer" id="dim2"></div>
+
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s2-main">
+      <div id="city">
+        <img src="https://motorclaims.gig.sa/Claim/images/background.png" alt="">
+      </div>
+
+      <div id="s2-form">
+        <div id="s2-flash"></div>
+        <div id="otp-title">من فضلك أدخل رمز التحقق المرسل إلى رقم<br>جوالك المسجل</div>
+        <div id="otp-sub">بمتابعة العملية وإدخال رمز التحقق، أفوّض جي آي جي بالحصول على بياناتي الشخصية وبيانات مركبتي من الجهات المختصة لاستكمال تنفيذ الطلب، وأقر بأنني قد اطلعت على بنود <a href="#">سياسة الخصوصية</a> ومفهمتها وأوافق عليها</div>
+        <div id="otp-wrap">
+          <div id="otp-spot"></div>
+          <div class="otp-box" id="b1"><span class="digit"></span></div>
+          <div class="otp-box" id="b2"><span class="digit"></span></div>
+          <div class="otp-box" id="b3"><span class="digit"></span></div>
+          <div class="otp-box" id="b4"><span class="digit"></span></div>
+        </div>
+        <div id="otp-timer">لم يصلك بعد؟ &nbsp;<strong id="timer-txt">0:56</strong></div>
+        <button id="s2-btn" class="shimmable">التالي</button>
+        <div id="back-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          رجوع
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+  </div>
+
+  <!-- ══════════════ SCREEN 3 — VERIFICATION (COMPANY / BANK) ══════════════ -->
+  <div class="screen" id="s3">
+    <div class="dim-layer" id="dim3"></div>
+
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s3-body">
+      <div id="s3-content">
+        <div id="s3-form">
+          <div id="s3-flash"></div>
+          <div id="s3-title">التحقق</div>
+
+          <div class="fld" id="fg4">
+            <div class="fld-spot" id="spot4"></div>
+            <div class="fld-top">
+              <span class="fld-req">*</span>
+              <span class="fld-lbl" id="lbl4">رقم الهوية الوطنية / الإقامة / هوية المالك</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <input class="fld-input" id="inp4" placeholder="10 أرقام فقط" readonly>
+            <div class="chk" id="chk4"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div class="fld" id="fg5">
+            <div class="fld-spot" id="spot5"></div>
+            <div class="fld-top">
+              <span class="fld-req">*</span>
+              <span class="fld-lbl" id="lbl5">رقم هوية السائق</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <input class="fld-input" id="inp5" placeholder="10 أرقام فقط" readonly>
+            <div class="chk" id="chk5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div class="fld" id="fg6">
+            <div class="fld-spot" id="spot6"></div>
+            <div class="fld-top">
+              <span class="fld-req">*</span>
+              <span class="fld-lbl" id="lbl6">رقم الجوال</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <div class="ph-wrap">
+              <div class="ph-code" id="phcode3">
+                <img src="images/saudi-flag.png" alt="السعودية" style="width:36px;height:24px;object-fit:contain;border-radius:3px;display:block;">
+                <span>966+</span>
+              </div>
+              <input class="ph-inp" id="inp6" placeholder="5xxxxxxxx" readonly>
+            </div>
+            <div class="chk" id="chk6"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div class="fld" id="fg7">
+            <div class="fld-spot" id="spot7"></div>
+            <div class="fld-top">
+              <span class="fld-lbl" id="lbl7">البريد الإلكتروني</span>
+              <div class="fld-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <input class="fld-input" id="inp7" placeholder="البريد الإلكتروني" readonly>
+            <div class="chk" id="chk7"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+          </div>
+
+          <div style="height:18px;"></div>
+
+          <button id="s3-btn" class="shimmable">
+            <span>التالي</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <aside id="s3-sidebar">
+        <div class="stp-row active"><div class="stp-num" id="stp1c">1</div><div class="stp-lbl">بيانات مقدم المطالبة</div></div>
+        <div class="stp-line" id="line1c"></div>
+        <div class="stp-row"><div class="stp-num">2</div><div class="stp-lbl">تفاصيل الحادث</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
+      </aside>
+    </div>
+
+    <footer class="site-ftr" id="s3-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+  </div>
+
+  <!-- ══════════════ SCREEN 4 — ACCIDENT DETAILS (NAJM) ══════════════ -->
+  <div class="screen" id="s4">
+    <div class="dim-layer" id="dim4"></div>
+
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s4-body">
+      <aside id="s4-leftpanel">
+        <div class="lp-welcome">مرحبًا بك</div>
+        <div class="lp-card">
+          <div class="lp-head">
+            <span>البيانات الشخصية</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a5a28" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </div>
+          <div class="lp-row"><span class="lp-k">رقم الهوية</span><span class="lp-v">7001689913</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الجوال</span><span class="lp-v">537077897</span></div>
+        </div>
+      </aside>
+
+      <div id="s4-content">
+        <div id="s4-form">
+          <div id="s4-flash"></div>
+          <div id="s4-title">من فضلك أدخل تفاصيل الحادث</div>
+
+          <!-- مصدر تقرير الحادث -->
+          <div class="acc-sec" id="sec-source">
+            <div class="acc-spot" id="spot-src"></div>
+            <div class="acc-h">مصدر تقرير الحادث</div>
+            <div class="card-row">
+              <div class="opt-card" id="src-najm">
+                <div class="oc-ic"><img src="images/GIG - Logos-01.png" alt="نجم" ></div>
+                <div class="oc-lbl">نجم</div>
+              </div>
+              <div class="opt-card" id="src-basher">
+                <div class="oc-ic"><img src="images/GIG - Logos-02.png" alt="المرور"></div>
+                <div class="oc-lbl">باشر / المرور</div>
+              </div>
+              <div class="opt-card" id="src-other">
+                <div class="oc-ic"><img src="images/GIG - Logos-03.png" alt="أخرى"></div>
+                <div class="oc-lbl">أخرى</div>
+                <div class="oc-sub">(العملاء جي آي جي فقط)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- نوع الحادث -->
+          <div class="acc-sec" id="sec-type">
+            <div class="acc-spot" id="spot-type"></div>
+            <div class="acc-h">نوع الحادث</div>
+            <div class="card-row">
+              <div class="opt-card" id="type-veh">
+                <div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.5" r="1"/><circle cx="16.5" cy="14.5" r="1"/></svg></div>
+                <div class="oc-lbl">أضرار في المركبة</div>
+              </div>
+              <div class="opt-card" id="type-prop">
+                <div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></div>
+                <div class="oc-lbl">أضرار في الممتلكات</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- هل مالك المركبة هو القائد -->
+          <div class="acc-sec" id="sec-owner">
+            <div class="acc-spot" id="spot-owner"></div>
+            <div class="q-row">
+              <div class="q-lblwrap">
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+                <span class="q-lbl"><span class="q-req">*</span> هل مالك المركبة هو القائد أثناء وقوع الحادث؟</span>
+              </div>
+              <div class="rad-grp">
+                <div class="rad-opt" id="own-yes"><span class="rad-dot"></span><span class="rad-txt">نعم</span></div>
+                <div class="rad-opt" id="own-no"><span class="rad-dot"></span><span class="rad-txt">لا</span></div>
+              </div>
+            </div>
+            <div class="acc-fld" id="fld-driver">
+              <div class="fld-top">
+                <span class="fld-req" style="color:#d28c64;font-weight:700;">*</span>
+                <span class="acc-fld-lbl" id="lbl-driver">الرجاء إدخال هوية قائد المركبة أثناء وقوع الحادث</span>
+              </div>
+              <input class="acc-input" id="inp-driver" placeholder="هوية قائد المركبة" readonly>
+              <div class="chk" id="chk-driver"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+          </div>
+
+          <!-- معلومات وتفاصيل الحادث -->
+          <div class="acc-sec" id="sec-info">
+            <div class="acc-h">معلومات وتفاصيل الحادث</div>
+            <div class="acc-fld" id="fld-najm" style="opacity:1;">
+              <div class="acc-spot" id="spot-najm"></div>
+              <div class="fld-top">
+                <span class="fld-req" style="color:#d28c64;font-weight:700;">*</span>
+                <span class="acc-fld-lbl" id="lbl-najm">رقم تقرير الحادث الصادر عن نجم</span>
+              </div>
+              <input class="acc-input" id="inp-najm" placeholder="رقم تقرير الحادث الصادر عن نجم" readonly>
+              <div class="chk" id="chk-najm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="acc-fld" id="fld-serial" style="opacity:1;">
+              <div class="acc-spot" id="spot-serial"></div>
+              <div class="fld-top">
+                <span class="fld-req" style="color:#d28c64;font-weight:700;">*</span>
+                <span class="acc-fld-lbl" id="lbl-serial">الرقم التسلسلي / رقم البطاقة الجمركية</span>
+              </div>
+              <input class="acc-input" id="inp-serial" placeholder="الرقم التسلسلي / رقم البطاقة الجمركية" readonly>
+              <div class="chk" id="chk-serial"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+          </div>
+
+          <button id="s4-btn" class="shimmable">التالي</button>
+          <div id="s4-back">→ رجوع</div>
+        </div>
+      </div>
+
+      <aside id="s4-sidebar">
+        <div class="stp-row"><div class="stp-num" id="s4-stp1">1</div><div class="stp-lbl">بيانات مقدم المطالبة</div></div>
+        <div class="stp-line done" id="s4-line1"></div>
+        <div class="stp-row active"><div class="stp-num" id="s4-stp2">2</div><div class="stp-lbl">تفاصيل الحادث</div></div>
+        <div class="stp-line" id="s4-line2"></div>
+        <div class="stp-row"><div class="stp-num">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
+      </aside>
+    </div>
+
+    <footer class="site-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+  </div>
+
+  <!-- ══════════════ SCREEN 5 — ESTIMATE & BANK DETAILS ══════════════ -->
+  <div class="screen" id="s5">
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s5-body">
+      <aside id="s5-leftpanel">
+        <div class="lp-welcome">مرحبًا بك</div>
+        <div class="lp-card">
+          <div class="lp-head">
+            <span>البيانات الشخصية</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a5a28" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </div>
+          <div class="lp-row"><span class="lp-k">الاسم</span><span class="lp-v">سعد علي ابن حسين العريشي</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الهوية</span><span class="lp-v">7008230976</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الجوال</span><span class="lp-v">537077897</span></div>
+        </div>
+      </aside>
+
+      <div id="s5-content">
+        <div id="s5-form">
+          <div id="s5-flash"></div>
+          <div id="s5-title">التقدير و البيانات البنكية</div>
+
+          <!-- vehicle card -->
+          <div class="veh-card" id="veh-card">
+            <div class="veh-top">
+              <div class="veh-name">MITSUBISHI 2020</div>
+              <div class="veh-logo">▲</div>
+            </div>
+            <div class="veh-bot">
+              <div>
+                <div class="veh-serial-lbl">الرقم التسلسلي / رقم البطاقة الجمركية</div>
+                <div class="veh-serial-num">244751810</div>
+              </div>
+              <div class="plate">
+                <div class="plate-top">
+                  <div class="plate-cell plate-ar">٢١٣٦</div>
+                  <div class="plate-cell plate-ar">ح ه د</div>
+                </div>
+                <div class="plate-bot">
+                  <div class="plate-en">2136</div>
+                  <div class="plate-en">JHD</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- نوع تقييم الأضرار -->
+          <div class="acc-sec" id="sec-evaltype">
+            <div class="acc-spot" id="spot-evaltype"></div>
+            <div class="acc-h">نوع تقييم الأضرار <span style="color:#d28c64">*</span></div>
+            <div class="card-row">
+              <div class="opt-card" id="eval-est"><div class="oc-lbl">تقدير</div></div>
+              <div class="opt-card" id="eval-other"><div class="oc-lbl">أخرى</div></div>
+            </div>
+          </div>
+
+          <!-- رقم تقييم الأضرار + تحقق -->
+          <div class="acc-sec" id="sec-evalnum">
+            <div class="acc-spot" id="spot-evalnum"></div>
+            <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+              <span class="acc-fld-lbl" id="lbl-evalnum"><span style="color:#d28c64;font-weight:700;">*</span> رقم تقييم الأضرار</span>
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <div class="pfx-wrap">
+              <div class="pfx-box">DA</div>
+              <input class="pfx-input pfx-mid" id="inp-evalnum" placeholder="رقم تقييم الأضرار" readonly>
+              <button class="vrf-btn" id="vrf-eval">تحقق</button>
+              <div class="chk" id="chk-evalnum" style="right:auto;left:-42px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+          </div>
+
+          <!-- مستند التقدير -->
+          <div class="acc-sec" id="sec-doc1">
+            <div class="acc-spot" id="spot-doc1"></div>
+            <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+              <span class="acc-fld-lbl"><span style="color:#d28c64;font-weight:700;">*</span> مستند التقدير</span>
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <div class="file-up" id="file-doc1">
+              <div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">تقرير مختصر.pdf</span></div>
+              <span class="fu-empty">إرفاق ملف…</span>
+              <div class="fu-btns"><span class="fu-change">تغيير الملف</span><span class="fu-del">حذف</span></div>
+            </div>
+          </div>
+
+          <!-- نوع تسوية المطالبة -->
+          <div class="acc-sec" id="sec-settle">
+            <div class="acc-spot" id="spot-settle"></div>
+            <div class="acc-h">نوع تسوية المطالبة <span style="color:#d28c64">*</span></div>
+            <div class="card-row">
+              <div class="opt-card" id="settle-fix"><div class="oc-lbl">إصلاح</div></div>
+              <div class="opt-card" id="settle-comp"><div class="oc-lbl">تعويض</div></div>
+            </div>
+          </div>
+
+          <!-- IBAN -->
+          <div class="acc-sec" id="sec-iban">
+            <div class="acc-spot" id="spot-iban"></div>
+            <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+              <span class="acc-fld-lbl" id="lbl-iban"><span style="color:#d28c64;font-weight:700;">*</span> رقم الحساب البنكي (IBAN)</span>
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <div class="pfx-wrap">
+              <div class="pfx-box">SA</div>
+              <input class="pfx-input" id="inp-iban" placeholder="رقم الحساب البنكي" readonly>
+              <div class="chk" id="chk-iban" style="right:auto;left:-42px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+          </div>
+
+          <!-- شهادة الآيبان -->
+          <div class="acc-sec" id="sec-doc2">
+            <div class="acc-spot" id="spot-doc2"></div>
+            <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+              <span class="acc-fld-lbl"><span style="color:#d28c64;font-weight:700;">*</span> شهادة الآيبان الخاص بالمالك</span>
+              <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+            </div>
+            <div class="file-up" id="file-doc2">
+              <div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">تقرير مختصر.pdf</span></div>
+              <span class="fu-empty">إرفاق ملف…</span>
+              <div class="fu-btns"><span class="fu-change">تغيير الملف</span><span class="fu-del">حذف</span></div>
+            </div>
+          </div>
+
+          <button id="s5-btn" class="shimmable">التالي</button>
+        </div>
+      </div>
+
+      <aside id="s5-sidebar">
+        <div class="stp-row"><div class="stp-num">1</div><div class="stp-lbl">بيانات مقدم المطالبة</div></div>
+        <div class="stp-line done"></div>
+        <div class="stp-row"><div class="stp-num">2</div><div class="stp-lbl">تفاصيل الحادث</div></div>
+        <div class="stp-line done"></div>
+        <div class="stp-row active"><div class="stp-num" id="s5-stp3">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
+        <div class="stp-line" id="s5-line3"></div>
+        <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
+      </aside>
+    </div>
+
+    <footer class="site-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+  </div>
+
+  <!-- ══════════════ SCREEN 6 — REVIEW & SUBMIT ══════════════ -->
+  <div class="screen" id="s6">
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s6-banner">
+      <div id="s6-btitle">مطالبة مركبات</div>
+      <div id="s6-bsub">الرجاء التأكد من صحة البيانات أدناه ومتابعة تقديم الطلب.</div>
+    </div>
+
+    <div id="s6-body">
+      <div id="s6-grid">
+        <!-- claim card (right) -->
+        <div id="s6-right">
+          <div class="rev-card" id="rev-claim">
+            <div class="cl-veh-top">
+              <div class="veh-name" style="font-size:17px;">MG</div>
+              <div class="veh-logo" style="color:#c0392b;">MG</div>
+            </div>
+            <div class="cl-veh-bot">
+              <div>
+                <div class="veh-serial-lbl">الرقم التسلسلي / رقم البطاقة الجمركية</div>
+                <div class="veh-serial-num">956423220</div>
+              </div>
+              <div class="plate">
+                <div class="plate-top"><div class="plate-cell plate-ar">٢٢٨٤</div><div class="plate-cell plate-ar">ي ب س</div></div>
+                <div class="plate-bot"><div class="plate-en">2284</div><div class="plate-en">VBS</div></div>
+              </div>
+            </div>
+            <div class="cl-sec-h">تفاصيل الحادث</div>
+            <div class="cl-row"><span class="cl-k">رقم تقرير الحادث</span><span class="cl-v">RD1805262256</span></div>
+            <div class="cl-row"><span class="cl-k">التاريخ</span><span class="cl-v">18/05/2026</span></div>
+            <div class="cl-row"><span class="cl-k">نوع الأضرار</span><span class="cl-v">Vehicle Damage</span></div>
+            <div class="cl-sec-h">البيانات البنكية</div>
+            <div class="cl-row"><span class="cl-k">رقم الآيبان</span><span class="cl-v">SA1245793631546464646846</span></div>
+            <div class="cl-row"><span class="cl-k">اسم البنك</span><span class="cl-v">Saudi National Bank</span></div>
+            <div class="cl-row"><span class="cl-k">اسم المستفيد</span><span class="cl-v">JUANITO REY BROSOTO LUMAGUE-T</span></div>
+            <div class="cl-legal">
+              <p>بالنقر على "تقديم"، أقر بأنه عند استلام مبلغ التعويض المستحق لي وفقًا للتقديرات المرفقة وطبقًا لشروط وأحكام الوثيقة، وذلك من خلال تحويل المبلغ إلى حسابي المصرفي المذكور أعلاه، فإنني أبرئ ذمة شركة التأمين إبراءً تامًا ونهائيًا من جميع الالتزامات التي قد تنشأ عن هذه المطالبة في الوقت الحالي أو في المستقبل.</p>
+              <p>أقر بصحة المعلومات المدخلة أعلاه، وبأن أي خطأ في إدخال رقم الآيبان يقع على عاتق مقدم المطالبة وتحت مسؤوليته.</p>
+              <p>أقر بمنحي جي آي جي موافقتي الطوعية على مشاركة معلوماتي الشخصية، ولا سيما اسمي الكامل ورقم تواصلي وبيانات مركبتي، مع ورش الإصلاح أو أي أطراف أخرى ذات صلة، وذلك بالقدر اللازم لمعالجة مطالبتي.</p>
+            </div>
+            <button id="s6-submit" class="shimmable">تقديم المطالبة</button>
+            <div id="s6-back">→ رجوع</div>
+          </div>
+        </div>
+
+        <!-- personal + policy (left) -->
+        <div id="s6-left">
+          <div class="rev-card" id="rev-personal">
+            <div class="rev-head"><div class="rh-l"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span>البيانات الشخصية</span></div><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+            <div class="rev-row"><span class="rev-k">الاسم</span><span class="rev-v" style="direction:rtl;">رضوان محمد سليم العطار</span></div>
+            <div class="rev-row"><span class="rev-k">رقم الهوية</span><span class="rev-v">7001689913</span></div>
+            <div class="rev-row"><span class="rev-k">رقم الجوال</span><span class="rev-v">537077897</span></div>
+          </div>
+          <div class="rev-card" id="rev-policy">
+            <div class="rev-head"><div class="rh-l"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/></svg><span>تفاصيل الوثيقة</span></div><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a4a22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+            <div class="rev-row"><span class="rev-k">رقم الوثيقة</span><span class="rev-v">1/VF/41210/0/0</span></div>
+            <div class="rev-row"><span class="rev-k">تاريخ السريان</span><span class="rev-v">01/03/2026</span></div>
+            <div class="rev-row"><span class="rev-k">تاريخ الانتهاء</span><span class="rev-v">28/02/2027</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+
+    <!-- success overlay -->
+    <div id="s6-success">
+      <div class="suc-card">
+        <div class="suc-ring"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp2" points="20 6 9 17 4 12"/></svg></div>
+        <div class="suc-title">تم تقديم مطالبتك بنجاح</div>
+        <div class="suc-sub">رقم المطالبة: <strong>MC0500100008801</strong></div>
+        <div class="suc-note">ستصلك رسالة نصية بتفاصيل المطالبة</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SCREEN 7 — ACCIDENT DETAILS (باشر / المرور) ══════════════ -->
+  <div class="screen" id="s7">
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s7-body">
+      <aside id="s7-leftpanel">
+        <div class="lp-welcome">مرحبًا بك</div>
+        <div class="lp-card">
+          <div class="lp-head"><span>البيانات الشخصية</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a5a28" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+          <div class="lp-row"><span class="lp-k">الاسم</span><span class="lp-v">رضوان محمد سليم العطار</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الهوية</span><span class="lp-v">7001689913</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الجوال</span><span class="lp-v">537077897</span></div>
+        </div>
+      </aside>
+
+      <div id="s7-content">
+        <div id="s7-form">
+          <div id="s7-flash"></div>
+          <div id="s7-title">من فضلك أدخل تفاصيل الحادث</div>
+
+          <!-- مصدر تقرير الحادث -->
+          <div class="acc-sec" id="bsec-source">
+            <div class="acc-spot" id="bspot-source"></div>
+            <div class="acc-h">مصدر تقرير الحادث</div>
+            <div class="card-row">
+              <div class="opt-card" id="bsrc-najm">
+                <div class="oc-ic"><img src="images/GIG - Logos-01.png" alt="نجم" ></div>
+                <div class="oc-lbl">نجم</div>
+              </div>
+              <div class="opt-card" id="bsrc-basher">
+                <div class="oc-ic"><img src="images/GIG - Logos-02.png" alt="المرور"></div>
+                <div class="oc-lbl">باشر / المرور</div>
+              </div>
+              <div class="opt-card" id="bsrc-other">
+                <div class="oc-ic"><img src="images/GIG - Logos-03.png" alt="أخرى"></div>
+                <div class="oc-lbl">أخرى</div>
+                <div class="oc-sub">(العملاء جي آي جي فقط)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- نوع الحادث (4 خيارات) -->
+          <div class="acc-sec" id="bsec-type">
+            <div class="acc-spot" id="bspot-type"></div>
+            <div class="acc-h">نوع الحادث</div>
+            <div class="card-row">
+              <div class="opt-card" id="btype-death"><div class="oc-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round"><path d="M9 9h.01M15 9h.01M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="12" r="10"/></svg></div><div class="oc-lbl">وفاة</div></div>
+              <div class="opt-card" id="btype-injury"><div class="oc-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v20M2 12h20"/></svg></div><div class="oc-lbl">إصابة</div></div>
+              <div class="opt-card" id="btype-veh"><div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.5" r="1"/><circle cx="16.5" cy="14.5" r="1"/></svg></div><div class="oc-lbl">أضرار في المركبة</div></div>
+              <div class="opt-card" id="btype-prop"><div class="oc-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></div><div class="oc-lbl">أضرار في الممتلكات</div></div>
+            </div>
+          </div>
+
+          <!-- معلومات وتفاصيل الحادث -->
+          <div class="acc-sec" id="bsec-info">
+            <div class="acc-h">معلومات وتفاصيل الحادث</div>
+            <div class="acc-fld" id="bfld-report" style="opacity:1;">
+              <div class="acc-spot" id="bspot-report"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl" id="blbl-report"><span style="color:#d28c64;font-weight:700;">*</span> رقم تقرير باشر / المرور</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <input class="acc-input" id="binp-report" placeholder="رقم تقرير باشر / المرور" readonly>
+              <div class="chk" id="bchk-report"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="fld-2col">
+              <div class="acc-fld" id="bfld-serial" style="opacity:1;">
+                <div class="acc-spot" id="bspot-serial"></div>
+                <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                  <span class="acc-fld-lbl" id="blbl-serial"><span style="color:#d28c64;font-weight:700;">*</span> الرقم التسلسلي / رقم البطاقة الجمركية</span>
+                  <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+                </div>
+                <input class="acc-input" id="binp-serial" placeholder="الرقم التسلسلي" readonly>
+                <div class="chk" id="bchk-serial"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+              </div>
+              <div class="acc-fld" id="bfld-date" style="opacity:1;">
+                <div class="acc-spot" id="bspot-date"></div>
+                <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                  <span class="acc-fld-lbl" id="blbl-date"><span style="color:#d28c64;font-weight:700;">*</span> تاريخ وقوع الحادث</span>
+                  <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+                </div>
+                <div class="date-fld">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <input class="acc-input" id="binp-date" style="padding-left:36px;direction:ltr;" placeholder="DD/MM/YYYY" readonly>
+                </div>
+                <div class="chk" id="bchk-date"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- هل سيارتك مؤمنة لدى GIG -->
+          <div class="acc-sec" id="bsec-ins">
+            <div class="acc-spot" id="bspot-ins"></div>
+            <div class="q-row">
+              <div class="q-lblwrap">
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+                <span class="q-lbl"><span class="q-req">*</span> هل سيارتك مؤمنة لدى شركة GIG؟</span>
+              </div>
+              <div class="rad-grp">
+                <div class="rad-opt" id="bins-yes"><span class="rad-dot"></span><span class="rad-txt">نعم</span></div>
+                <div class="rad-opt" id="bins-no"><span class="rad-dot"></span><span class="rad-txt">لا</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- المستند المطلوب -->
+          <div class="acc-sec" id="bsec-docs">
+            <div class="acc-h">المستند المطلوب</div>
+            <div class="acc-fld" id="bfld-doc1" style="opacity:1;margin-bottom:13px;">
+              <div class="acc-spot" id="bspot-doc1"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl"><span style="color:#d28c64;font-weight:700;">*</span> تقرير الحادث</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="bfile-report"><div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">تقرير الحادث.pdf</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+            <div class="acc-fld" id="bfld-doc2" style="opacity:1;margin-bottom:13px;">
+              <div class="acc-spot" id="bspot-doc2"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl"><span style="color:#d28c64;font-weight:700;">*</span> رخصة القيادة</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="bfile-license"><div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">رخصة القيادة.pdf</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+            <div class="acc-fld" id="bfld-doc3" style="opacity:1;margin-bottom:13px;">
+              <div class="acc-spot" id="bspot-doc3"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl"><span style="color:#d28c64;font-weight:700;">*</span> رخصة السير (الاستمارة)</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="bfile-form"><div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">الاستمارة.pdf</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+          </div>
+
+          <button id="s7-btn" class="shimmable">التالي</button>
+        </div>
+      </div>
+
+      <aside id="s7-sidebar">
+        <div class="stp-row"><div class="stp-num">1</div><div class="stp-lbl">بيانات مقدم المطالبة</div></div>
+        <div class="stp-line done"></div>
+        <div class="stp-row active"><div class="stp-num" id="s7-stp2">2</div><div class="stp-lbl">تفاصيل الحادث</div></div>
+        <div class="stp-line" id="s7-line2"></div>
+        <div class="stp-row"><div class="stp-num">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
+      </aside>
+    </div>
+
+    <footer class="site-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+  </div>
+
+  <!-- ══════════════ SCREEN 8 — ACCIDENT DETAILS (أخرى — عملاء GIG) ══════════════ -->
+  <div class="screen" id="s8">
+    <header class="site-hdr">
+      <div class="hdr-left">
+        <span class="hdr-lang">English</span>
+        <div class="hdr-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 5.49 5.49l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+          <span>اتصل بنا</span>
+        </div>
+        <span class="hdr-help">هل تحتاج إلى مساعدة ؟</span>
+      </div>
+      <div class="hdr-right">
+        <img src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG" style="height:38px;width:auto;object-fit:contain;">
+      </div>
+    </header>
+
+    <div id="s8-body">
+      <aside id="s8-leftpanel">
+        <div class="lp-welcome">مرحبًا بك</div>
+        <div class="lp-card">
+          <div class="lp-head"><span>البيانات الشخصية</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9a5a28" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></div>
+          <div class="lp-row"><span class="lp-k">الاسم</span><span class="lp-v">رضوان محمد سليم العطار</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الهوية</span><span class="lp-v">7001689913</span></div>
+          <div class="lp-row"><span class="lp-k">رقم الجوال</span><span class="lp-v">537077897</span></div>
+        </div>
+      </aside>
+
+      <div id="s8-content">
+        <div id="s8-form">
+          <div id="s8-flash"></div>
+          <div id="s8-title">من فضلك أدخل تفاصيل الحادث</div>
+
+          <!-- مصدر تقرير الحادث -->
+          <div class="acc-sec" id="csec-source">
+            <div class="acc-spot" id="cspot-source"></div>
+            <div class="acc-h">مصدر تقرير الحادث</div>
+            <div class="card-row">
+              <div class="opt-card" id="csrc-najm">
+                <div class="oc-ic"><img src="images/GIG - Logos-01.png" alt="نجم" ></div>
+                <div class="oc-lbl">نجم</div>
+              </div>
+              <div class="opt-card" id="csrc-basher">
+                <div class="oc-ic"><img src="images/GIG - Logos-02.png" alt="المرور"></div>
+                <div class="oc-lbl">باشر / المرور</div>
+              </div>
+              <div class="opt-card" id="csrc-other">
+                <div class="oc-ic"><img src="images/GIG - Logos-03.png" alt="أخرى"></div>
+                <div class="oc-lbl">أخرى</div>
+                <div class="oc-sub">(العملاء جي آي جي فقط)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- نوع الحادث (شامل) -->
+          <div class="acc-sec" id="csec-type">
+            <div class="acc-spot" id="cspot-type"></div>
+            <div class="acc-h">نوع الحادث</div>
+            <div class="card-row">
+              <div class="opt-card" id="ctype-theft"><div class="oc-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13v5h-2v-1H7v1H5z"/><path d="M9 3l1.5 2M15 3l-1.5 2"/></svg></div><div class="oc-lbl">سرقة</div></div>
+              <div class="opt-card" id="ctype-fire"><div class="oc-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 4 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5-1-8z"/></svg></div><div class="oc-lbl">حريق</div></div>
+              <div class="opt-card" id="ctype-glass"><div class="oc-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13v5h-3M5 13v5h3M9 11l3 3 3-3"/></svg></div><div class="oc-lbl">أضرار في الزجاج</div></div>
+              <div class="opt-card" id="ctype-rain"><div class="oc-ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14a4 4 0 1 1 1-7.9A5 5 0 0 1 18 8a3.5 3.5 0 0 1-.5 6.9"/><line x1="8" y1="18" x2="8" y2="21"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="16" y1="18" x2="16" y2="21"/></svg></div><div class="oc-lbl">أمطار وسيول</div></div>
+            </div>
+          </div>
+
+          <!-- معلومات وتفاصيل الحادث -->
+          <div class="acc-sec" id="csec-info">
+            <div class="acc-h">معلومات وتفاصيل الحادث</div>
+            <div class="acc-fld" id="cfld-report" style="opacity:1;">
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl">رقم تقرير الحادث</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <input class="acc-input" id="cinp-report" placeholder="رقم تقرير الحادث" readonly>
+            </div>
+            <div class="acc-fld" id="cfld-serial" style="opacity:1;">
+              <div class="acc-spot" id="cspot-serial"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl" id="clbl-serial"><span style="color:#d28c64;font-weight:700;">*</span> الرقم التسلسلي / رقم البطاقة الجمركية</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <input class="acc-input" id="cinp-serial" placeholder="الرقم التسلسلي / رقم البطاقة الجمركية" readonly>
+              <div class="chk" id="cchk-serial"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="fld-2col">
+              <div class="acc-fld" id="cfld-city" style="opacity:1;">
+                <div class="acc-spot" id="cspot-city"></div>
+                <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                  <span class="acc-fld-lbl"><span style="color:#d28c64;font-weight:700;">*</span> مدينة / موقع وقوع الحادث</span>
+                </div>
+                <div class="acc-select" id="csel-city"><span class="sel-val" id="csel-city-val">الرجاء الاختيار</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+              </div>
+              <div class="acc-fld" id="cfld-date" style="opacity:1;">
+                <div class="acc-spot" id="cspot-date"></div>
+                <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                  <span class="acc-fld-lbl" id="clbl-date"><span style="color:#d28c64;font-weight:700;">*</span> تاريخ وقوع الحادث</span>
+                </div>
+                <div class="date-fld">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <input class="acc-input" id="cinp-date" style="padding-left:36px;direction:ltr;" placeholder="DD/MM/YYYY" readonly>
+                </div>
+                <div class="chk" id="cchk-date"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="cp" points="20 6 9 17 4 12"/></svg></div>
+              </div>
+            </div>
+            <div class="acc-fld" id="cfld-desc" style="opacity:1;">
+              <div class="acc-spot" id="cspot-desc"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl" id="clbl-desc"><span style="color:#d28c64;font-weight:700;">*</span> وصف الحادث</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <textarea class="acc-textarea" id="cinp-desc" placeholder="أدخل الوصف" readonly></textarea>
+            </div>
+          </div>
+
+          <!-- المستند المطلوب -->
+          <div class="acc-sec" id="csec-docs">
+            <div class="acc-h">المستند المطلوب</div>
+            <div class="acc-fld" id="cfld-doc1" style="opacity:1;margin-bottom:13px;">
+              <div class="acc-spot" id="cspot-doc1"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl"><span style="color:#d28c64;font-weight:700;">*</span> صور أضرار المركبة</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="cfile-photos"><div class="fu-file"><div class="fu-ic">IMG</div><span class="fu-name">صور الأضرار.jpg</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+            <div class="acc-fld" id="cfld-doc2" style="opacity:1;margin-bottom:13px;">
+              <div class="acc-spot" id="cspot-doc2"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl"><span style="color:#d28c64;font-weight:700;">*</span> رخصة سير المركبة</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="cfile-form"><div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">رخصة السير.pdf</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+            <div class="acc-fld" id="cfld-doc3" style="opacity:1;margin-bottom:13px;">
+              <div class="acc-spot" id="cspot-doc3"></div>
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl"><span style="color:#d28c64;font-weight:700;">*</span> رخصة القيادة</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="cfile-license"><div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">رخصة القيادة.pdf</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+            <div class="acc-fld" id="cfld-doc4" style="opacity:1;margin-bottom:13px;">
+              <div class="fld-top" style="display:flex;flex-direction:row;direction:rtl;align-items:center;gap:7px;margin-bottom:7px;">
+                <span class="acc-fld-lbl">المستندات الداعمة</span>
+                <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+              </div>
+              <div class="file-up" id="cfile-extra"><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+            </div>
+          </div>
+
+          <button id="s8-btn" class="shimmable">التالي</button>
+        </div>
+      </div>
+
+      <aside id="s8-sidebar">
+        <div class="stp-row"><div class="stp-num">1</div><div class="stp-lbl">بيانات مقدم المطالبة</div></div>
+        <div class="stp-line done"></div>
+        <div class="stp-row active"><div class="stp-num" id="s8-stp2">2</div><div class="stp-lbl">تفاصيل الحادث</div></div>
+        <div class="stp-line" id="s8-line2"></div>
+        <div class="stp-row"><div class="stp-num">3</div><div class="stp-lbl">التقدير والبيانات البنكية</div></div>
+        <div class="stp-line"></div>
+        <div class="stp-row"><div class="stp-num">4</div><div class="stp-lbl">مراجعة وتقديم المطالبة</div></div>
+      </aside>
+    </div>
+
+    <footer class="site-ftr">
+      <div class="ftr-l"><span>المملكة العربية السعودية</span><span class="ftr-sep">|</span><span>من نحن</span><span class="ftr-sep">|</span><span>الشروط والأحكام</span><span class="ftr-sep">|</span><span>سياسة الخصوصية</span><span class="ftr-sep">|</span><span>حقوق النشر © 2026</span></div>
+      <div class="ftr-r">جي آي جي، شركة خاضعة لرقابة وإشراف هيئة التأمين</div>
+    </footer>
+  </div>
+
+</div><!-- /scene -->
+
+<script>
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms / 1.35));
+const scene = $('scene');
+const cur   = $('cursor');
+
+/* ══ SCALE ══ */
+function scaleScene(){
+  const sx=window.innerWidth/1024, sy=window.innerHeight/768;
+  const sc=Math.min(sx,sy);
+  const tx=(window.innerWidth-1024*sc)/2, ty=(window.innerHeight-768*sc)/2;
+  scene.style.transform=`translate(${tx}px,${ty}px) scale(${sc})`;
+}
+scaleScene(); window.addEventListener('resize',scaleScene);
+
+/* ══ CURSOR ══ */
+gsap.set(cur,{left:-60,top:-60,opacity:0});
+let trailTimer=null;
+function startTrail(){
+  if(trailTimer) clearInterval(trailTimer);
+  trailTimer=setInterval(()=>{
+    const x=parseFloat(cur.style.left||0), y=parseFloat(cur.style.top||0);
+    const d=document.createElement('div'); d.className='tr';
+    const sz=5+Math.random()*4;
+    d.style.cssText=`width:${sz}px;height:${sz}px;left:${x+18}px;top:${y+18}px;`;
+    document.body.appendChild(d); setTimeout(()=>d.remove(),520);
+  },42);
+}
+function stopTrail(){ clearInterval(trailTimer); }
+
+async function moveTo(x,y,dur=.52){
+  return new Promise(res=>gsap.to(cur,{left:x,top:y,duration:dur,ease:'power2.inOut',onComplete:res}));
+}
+async function clickAt(x,y){
+  await moveTo(x,y,.42);
+  sfx_click();
+  cur.classList.add('clicking');
+  const r=document.createElement('div'); r.className='ripple';
+  r.style.left=x+'px'; r.style.top=y+'px';
+  document.body.appendChild(r); setTimeout(()=>r.remove(),700);
+  await sleep(180); cur.classList.remove('clicking'); await sleep(100);
+}
+
+/* ══ TYPING ══ */
+async function typeIn(el,text,delay=68){
+  el.classList.add('focused'); el.value='';
+  let n=0;
+  for(const ch of text){
+    el.value+=ch; sfx_key(); n++;
+    if(n%3===0){ el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse'); }
+    await sleep(delay+Math.random()*28);
+  }
+  el.classList.remove('focused','pulse');
+  el.classList.add('filled','fill-flash');
+  setTimeout(()=>el.classList.remove('fill-flash'),700);
+}
+
+/* ══ ZOOM (generic — works for any screen) ══ */
+async function zoomTo(formEl, containerEl, targetEl, scale=1.55, dur=0.95, vShift=0){
+  gsap.set(formEl,{scale:1,x:0,y:0});
+  await new Promise(res=>requestAnimationFrame(res));
+  await new Promise(res=>requestAnimationFrame(res));
+  const cwr=containerEl.getBoundingClientRect();
+  const tgt=targetEl.getBoundingClientRect();
+  const fwr=formEl.getBoundingClientRect();
+  const tCX=tgt.left+tgt.width/2,  tCY=tgt.top+tgt.height/2;
+  const cCX=cwr.left+cwr.width/2,  cCY=cwr.top+cwr.height/2+vShift;
+  const oX=fwr.left+fwr.width/2,   oY=fwr.top;
+  const tx=cCX-oX-(tCX-oX)*scale;
+  const ty=cCY-oY-(tCY-oY)*scale;
+  return new Promise(res=>gsap.to(formEl,{scale,x:tx,y:ty,duration:dur,ease:'power3.inOut',onComplete:res}));
+}
+async function zoomOut(formEl,dur=0.9){
+  return new Promise(res=>gsap.to(formEl,{scale:1,x:0,y:0,duration:dur,ease:'power3.inOut',onComplete:res}));
+}
+
+/* ══ HELPERS ══ */
+const setP=p=>{ $('pf').style.width=p+'%'; };
+const showChk=id=>$('chk'+id).classList.add('show');
+const spotOn=n=>gsap.to($('spot'+n),{opacity:1,duration:.28});
+const spotOff=n=>gsap.to($('spot'+n),{opacity:0,duration:.28});
+const lblOn=n=>$('lbl'+n).classList.add('active');
+const lblOff=n=>$('lbl'+n).classList.remove('active');
+const pingOn=(id='stp1')=>$(id).classList.add('ping');
+const pingOff=(id='stp1')=>$(id).classList.remove('ping');
+function shimBtn(id){ const b=$(id); b.classList.remove('shim'); void b.offsetWidth; b.classList.add('shim'); }
+async function successFlash(flashEl){
+  gsap.to(flashEl,{backgroundColor:'rgba(39,174,96,0.12)',duration:.25,ease:'power2.out'});
+  await sleep(350);
+  gsap.to(flashEl,{backgroundColor:'rgba(39,174,96,0)',duration:.5,ease:'power2.inOut'});
+  await sleep(500);
+}
+
+/* ══ TRANSITION between screens — cinematic slide ══ */
+async function transitionTo(fromId, toId){
+  const trans    = $('trans');
+  const curtain  = $('trans-curtain');
+  const shine    = $('trans-shine');
+  const fromEl   = $(fromId);
+  const toEl     = $(toId);
+
+  /* make overlay visible */
+  gsap.set(trans,   { opacity:1 });
+  gsap.set(curtain, { x:'-100%' });
+  gsap.set(shine,   { opacity:0 });
+
+  /* curtain sweeps RIGHT across screen */
+  sfx_transition();
+  gsap.to(curtain, { x:'0%', duration:.55, ease:'power3.inOut' });
+  await sleep(280);
+
+  /* shine flash at peak */
+  gsap.to(shine, { opacity:1, duration:.2, ease:'power2.out',
+    onComplete: () => gsap.to(shine, { opacity:0, duration:.35 }) });
+
+  /* swap screens at midpoint */
+  fromEl.classList.remove('active');
+  toEl.classList.add('active');
+  await sleep(300);
+
+  /* curtain continues off to the RIGHT (reveal) */
+  gsap.to(curtain, { x:'100%', duration:.55, ease:'power3.inOut' });
+  await sleep(580);
+
+  /* hide overlay */
+  gsap.set(trans, { opacity:0 });
+  gsap.set(curtain, { x:'-100%' });
+}
+
+/* ══ TIMER ══ */
+function startCountdown(seconds=56){
+  const txt=$('timer-txt');
+  let rem=seconds;
+  const iv=setInterval(()=>{
+    rem--;
+    const m=Math.floor(rem/60), s=rem%60;
+    txt.textContent=`${m}:${s.toString().padStart(2,'0')}`;
+    if(rem<=0) clearInterval(iv);
+  },1000);
+  return iv;
+}
+
+/* ══════════════════════════════════════════
+   SCENE 1 — VERIFICATION
+══════════════════════════════════════════ */
+async function runScene1(){
+  const dim=$('dim1');
+
+  /* init */
+  gsap.set('.site-hdr',{y:-32,opacity:0});
+  gsap.set($('s1-sidebar'),{x:32,opacity:0});
+  gsap.set($('s1-form'),{y:26,scale:.97,opacity:0});
+  gsap.set($('s1-title'),{y:-16,opacity:0});
+  gsap.set(['#fg1','#fg2','#fg3'],{x:20,opacity:0});
+  gsap.set($('s1-btn'),{y:18,scale:.95,opacity:0});
+  gsap.set($('s1-ftr'),{opacity:0});
+
+  /* cinematic open */
+  await sleep(200);
+  /* branded open: curtain sweeps right then exits */
+  const cin = $('cin');
+  gsap.set(cin, { background:'linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%)' });
+  sfx_open();
+  gsap.to(cin, { x:'100%', duration:.85, ease:'power3.inOut',
+    onComplete:()=>{ cin.style.display='none'; gsap.set(cin,{x:'0%'}); }});
+  await sleep(900);
+  setP(2);
+
+  /* page builds off-screen */
+  gsap.to('.site-hdr',{y:0,opacity:1,duration:.75,ease:'power3.out',stagger:.08});
+  await sleep(650);
+  gsap.to($('s1-ftr'),{opacity:1,duration:.55});
+  await sleep(250);
+  gsap.to($('s1-sidebar'),{x:0,opacity:1,duration:.75,ease:'power3.out'});
+  await sleep(560);
+  gsap.to($('s1-form'),{y:0,scale:1,opacity:1,duration:.75,ease:'power3.out'});
+  await sleep(400);
+  gsap.to($('s1-title'),{y:0,opacity:1,duration:.65,ease:'back.out(1.5)'});
+  await sleep(300);
+  gsap.to($('fg1'),{x:0,opacity:1,duration:.5,ease:'power2.out'});
+  await sleep(120);
+  gsap.to($('fg2'),{x:0,opacity:1,duration:.5,ease:'power2.out'});
+  await sleep(120);
+  gsap.to($('fg3'),{x:0,opacity:1,duration:.5,ease:'power2.out'});
+  await sleep(300);
+  setP(18);
+
+  const s1form=$('s1-form'), s1cont=$('s1-content');
+
+  /* ── FIELD 1 ── */
+  act('إدخال رقم الهوية الوطنية');
+  pingOn(); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(s1form,s1cont,$('fg1'),1.55,0.95);
+  spotOn(1); lblOn(1);
+  const r1=$('inp1').getBoundingClientRect();
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  await moveTo(r1.left+r1.width*.62,r1.top+r1.height*.5,1.1);
+  await clickAt(r1.left+r1.width*.62,r1.top+r1.height*.5);
+  $('inp1').focus(); await sleep(180);
+  await typeIn($('inp1'),'2341968192',70);
+  lblOff(1); showChk(1); sfx_check(); await sleep(340);
+  spotOff(1); pingOff(); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(s1form,0.9); setP(36); await sleep(360);
+
+  /* ── FIELD 2 ── */
+  act('إدخال رقم الجوال');
+  pingOn(); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(s1form,s1cont,$('fg2'),1.55,0.95);
+  spotOn(2); lblOn(2);
+  const r2=$('inp2').getBoundingClientRect();
+  await moveTo(r2.left+r2.width*.55,r2.top+r2.height*.5,.55);
+  await clickAt(r2.left+r2.width*.55,r2.top+r2.height*.5);
+  $('inp2').classList.add('focused'); $('phcode').style.borderColor='#d28c64';
+  await sleep(180);
+  await typeIn($('inp2'),'537077897',74);
+  $('phcode').style.borderColor='#c8d8ff';
+  lblOff(2); showChk(2); sfx_check(); await sleep(340);
+  spotOff(2); pingOff(); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(s1form,0.9); setP(54); await sleep(360);
+
+  /* ── FIELD 3 ── */
+  act('إدخال البريد الإلكتروني');
+  pingOn(); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(s1form,s1cont,$('fg3'),1.55,0.95);
+  spotOn(3); lblOn(3);
+  const r3=$('inp3').getBoundingClientRect();
+  await moveTo(r3.left+r3.width*.55,r3.top+r3.height*.5,.55);
+  await clickAt(r3.left+r3.width*.55,r3.top+r3.height*.5);
+  $('inp3').focus(); $('inp3').classList.add('focused');
+  await sleep(180);
+  await typeIn($('inp3'),'ahmed@example.com',62);
+  lblOff(3); showChk(3); sfx_check(); await sleep(340);
+  spotOff(3); pingOff(); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(s1form,0.9); setP(70); await sleep(360);
+
+  /* sidebar progress line */
+  $('line1').classList.add('done'); await sleep(400);
+
+  /* ── BUTTON ── */
+  act('تأكيد البيانات والمتابعة');
+  gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(420);
+  shimBtn('s1-btn'); await sleep(500);
+  sfx_zoomin(); await zoomTo(s1form,s1cont,$('s1-btn'),1.3,0.85,80);
+  await sleep(320);
+  const rb=$('s1-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s1-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s1-btn').style.background='#2a1aaa',
+    onComplete:()=>setTimeout(()=>{ $('s1-btn').style.background='#19058c'; shimBtn('s1-btn'); },200)
+  });
+
+  setP(82); await sleep(500);
+  await zoomOut(s1form,0.85); await sleep(180);
+  sfx_success(); await successFlash($('s1-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+}
+
+/* ══════════════════════════════════════════
+   SCENE 2 — OTP
+══════════════════════════════════════════ */
+function resetScene2(){
+  ['b1','b2','b3','b4'].forEach(id=>{ const b=$(id); b.classList.remove('filled','active'); const d=b.querySelector('.digit'); if(d) d.textContent=''; });
+  $('s2-btn').classList.remove('ready'); $('s2-btn').style.background='';
+  $('timer-txt').textContent='0:56';
+  gsap.set($('otp-spot'),{opacity:0});
+  $('dim2').classList.remove('on');
+  gsap.set($('s2-form'),{y:24,scale:.97,opacity:0});
+  gsap.set($('otp-title'),{y:-16,opacity:0});
+  gsap.set($('otp-sub'),{y:10,opacity:0});
+  gsap.set($('otp-wrap'),{y:12,opacity:0});
+  gsap.set($('otp-timer'),{opacity:0});
+  gsap.set($('s2-btn'),{y:14,scale:.95,opacity:0});
+  gsap.set($('back-link'),{opacity:0});
+  gsap.set($('city'),{opacity:0});
+}
+
+async function runScene2(isFinal=true){
+  const dim=$('dim2');
+  resetScene2();
+
+  /* page builds */
+  setP(85);
+  sfx_city(); gsap.to($('city'),{opacity:1,duration:1.2});
+  await sleep(300);
+  gsap.to($('s2-form'),{y:0,scale:1,opacity:1,duration:.75,ease:'power3.out'});
+  await sleep(380);
+  gsap.to($('otp-title'),{y:0,opacity:1,duration:.65,ease:'back.out(1.4)'}); await sleep(280);
+  gsap.to($('otp-sub'),{y:0,opacity:1,duration:.55,ease:'power2.out'}); await sleep(260);
+  gsap.to($('otp-wrap'),{y:0,opacity:1,duration:.55,ease:'back.out(1.5)'}); await sleep(260);
+  gsap.to($('otp-timer'),{opacity:1,duration:.4});
+  const timerIv=startCountdown(56); await sleep(220);
+  gsap.to($('s2-btn'),{y:0,scale:1,opacity:1,duration:.6,ease:'back.out(1.7)'}); await sleep(180);
+  gsap.to($('back-link'),{opacity:1,duration:.4}); await sleep(400);
+
+  const s2form=$('s2-form'), s2cont=$('s2-main');
+
+  /* ── OTP BOXES (no dim / no zoom — clean, nothing gets clipped) ── */
+  act('إدخال رمز التحقق المُرسَل للجوال');
+  gsap.to($('otp-spot'),{opacity:1,duration:.28}); await sleep(220);
+
+  const b1r=$('b1').getBoundingClientRect();
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  await moveTo(b1r.left+b1r.width/2,b1r.top+b1r.height/2,1.0);
+
+  const boxes=['b1','b2','b3','b4'], code=['7','3','9','4'];
+  for(let i=0;i<4;i++){
+    const box=$(boxes[i]);
+    box.classList.add('active'); await sleep(160);
+    const br=box.getBoundingClientRect();
+    await clickAt(br.left+br.width/2,br.top+br.height/2);
+    await sleep(100);
+    box.querySelector('.digit').textContent=code[i];
+    sfx_otpdig(i);
+    box.classList.remove('active'); box.classList.add('filled');
+    if(i<3){ const nbr=$(boxes[i+1]).getBoundingClientRect(); await moveTo(nbr.left+nbr.width/2,nbr.top+nbr.height/2,.3); }
+    await sleep(150);
+  }
+
+  gsap.to($('otp-spot'),{opacity:0,duration:.28}); await sleep(340);
+
+  /* ── BUTTON ACTIVATES ── */
+  act('تأكيد رمز التحقق');
+  sfx_unlock(); $('s2-btn').classList.add('ready'); shimBtn('s2-btn'); await sleep(480);
+  const rb=$('s2-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s2-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s2-btn').style.background='#2a1aaa',
+    onComplete:()=>setTimeout(()=>{ $('s2-btn').style.background='#19058c'; shimBtn('s2-btn'); },200)
+  });
+
+  clearInterval(timerIv);
+  setP(100); await sleep(500);
+  sfx_success(); await successFlash($('s2-flash'));
+
+  stopTrail();
+  if(isFinal){
+    /* cinematic close — branded curtain sweeps in */
+    const end = document.createElement('div');
+    end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
+    document.body.appendChild(end);
+    gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
+    gsap.to(cur, { opacity:0, duration:.5 });
+  } else {
+    gsap.to(cur, { opacity:0, duration:.4 });
+  }
+}
+
+/* ══════════════════════════════════════════
+   SCENE 3 — VERIFICATION (COMPANY / BANK)
+══════════════════════════════════════════ */
+async function runScene3(){
+  const dim=$('dim3');
+
+  /* init (form elements already hidden via CSS — just set transforms) */
+  gsap.set($('s3-sidebar'),{x:32,opacity:0});
+  gsap.set($('s3-form'),{y:26,scale:.97,opacity:0});
+  gsap.set($('s3-title'),{y:-16,opacity:0});
+  gsap.set(['#fg4','#fg5','#fg6','#fg7'],{x:20,opacity:0});
+  gsap.set($('s3-btn'),{y:18,scale:.95,opacity:0});
+
+  setP(2);
+
+  /* page builds */
+  gsap.to($('s3-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
+  await sleep(480);
+  gsap.to($('s3-form'),{y:0,scale:1,opacity:1,duration:.7,ease:'power3.out'});
+  await sleep(360);
+  gsap.to($('s3-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.5)'});
+  await sleep(260);
+  gsap.to($('fg4'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to($('fg5'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to($('fg6'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to($('fg7'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  setP(16);
+
+  const f=$('s3-form'), c=$('s3-content');
+
+  /* ── FIELD 4 — owner / company ID ── */
+  act('إدخال رقم هوية المالك / المنشأة');
+  pingOn('stp1c'); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(f,c,$('fg4'),1.55,0.95);
+  spotOn(4); lblOn(4);
+  const r4=$('inp4').getBoundingClientRect();
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  await moveTo(r4.left+r4.width*.62,r4.top+r4.height*.5,1.1);
+  await clickAt(r4.left+r4.width*.62,r4.top+r4.height*.5);
+  $('inp4').focus(); await sleep(180);
+  await typeIn($('inp4'),'7001689913',70);
+  lblOff(4); showChk(4); sfx_check(); await sleep(340);
+  spotOff(4); pingOff('stp1c'); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(f,0.9); setP(30); await sleep(340);
+
+  /* ── FIELD 5 — driver ID ── */
+  act('إدخال رقم هوية السائق');
+  pingOn('stp1c'); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(f,c,$('fg5'),1.55,0.95);
+  spotOn(5); lblOn(5);
+  const r5=$('inp5').getBoundingClientRect();
+  await moveTo(r5.left+r5.width*.62,r5.top+r5.height*.5,.6);
+  await clickAt(r5.left+r5.width*.62,r5.top+r5.height*.5);
+  $('inp5').focus(); await sleep(180);
+  await typeIn($('inp5'),'2341968192',70);
+  lblOff(5); showChk(5); sfx_check(); await sleep(340);
+  spotOff(5); pingOff('stp1c'); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(f,0.9); setP(44); await sleep(340);
+
+  /* ── FIELD 6 — mobile ── */
+  act('إدخال رقم الجوال');
+  pingOn('stp1c'); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(f,c,$('fg6'),1.55,0.95);
+  spotOn(6); lblOn(6);
+  const r6=$('inp6').getBoundingClientRect();
+  await moveTo(r6.left+r6.width*.55,r6.top+r6.height*.5,.55);
+  await clickAt(r6.left+r6.width*.55,r6.top+r6.height*.5);
+  $('inp6').classList.add('focused'); $('phcode3').style.borderColor='#d28c64';
+  await sleep(180);
+  await typeIn($('inp6'),'537077897',74);
+  $('phcode3').style.borderColor='#c8d8ff';
+  lblOff(6); showChk(6); sfx_check(); await sleep(340);
+  spotOff(6); pingOff('stp1c'); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(f,0.9); setP(58); await sleep(360);
+
+  /* ── FIELD 7 — email (same as Scene 1) ── */
+  act('إدخال البريد الإلكتروني');
+  pingOn('stp1c'); dim.classList.add('on');
+  sfx_zoomin(); await zoomTo(f,c,$('fg7'),1.55,0.95);
+  spotOn(7); lblOn(7);
+  const r7=$('inp7').getBoundingClientRect();
+  await moveTo(r7.left+r7.width*.55,r7.top+r7.height*.5,.55);
+  await clickAt(r7.left+r7.width*.55,r7.top+r7.height*.5);
+  $('inp7').focus(); $('inp7').classList.add('focused');
+  await sleep(180);
+  await typeIn($('inp7'),'ahmed@example.com',62);
+  lblOff(7); showChk(7); sfx_check(); await sleep(340);
+  spotOff(7); pingOff('stp1c'); dim.classList.remove('on');
+  sfx_zoomout(); await zoomOut(f,0.9); setP(72); await sleep(360);
+
+  /* sidebar progress line */
+  $('line1c').classList.add('done'); await sleep(400);
+
+  /* ── BUTTON ── */
+  act('تأكيد البيانات والمتابعة');
+  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(420);
+  shimBtn('s3-btn'); await sleep(500);
+  sfx_zoomin(); await zoomTo(f,c,$('s3-btn'),1.3,0.85,80);
+  await sleep(320);
+  const rb=$('s3-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s3-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s3-btn').style.background='#2a1aaa',
+    onComplete:()=>setTimeout(()=>{ $('s3-btn').style.background='#19058c'; shimBtn('s3-btn'); },200)
+  });
+
+  setP(82); await sleep(500);
+  await zoomOut(f,0.85); await sleep(180);
+  sfx_success(); await successFlash($('s3-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+}
+
+/* ══════════════════════════════════════════
+   SCENE 4 — ACCIDENT DETAILS (NAJM)
+══════════════════════════════════════════ */
+const accSpot=(id,on)=>gsap.to($(id),{opacity:on?1:0,duration:.28});
+function selCard(id){ const el=$(id); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('sel','pop'); }
+
+/* smooth vertical scroll of the (tall) accident form so a target sits in view */
+let s4y = 0;
+function curScale(){ return Math.min(window.innerWidth/1024, window.innerHeight/768); }
+async function scrollToEl(formEl, contEl, targetEl, dur=0.7, frac=0.42){
+  const sc   = curScale();
+  const cont = contEl.getBoundingClientRect();
+  const tgt  = targetEl.getBoundingClientRect();
+  const desired = cont.top + cont.height*frac;
+  const current = tgt.top + tgt.height/2;
+  s4y += (desired - current)/sc;
+  if(s4y > 0) s4y = 0;
+  const maxScroll = Math.max(0, formEl.offsetHeight - contEl.clientHeight + 30);
+  if(s4y < -maxScroll) s4y = -maxScroll;
+  return new Promise(res=>gsap.to(formEl,{y:s4y,duration:dur,ease:'power2.inOut',onComplete:res}));
+}
+
+async function runScene4(){
+  const f=$('s4-form'), c=$('s4-content');
+  s4y=0;
+
+  /* init */
+  gsap.set($('s4-sidebar'),{x:32,opacity:0});
+  gsap.set($('s4-leftpanel'),{x:-32,opacity:0});
+  gsap.set($('s4-form'),{y:20,opacity:0,scale:1,x:0});
+  gsap.set($('s4-title'),{y:-16,opacity:0});
+  gsap.set('#sec-source',{y:16,opacity:0});
+  gsap.set(['#sec-type','#sec-owner','#sec-info','#s4-btn','#s4-back'],{y:16,opacity:0});
+  $('fld-driver').style.display='none';
+
+  setP(2);
+
+  /* build in (header/footer static) */
+  gsap.to($('s4-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
+  await sleep(420);
+  gsap.to($('s4-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
+  await sleep(360);
+  gsap.to($('s4-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'});
+  await sleep(320);
+  gsap.to($('s4-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'});
+  await sleep(260);
+  gsap.to('#sec-source',{y:0,opacity:1,duration:.55,ease:'power2.out'});
+  await sleep(360);
+  setP(14);
+
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  pingOn('s4-stp2');
+
+  /* ── 1) SOURCE = نجم (cursor goes straight to نجم) ── */
+  act('اختيار مصدر البلاغ: نجم');
+  await scrollToEl(f,c,$('sec-source'),.6,.5);
+  accSpot('spot-src',true); await sleep(160);
+  const rnajm=$('src-najm').getBoundingClientRect();
+  await moveTo(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2,.95);
+  sfx_confirm(); await clickAt(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2);
+  selCard('src-najm'); sfx_check(); await sleep(340);
+  accSpot('spot-src',false); await sleep(220);
+
+  /* reveal the rest of the form */
+  gsap.to('#sec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
+  gsap.to('#sec-owner',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
+  gsap.to('#sec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
+  gsap.to('#s4-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(60);
+  gsap.to('#s4-back',{y:0,opacity:1,duration:.4}); await sleep(300);
+  setP(28);
+
+  /* ── 2) TYPE = أضرار في المركبة ── */
+  act('اختيار نوع الحادث: أضرار في المركبة');
+  await scrollToEl(f,c,$('sec-type'),.7,.45);
+  accSpot('spot-type',true); await sleep(140);
+  const rveh=$('type-veh').getBoundingClientRect();
+  await moveTo(rveh.left+rveh.width/2,rveh.top+rveh.height/2,.7);
+  sfx_confirm(); await clickAt(rveh.left+rveh.width/2,rveh.top+rveh.height/2);
+  selCard('type-veh'); sfx_check(); await sleep(340);
+  accSpot('spot-type',false); setP(42); await sleep(240);
+
+  /* ── 3) OWNER = لا → driver identity ── */
+  act('تحديد المالك وإدخال رقم هوية السائق');
+  await scrollToEl(f,c,$('sec-owner'),.7,.4);
+  accSpot('spot-owner',true); await sleep(140);
+  const rno=$('own-no').getBoundingClientRect();
+  await moveTo(rno.left+rno.width/2,rno.top+rno.height/2,.7);
+  sfx_click(); await clickAt(rno.left+rno.width/2,rno.top+rno.height/2);
+  $('own-no').classList.add('sel'); sfx_check(); await sleep(220);
+
+  /* driver field slides in */
+  $('fld-driver').style.display='block';
+  gsap.fromTo($('fld-driver'),{opacity:0,y:-8},{opacity:1,y:0,duration:.45,ease:'power2.out'});
+  await sleep(320);
+  await scrollToEl(f,c,$('fld-driver'),.55,.5);
+  $('lbl-driver').classList.add('active');
+  const rdrv=$('inp-driver').getBoundingClientRect();
+  await moveTo(rdrv.left+rdrv.width*.55,rdrv.top+rdrv.height*.5,.6);
+  await clickAt(rdrv.left+rdrv.width*.55,rdrv.top+rdrv.height*.5);
+  await sleep(160);
+  await typeIn($('inp-driver'),'2094309909',68);
+  $('lbl-driver').classList.remove('active'); $('chk-driver').classList.add('show'); sfx_check(); await sleep(340);
+  accSpot('spot-owner',false); setP(58); await sleep(240);
+
+  /* ── 4) NAJM REPORT NUMBER ── */
+  act('إدخال رقم تقرير نجم');
+  await scrollToEl(f,c,$('fld-najm'),.7,.45);
+  accSpot('spot-najm',true);
+  $('lbl-najm').classList.add('active'); await sleep(120);
+  const rn=$('inp-najm').getBoundingClientRect();
+  await moveTo(rn.left+rn.width*.55,rn.top+rn.height*.5,.7);
+  await clickAt(rn.left+rn.width*.55,rn.top+rn.height*.5);
+  await sleep(160);
+  await typeIn($('inp-najm'),'RD1805262256',58);
+  $('lbl-najm').classList.remove('active'); $('chk-najm').classList.add('show'); sfx_check(); await sleep(340);
+  accSpot('spot-najm',false); setP(72); await sleep(220);
+
+  /* ── 5) SERIAL / CUSTOMS NUMBER ── */
+  act('إدخال الرقم التسلسلي للمركبة');
+  await scrollToEl(f,c,$('fld-serial'),.6,.45);
+  accSpot('spot-serial',true);
+  $('lbl-serial').classList.add('active'); await sleep(120);
+  const rs=$('inp-serial').getBoundingClientRect();
+  await moveTo(rs.left+rs.width*.55,rs.top+rs.height*.5,.7);
+  await clickAt(rs.left+rs.width*.55,rs.top+rs.height*.5);
+  await sleep(160);
+  await typeIn($('inp-serial'),'956423220',62);
+  $('lbl-serial').classList.remove('active'); $('chk-serial').classList.add('show'); sfx_check(); await sleep(340);
+  accSpot('spot-serial',false); setP(86); await sleep(240);
+
+  /* step 2 line completes */
+  pingOff('s4-stp2');
+  $('s4-line2').classList.add('done'); await sleep(320);
+
+  /* ── BUTTON ── */
+  act('حفظ تفاصيل الحادث والمتابعة');
+  await scrollToEl(f,c,$('s4-btn'),.6,.5);
+  sfx_btnpop(); shimBtn('s4-btn'); await sleep(360);
+  const rb=$('s4-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(260); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s4-btn'),{scale:.97,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s4-btn').style.background='#2a1aaa',
+    onComplete:()=>setTimeout(()=>{ $('s4-btn').style.background='#19058c'; shimBtn('s4-btn'); },200)
+  });
+
+  setP(70); await sleep(450);
+  sfx_success(); await successFlash($('s4-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+}
+
+/* ══════════════════════════════════════════
+   SCENE 5 — ESTIMATE & BANK DETAILS
+══════════════════════════════════════════ */
+let s5y = 0;
+async function s5scroll(targetEl, dur=0.65, frac=0.45){
+  const f=$('s5-form'), c=$('s5-content');
+  const sc=curScale();
+  const cont=c.getBoundingClientRect(), tgt=targetEl.getBoundingClientRect();
+  s5y += (cont.top + cont.height*frac - (tgt.top + tgt.height/2))/sc;
+  if(s5y>0) s5y=0;
+  const maxScroll=Math.max(0, f.offsetHeight - c.clientHeight + 30);
+  if(s5y < -maxScroll) s5y=-maxScroll;
+  return new Promise(res=>gsap.to(f,{y:s5y,duration:dur,ease:'power2.inOut',onComplete:res}));
+}
+
+async function runScene5(){
+  const f=$('s5-form'), c=$('s5-content');
+  s5y=0;
+
+  /* init */
+  gsap.set($('s5-sidebar'),{x:32,opacity:0});
+  gsap.set($('s5-leftpanel'),{x:-32,opacity:0});
+  gsap.set($('s5-form'),{y:20,opacity:0,scale:1,x:0});
+  gsap.set($('s5-title'),{y:-16,opacity:0});
+  gsap.set('#veh-card',{y:16,opacity:0});
+  gsap.set(['#sec-evaltype','#sec-evalnum','#sec-doc1','#sec-settle','#sec-iban','#sec-doc2','#s5-btn'],{y:16,opacity:0});
+
+  setP(72);
+
+  /* build in */
+  gsap.to($('s5-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(420);
+  gsap.to($('s5-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(340);
+  gsap.to($('s5-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(300);
+  gsap.to($('s5-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(240);
+  gsap.to('#veh-card',{y:0,opacity:1,duration:.55,ease:'power3.out'}); await sleep(260);
+  gsap.to('#sec-evaltype',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-evalnum',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-doc1',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-settle',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-iban',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#sec-doc2',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
+  gsap.to('#s5-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  setP(74);
+
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  pingOn('s5-stp3');
+
+  /* glance at the vehicle card */
+  await s5scroll($('veh-card'),.6,.45); await sleep(420);
+
+  /* ── 1) EVALUATION TYPE = تقدير ── */
+  act('اختيار نوع التقييم: تقدير');
+  await s5scroll($('sec-evaltype'),.6,.5);
+  accSpot('spot-evaltype',true); await sleep(140);
+  const re=$('eval-est').getBoundingClientRect();
+  await moveTo(re.left+re.width/2,re.top+re.height/2,.85);
+  sfx_confirm(); await clickAt(re.left+re.width/2,re.top+re.height/2);
+  selCard('eval-est'); sfx_check(); await sleep(320);
+  accSpot('spot-evaltype',false); setP(78); await sleep(220);
+
+  /* ── 2) EVALUATION NUMBER + تحقق ── */
+  act('إدخال رقم التقييم والتحقق منه');
+  await s5scroll($('sec-evalnum'),.65,.45);
+  accSpot('spot-evalnum',true); $('lbl-evalnum').classList.add('active'); await sleep(120);
+  const ren=$('inp-evalnum').getBoundingClientRect();
+  await moveTo(ren.left+ren.width*.5,ren.top+ren.height*.5,.7);
+  await clickAt(ren.left+ren.width*.5,ren.top+ren.height*.5);
+  await sleep(150);
+  await typeIn($('inp-evalnum'),'1004267894',64);
+  $('lbl-evalnum').classList.remove('active');
+  /* press تحقق */
+  const rv=$('vrf-eval').getBoundingClientRect();
+  await moveTo(rv.left+rv.width/2,rv.top+rv.height/2,.55);
+  sfx_confirm(); $('vrf-eval').classList.add('pressed');
+  await clickAt(rv.left+rv.width/2,rv.top+rv.height/2);
+  setTimeout(()=>$('vrf-eval').classList.remove('pressed'),220);
+  await sleep(160); $('chk-evalnum').classList.add('show'); sfx_check(); await sleep(320);
+  accSpot('spot-evalnum',false); setP(80); await sleep(220);
+
+  /* ── 3) ESTIMATE DOCUMENT (upload) ── */
+  act('إرفاق مستند التقدير');
+  await s5scroll($('sec-doc1'),.6,.5);
+  accSpot('spot-doc1',true); await sleep(120);
+  const rd1=$('file-doc1').getBoundingClientRect();
+  await moveTo(rd1.left+rd1.width*.5,rd1.top+rd1.height*.5,.7);
+  sfx_click(); await clickAt(rd1.left+rd1.width*.5,rd1.top+rd1.height*.5);
+  await sleep(240); $('file-doc1').classList.add('attached'); sfx_check(); await sleep(360);
+  accSpot('spot-doc1',false); setP(82); await sleep(220);
+
+  /* ── 4) SETTLEMENT TYPE = تعويض ── */
+  act('اختيار طريقة التسوية: تعويض نقدي');
+  await s5scroll($('sec-settle'),.6,.5);
+  accSpot('spot-settle',true); await sleep(140);
+  const rc=$('settle-comp').getBoundingClientRect();
+  await moveTo(rc.left+rc.width/2,rc.top+rc.height/2,.8);
+  sfx_confirm(); await clickAt(rc.left+rc.width/2,rc.top+rc.height/2);
+  selCard('settle-comp'); sfx_check(); await sleep(320);
+  accSpot('spot-settle',false); setP(84); await sleep(220);
+
+  /* ── 5) IBAN ── */
+  act('إدخال رقم الآيبان البنكي');
+  await s5scroll($('sec-iban'),.65,.45);
+  accSpot('spot-iban',true); $('lbl-iban').classList.add('active'); await sleep(120);
+  const ri=$('inp-iban').getBoundingClientRect();
+  await moveTo(ri.left+ri.width*.5,ri.top+ri.height*.5,.7);
+  await clickAt(ri.left+ri.width*.5,ri.top+ri.height*.5);
+  await sleep(150);
+  await typeIn($('inp-iban'),'1875647962498888745555',46);
+  $('lbl-iban').classList.remove('active'); $('chk-iban').classList.add('show'); sfx_check(); await sleep(320);
+  accSpot('spot-iban',false); setP(86); await sleep(220);
+
+  /* ── 6) IBAN CERTIFICATE (upload) ── */
+  act('إرفاق شهادة الآيبان البنكي');
+  await s5scroll($('sec-doc2'),.6,.5);
+  accSpot('spot-doc2',true); await sleep(120);
+  const rd2=$('file-doc2').getBoundingClientRect();
+  await moveTo(rd2.left+rd2.width*.5,rd2.top+rd2.height*.5,.7);
+  sfx_click(); await clickAt(rd2.left+rd2.width*.5,rd2.top+rd2.height*.5);
+  await sleep(240); $('file-doc2').classList.add('attached'); sfx_check(); await sleep(360);
+  accSpot('spot-doc2',false); setP(88); await sleep(220);
+
+  /* step 3 line completes */
+  pingOff('s5-stp3');
+  $('s5-line3').classList.add('done'); await sleep(320);
+
+  /* ── BUTTON ── */
+  act('حفظ البيانات البنكية والمتابعة');
+  await s5scroll($('s5-btn'),.6,.5);
+  sfx_btnpop(); shimBtn('s5-btn'); await sleep(360);
+  const rb=$('s5-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(260); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s5-btn'),{scale:.97,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s5-btn').style.background='#2a1aaa',
+    onComplete:()=>setTimeout(()=>{ $('s5-btn').style.background='#19058c'; shimBtn('s5-btn'); },200)
+  });
+
+  setP(90); await sleep(450);
+  sfx_success(); await successFlash($('s5-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+}
+
+/* ══════════════════════════════════════════
+   SCENE 6 — REVIEW & SUBMIT
+══════════════════════════════════════════ */
+let s6y = 0;
+async function s6scroll(targetEl, dur=0.7, frac=0.5){
+  const body=$('s6-body'), grid=$('s6-grid');
+  const sc=curScale();
+  const cont=body.getBoundingClientRect(), tgt=targetEl.getBoundingClientRect();
+  s6y += (cont.top + cont.height*frac - (tgt.top + tgt.height/2))/sc;
+  if(s6y>0) s6y=0;
+  const maxScroll=Math.max(0, grid.offsetHeight - body.clientHeight + 30);
+  if(s6y < -maxScroll) s6y=-maxScroll;
+  return new Promise(res=>gsap.to(grid,{y:s6y,duration:dur,ease:'power2.inOut',onComplete:res}));
+}
+const hl=(id,on)=>$(id).classList[on?'add':'remove']('hl');
+
+async function runScene6(isFinal=false){
+  s6y=0;
+
+  /* init */
+  gsap.set('#s6-banner',{opacity:0,y:-20});
+  gsap.set('#s6-grid',{y:0});
+  gsap.set(['#rev-claim','#rev-personal','#rev-policy'],{opacity:0,y:22});
+  gsap.set('#s6-success',{opacity:0});
+  gsap.set('.suc-card',{scale:.9});
+
+  setP(92);
+
+  /* build in */
+  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(440);
+  gsap.to('#rev-claim',{opacity:1,y:0,duration:.6,ease:'power3.out'}); await sleep(240);
+  gsap.to('#rev-personal',{opacity:1,y:0,duration:.55,ease:'power3.out'}); await sleep(170);
+  gsap.to('#rev-policy',{opacity:1,y:0,duration:.55,ease:'power3.out'}); await sleep(420);
+
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+
+  /* review the data — gentle highlights */
+  act('مراجعة البيانات الشخصية');
+  const rp=$('rev-personal').getBoundingClientRect();
+  await moveTo(rp.left+rp.width*.5,rp.top+rp.height*.5,1.0);
+  hl('rev-personal',true); await sleep(680); hl('rev-personal',false);
+  act('مراجعة بيانات الوثيقة');
+  const rpo=$('rev-policy').getBoundingClientRect();
+  await moveTo(rpo.left+rpo.width*.5,rpo.top+rpo.height*.5,.55);
+  hl('rev-policy',true); await sleep(680); hl('rev-policy',false);
+  setP(95);
+
+  /* glance over the claim card, scrolling to the bank section */
+  act('مراجعة تفاصيل المطالبة والبيانات البنكية');
+  hl('rev-claim',true);
+  const rc=$('rev-claim').getBoundingClientRect();
+  await moveTo(rc.left+rc.width*.5,rc.top+rc.height*.4,.7);
+  await sleep(500);
+  await s6scroll($('s6-submit'),.9,.62); await sleep(300);
+  hl('rev-claim',false);
+  setP(98);
+
+  /* ── SUBMIT ── */
+  act('تقديم المطالبة');
+  sfx_btnpop(); shimBtn('s6-submit'); await sleep(360);
+  const rb=$('s6-submit').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s6-submit'),{scale:.97,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s6-submit').style.background='#2a1aaa',
+    onComplete:()=>setTimeout(()=>{ $('s6-submit').style.background='#19058c'; },200)
+  });
+  setP(100); await sleep(420);
+
+  /* ── SUCCESS MESSAGE ── */
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.35});
+  $('s6-success').classList.add('show');
+  gsap.to('#s6-success',{opacity:1,duration:.4,ease:'power2.out'});
+  gsap.to('.suc-card',{scale:1,duration:.55,ease:'back.out(1.6)'});
+  sfx_success();
+  await sleep(1900);
+
+  /* cinematic close — only on the very last run */
+  if(isFinal){
+    const end = document.createElement('div');
+    end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
+    document.body.appendChild(end);
+    gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
+  } else {
+    await sleep(400);
+    $('s6-success').classList.remove('show');
+    gsap.set('#s6-success',{opacity:0});
+    gsap.set('.suc-card',{scale:.9});
+  }
+}
+
+/* ══════════════════════════════════════════
+   SCENE 7 — ACCIDENT DETAILS (باشر / المرور)
+══════════════════════════════════════════ */
+async function runScene7(){
+  const f=$('s7-form'), c=$('s7-content');
+  s4y=0;
+
+  gsap.set($('s7-sidebar'),{x:32,opacity:0});
+  gsap.set($('s7-leftpanel'),{x:-32,opacity:0});
+  gsap.set($('s7-form'),{y:20,opacity:0,scale:1,x:0});
+  gsap.set($('s7-title'),{y:-16,opacity:0});
+  gsap.set('#bsec-source',{y:16,opacity:0});
+  gsap.set(['#bsec-type','#bsec-info','#bsec-ins','#bsec-docs','#s7-btn'],{y:16,opacity:0});
+
+  setP(2);
+  gsap.to($('s7-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(420);
+  gsap.to($('s7-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(340);
+  gsap.to($('s7-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(320);
+  gsap.to($('s7-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(260);
+  gsap.to('#bsec-source',{y:0,opacity:1,duration:.55,ease:'power2.out'}); await sleep(360);
+  setP(12);
+
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  pingOn('s7-stp2');
+
+  /* 1) SOURCE = باشر / المرور */
+  act('اختيار مصدر البلاغ: باشر / المرور');
+  await scrollToEl(f,c,$('bsec-source'),.6,.5);
+  accSpot('bspot-source',true); await sleep(160);
+  let r=$('bsrc-basher').getBoundingClientRect();
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.95);
+  sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
+  selCard('bsrc-basher'); sfx_check(); await sleep(320);
+  accSpot('bspot-source',false); await sleep(200);
+
+  gsap.to('#bsec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
+  gsap.to('#bsec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
+  gsap.to('#bsec-ins',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
+  gsap.to('#bsec-docs',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(60);
+  gsap.to('#s7-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  setP(22);
+
+  /* 2) TYPE = أضرار في المركبة */
+  act('اختيار نوع الحادث: أضرار في المركبة');
+  await scrollToEl(f,c,$('bsec-type'),.65,.45);
+  accSpot('bspot-type',true); await sleep(140);
+  r=$('btype-veh').getBoundingClientRect();
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.8);
+  sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
+  selCard('btype-veh'); sfx_check(); await sleep(320);
+  accSpot('bspot-type',false); setP(34); await sleep(220);
+
+  /* 3) باشر report number */
+  act('إدخال رقم بلاغ باشر');
+  await scrollToEl(f,c,$('bfld-report'),.6,.45);
+  accSpot('bspot-report',true); $('blbl-report').classList.add('active'); await sleep(120);
+  r=$('binp-report').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.7);
+  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
+  await typeIn($('binp-report'),'6000000000',60);
+  $('blbl-report').classList.remove('active'); $('bchk-report').classList.add('show'); sfx_check(); await sleep(320);
+  accSpot('bspot-report',false); setP(46); await sleep(200);
+
+  /* 4) serial number */
+  act('إدخال الرقم التسلسلي للمركبة');
+  await scrollToEl(f,c,$('bfld-serial'),.6,.42);
+  accSpot('bspot-serial',true); $('blbl-serial').classList.add('active'); await sleep(120);
+  r=$('binp-serial').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
+  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
+  await typeIn($('binp-serial'),'187987410',62);
+  $('blbl-serial').classList.remove('active'); $('bchk-serial').classList.add('show'); sfx_check(); await sleep(280);
+  accSpot('bspot-serial',false); setP(55); await sleep(160);
+
+  /* 5) accident date */
+  act('إدخال تاريخ وقوع الحادث');
+  accSpot('bspot-date',true); $('blbl-date').classList.add('active'); await sleep(120);
+  r=$('binp-date').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.55);
+  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
+  await typeIn($('binp-date'),'14/05/2026',72);
+  $('blbl-date').classList.remove('active'); $('bchk-date').classList.add('show'); sfx_check(); await sleep(300);
+  accSpot('bspot-date',false); setP(63); await sleep(200);
+
+  /* 6) insured by GIG = لا */
+  act('تحديد جهة التأمين على المركبة');
+  await scrollToEl(f,c,$('bsec-ins'),.6,.5);
+  accSpot('bspot-ins',true); await sleep(140);
+  r=$('bins-no').getBoundingClientRect();
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.7);
+  sfx_click(); await clickAt(r.left+r.width/2,r.top+r.height/2);
+  $('bins-no').classList.add('sel'); sfx_check(); await sleep(300);
+  accSpot('bspot-ins',false); setP(70); await sleep(200);
+
+  /* 7) required documents (3 uploads) */
+  act('إرفاق المستندات المطلوبة');
+  const docs=[['bfld-doc1','bspot-doc1','bfile-report',78],['bfld-doc2','bspot-doc2','bfile-license',85],['bfld-doc3','bspot-doc3','bfile-form',92]];
+  for(const [fld,spot,file,p] of docs){
+    await scrollToEl(f,c,$(fld),.55,.45);
+    accSpot(spot,true); await sleep(120);
+    r=$(file).getBoundingClientRect();
+    await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
+    sfx_click(); await clickAt(r.left+r.width*.5,r.top+r.height*.5);
+    await sleep(220); $(file).classList.add('attached'); sfx_check(); await sleep(300);
+    accSpot(spot,false); setP(p); await sleep(150);
+  }
+
+  /* step 2 line completes */
+  pingOff('s7-stp2');
+  $('s7-line2').classList.add('done'); await sleep(320);
+
+  /* BUTTON */
+  act('حفظ تفاصيل الحادث والمتابعة');
+  await scrollToEl(f,c,$('s7-btn'),.6,.55);
+  sfx_btnpop(); shimBtn('s7-btn'); await sleep(360);
+  const rb=$('s7-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(260); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s7-btn'),{scale:.97,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s7-btn').style.background='#2a1aaa',
+    onComplete:()=>setTimeout(()=>{ $('s7-btn').style.background='#19058c'; shimBtn('s7-btn'); },200)
+  });
+  setP(98); await sleep(450);
+  sfx_success(); await successFlash($('s7-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+}
+
+/* ══════════════════════════════════════════
+   SCENE 8 — ACCIDENT DETAILS (أخرى — عملاء GIG) — FINALE
+══════════════════════════════════════════ */
+async function runScene8(){
+  const f=$('s8-form'), c=$('s8-content');
+  s4y=0;
+
+  gsap.set($('s8-sidebar'),{x:32,opacity:0});
+  gsap.set($('s8-leftpanel'),{x:-32,opacity:0});
+  gsap.set($('s8-form'),{y:20,opacity:0,scale:1,x:0});
+  gsap.set($('s8-title'),{y:-16,opacity:0});
+  gsap.set('#csec-source',{y:16,opacity:0});
+  gsap.set(['#csec-type','#csec-info','#csec-docs','#s8-btn'],{y:16,opacity:0});
+
+  setP(2);
+  gsap.to($('s8-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(420);
+  gsap.to($('s8-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(340);
+  gsap.to($('s8-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(320);
+  gsap.to($('s8-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(260);
+  gsap.to('#csec-source',{y:0,opacity:1,duration:.55,ease:'power2.out'}); await sleep(360);
+  setP(12);
+
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  pingOn('s8-stp2');
+
+  /* 1) SOURCE = أخرى */
+  act('اختيار مصدر البلاغ: أخرى');
+  await scrollToEl(f,c,$('csec-source'),.6,.5);
+  accSpot('cspot-source',true); await sleep(160);
+  let r=$('csrc-other').getBoundingClientRect();
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.95);
+  sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
+  selCard('csrc-other'); sfx_check(); await sleep(320);
+  accSpot('cspot-source',false); await sleep(200);
+
+  gsap.to('#csec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
+  gsap.to('#csec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
+  gsap.to('#csec-docs',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(60);
+  gsap.to('#s8-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  setP(20);
+
+  /* 2) TYPE = أضرار في الزجاج */
+  act('اختيار نوع الحادث: أضرار في الزجاج');
+  await scrollToEl(f,c,$('csec-type'),.65,.45);
+  accSpot('cspot-type',true); await sleep(140);
+  r=$('ctype-glass').getBoundingClientRect();
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.8);
+  sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
+  selCard('ctype-glass'); sfx_check(); await sleep(320);
+  accSpot('cspot-type',false); setP(32); await sleep(220);
+
+  /* 3) serial number */
+  act('إدخال الرقم التسلسلي للمركبة');
+  await scrollToEl(f,c,$('cfld-serial'),.6,.45);
+  accSpot('cspot-serial',true); $('clbl-serial').classList.add('active'); await sleep(120);
+  r=$('cinp-serial').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.7);
+  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
+  await typeIn($('cinp-serial'),'256413870',62);
+  $('clbl-serial').classList.remove('active'); $('cchk-serial').classList.add('show'); sfx_check(); await sleep(300);
+  accSpot('cspot-serial',false); setP(42); await sleep(180);
+
+  /* 4) city dropdown = الرياض */
+  act('اختيار مدينة وقوع الحادث');
+  await scrollToEl(f,c,$('cfld-city'),.6,.42);
+  accSpot('cspot-city',true); await sleep(120);
+  r=$('csel-city').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
+  sfx_click(); await clickAt(r.left+r.width*.5,r.top+r.height*.5);
+  $('csel-city').classList.add('focused'); await sleep(260);
+  $('csel-city-val').textContent='الرياض'; $('csel-city').classList.remove('focused'); $('csel-city').classList.add('filled');
+  sfx_check(); await sleep(280);
+  accSpot('cspot-city',false); setP(46); await sleep(160);
+
+  /* 5) accident date */
+  act('إدخال تاريخ وقوع الحادث');
+  accSpot('cspot-date',true); $('clbl-date').classList.add('active'); await sleep(120);
+  r=$('cinp-date').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.55);
+  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
+  await typeIn($('cinp-date'),'14/05/2026',72);
+  $('clbl-date').classList.remove('active'); $('cchk-date').classList.add('show'); sfx_check(); await sleep(280);
+  accSpot('cspot-date',false); setP(52); await sleep(180);
+
+  /* 6) accident description */
+  act('كتابة وصف الحادث');
+  await scrollToEl(f,c,$('cfld-desc'),.6,.4);
+  accSpot('cspot-desc',true); $('clbl-desc').classList.add('active'); await sleep(120);
+  r=$('cinp-desc').getBoundingClientRect();
+  await moveTo(r.left+r.width*.5,r.top+r.height*.4,.7);
+  await clickAt(r.left+r.width*.5,r.top+r.height*.4); await sleep(150);
+  await typeIn($('cinp-desc'),'تعرّض زجاج المركبة الأمامي للكسر نتيجة الأمطار والسيول في موقع الحادث.',34);
+  $('clbl-desc').classList.remove('active'); sfx_check(); await sleep(300);
+  accSpot('cspot-desc',false); setP(57); await sleep(180);
+
+  /* 7) required documents (3 required uploads) */
+  act('إرفاق المستندات المطلوبة');
+  const docs=[['cfld-doc1','cspot-doc1','cfile-photos',60],['cfld-doc2','cspot-doc2','cfile-form',64],['cfld-doc3','cspot-doc3','cfile-license',68]];
+  for(const [fld,spot,file,p] of docs){
+    await scrollToEl(f,c,$(fld),.55,.45);
+    accSpot(spot,true); await sleep(120);
+    r=$(file).getBoundingClientRect();
+    await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
+    sfx_click(); await clickAt(r.left+r.width*.5,r.top+r.height*.5);
+    await sleep(220); $(file).classList.add('attached'); sfx_check(); await sleep(300);
+    accSpot(spot,false); setP(p); await sleep(150);
+  }
+
+  /* step 2 line completes */
+  pingOff('s8-stp2');
+  $('s8-line2').classList.add('done'); await sleep(320);
+
+  /* BUTTON */
+  act('حفظ تفاصيل الحادث والمتابعة');
+  await scrollToEl(f,c,$('s8-btn'),.6,.55);
+  sfx_btnpop(); shimBtn('s8-btn'); await sleep(360);
+  const rb=$('s8-btn').getBoundingClientRect();
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
+  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
+  await sleep(260); sfx_confirm(); await clickAt(xb,yb);
+  gsap.to($('s8-btn'),{scale:.97,duration:.08,yoyo:true,repeat:1,
+    onStart:()=>$('s8-btn').style.background='#2a1aaa',
+    onComplete:()=>setTimeout(()=>{ $('s8-btn').style.background='#19058c'; shimBtn('s8-btn'); },200)
+  });
+  setP(70); await sleep(450);
+  sfx_success(); await successFlash($('s8-flash'));
+  stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+}
+
+/* ── tell a parent presentation page which scene is on screen ── */
+function sig(key){ try{ parent.postMessage({gigScene:key}, '*'); }catch(e){} }
+/* ── live action caption: updates the parent's subtitle per micro-step ── */
+function act(txt){ try{ parent.postMessage({gigAction:txt}, '*'); }catch(e){} }
+
+/* ══ MASTER SEQUENCE — V2 (≈ 2 دقيقة) ══
+   التغييرات عن النسخة الأصلية:
+   • السرعة: 1.35× أسرع (sleep + GSAP timeScale)
+   • حُذف OTP الثاني (بعد المنشأة)
+   • حُذفت E+R الخاصة بباشر — الباشر يتحول مباشرة لـ "أخرى"
+   • بقي مسار كامل (نجم) + مسار نهائي (أخرى) مع التقدير والمراجعة
+════════════════════════════════════════════ */
+async function run(){
+  gsap.globalTimeline.timeScale(1.35);
+
+  /* ── الجزء A: عميل فرد — التحقق + OTP ── */
+  sig('s1');  await runScene1();
+  await transitionTo('s1','s2');
+  sig('otp'); await runScene2(false);
+
+  /* ── الجزء B: منشأة / بنك — التحقق (بدون OTP ثانٍ) ── */
+  await transitionTo('s2','s3');
+  sig('s3');  await runScene3();
+
+  /* ── الجزء C: نجم ← تقرير الحادث ← التقدير ← المراجعة ── */
+  await transitionTo('s3','s4');
+  sig('najm'); await runScene4();
+  await transitionTo('s4','s5');  sig('estimate'); await runScene5();
+  await transitionTo('s5','s6');  sig('review');   await runScene6(false);
+
+  /* ── الجزء D: باشر / المرور ← تقرير الحادث ── */
+  await transitionTo('s6','s7');
+  sig('basher'); await runScene7();
+
+  /* ── الجزء E: أخرى ← التقدير ← المراجعة النهائية ── */
+  await transitionTo('s7','s8');
+  sig('other'); await runScene8();
+  await transitionTo('s8','s5');  sig('estimate'); await runScene5();
+  await transitionTo('s5','s6');  sig('review');   await runScene6(true);
+  sig('end');
+}
+
+
+/* ════════════════════════════════════════════════
+   AUDIO ENGINE — Web Audio API (no external files)
+   All sounds synthesized procedurally
+════════════════════════════════════════════════ */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let actx = null;
+
+function getACtx() {
+  if (!actx) actx = new AudioCtx();
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+
+/* ── Shared soft master bus (gentle volume + a touch of high-cut warmth) ── */
+let master = null;
+let recTapNode = null;          /* extra output used by the video recorder */
+function getMaster() {
+  const ctx = getACtx();
+  if (!master) {
+    master = ctx.createGain();
+    master.gain.value = 0.5;
+    const soft = ctx.createBiquadFilter();
+    soft.type = 'lowpass'; soft.frequency.value = 6500; soft.Q.value = 0.4;
+    master.connect(soft); soft.connect(ctx.destination);
+    window._softBus = soft;     /* exposed so the recorder can tap it */
+  }
+  return master;
+}
+
+/* ── Generic envelope helper (lowpass-filtered for a soft, non-harsh tone) ── */
+function playTone({ freq=440, freq2=null, type='sine', gain=0.14,
+                    attack=0.012, sustain=0.06, release=0.2,
+                    delay=0, detune=0, cutoff=2400 } = {}) {
+  const ctx = getACtx();
+  const t   = ctx.currentTime + delay;
+  const osc = ctx.createOscillator();
+  const env = ctx.createGain();
+  const lp  = ctx.createBiquadFilter();
+  lp.type = 'lowpass'; lp.frequency.value = cutoff; lp.Q.value = 0.6;
+
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t);
+  if (freq2) osc.frequency.exponentialRampToValueAtTime(freq2, t + attack + sustain);
+  if (detune) osc.detune.setValueAtTime(detune, t);
+
+  env.gain.setValueAtTime(0.0001, t);
+  env.gain.linearRampToValueAtTime(gain, t + attack);
+  env.gain.setValueAtTime(gain, t + attack + sustain);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + attack + sustain + release);
+
+  osc.connect(env); env.connect(lp); lp.connect(getMaster());
+  osc.start(t);
+  osc.stop(t + attack + sustain + release + 0.05);
+}
+
+/* ── Noise burst (soft, filterable — supports a frequency sweep for whooshes) ── */
+function playNoise({ duration=0.06, gain=0.06, freq=800, freq2=null, q=1, delay=0, type='lowpass' } = {}) {
+  const ctx    = getACtx();
+  const t      = ctx.currentTime + delay;
+  const buf    = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * duration)), ctx.sampleRate);
+  const data   = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  const src    = ctx.createBufferSource();
+  const filter = ctx.createBiquadFilter();
+  const env    = ctx.createGain();
+  src.buffer   = buf;
+  filter.type  = type; filter.frequency.setValueAtTime(freq, t); filter.Q.value = q;
+  if (freq2) filter.frequency.exponentialRampToValueAtTime(freq2, t + duration);
+  env.gain.setValueAtTime(0.0001, t);
+  env.gain.linearRampToValueAtTime(gain, t + 0.01);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+  src.connect(filter); filter.connect(env); env.connect(getMaster());
+  src.start(t); src.stop(t + duration + 0.01);
+}
+
+/* ════════════════════════════
+   NAMED SOUND EFFECTS — soft, modern UI feel
+════════════════════════════ */
+
+/* 🎬 Scene open — deep, soft cinematic swell */
+function sfx_open() {
+  playTone({ freq:65, freq2:150, type:'sine', gain:0.10, attack:.10, sustain:.35, release:.6, cutoff:500 });
+  playTone({ freq:196, type:'sine', gain:0.05, attack:.18, sustain:.3, release:.6, cutoff:1400 });
+  playNoise({ duration:.6, gain:.035, freq:1600, freq2:300, q:0.5 });
+}
+
+/* 🖱️ Mouse click — soft tactile tock */
+function sfx_click() {
+  playNoise({ duration:.05, gain:.045, freq:2400, freq2:900, q:0.8 });
+  playTone({ freq:170, type:'sine', gain:0.05, attack:.001, sustain:.004, release:.06, cutoff:900 });
+}
+
+/* ⌨️ Keypress — barely-there tick */
+function sfx_key() {
+  playNoise({ duration:.018, gain:.028, freq:3200, freq2:1800, q:0.9 });
+}
+
+/* ✅ Checkmark — soft warm bell (root + octave, struck together) */
+function sfx_check() {
+  playTone({ freq:660, type:'sine', gain:0.085, attack:.012, sustain:.05, release:.32, cutoff:2200 });
+  playTone({ freq:990, type:'sine', gain:0.045, attack:.012, sustain:.03, release:.34, delay:.015, cutoff:2600 });
+}
+
+/* 📦 Field focus — gentle upward swell */
+function sfx_zoomin() {
+  playTone({ freq:220, freq2:360, type:'sine', gain:0.05, attack:.05, sustain:.1, release:.2, cutoff:1300 });
+}
+
+/* 📦 Field release — soft settle */
+function sfx_zoomout() {
+  playTone({ freq:340, freq2:190, type:'sine', gain:0.045, attack:.04, sustain:.08, release:.22, cutoff:1100 });
+}
+
+/* 🔵 Element appears — soft pop */
+function sfx_btnpop() {
+  playTone({ freq:523, type:'sine', gain:0.06, attack:.012, sustain:.03, release:.2, cutoff:2200 });
+}
+
+/* ▶️ Confirm — warm, rounded click (no buzz) */
+function sfx_confirm() {
+  playTone({ freq:300, freq2:210, type:'sine', gain:0.10, attack:.006, sustain:.05, release:.24, cutoff:1100 });
+  playTone({ freq:600, type:'sine', gain:0.04, attack:.006, sustain:.03, release:.18, delay:.01, cutoff:1800 });
+  playNoise({ duration:.05, gain:.03, freq:1400, freq2:600, q:0.8, delay:.004 });
+}
+
+/* ✨ Success — gentle rising triad over a soft pad (calm, not arcade) */
+function sfx_success() {
+  [{f:523,d:0},{f:659,d:.10},{f:880,d:.20}].forEach((n,i) =>
+    playTone({ freq:n.f, type:'sine', gain:0.075-i*.012, attack:.02, sustain:.06, release:.55, delay:n.d, cutoff:2400 }));
+  playTone({ freq:262, type:'sine', gain:0.045, attack:.06, sustain:.25, release:.7, cutoff:900 });
+}
+
+/* 🎬 Transition — soft airy whoosh */
+function sfx_transition() {
+  playNoise({ duration:.45, gain:.045, freq:1400, freq2:280, q:0.5 });
+  playTone({ freq:200, freq2:95, type:'sine', gain:0.06, attack:.04, sustain:.15, release:.28, cutoff:600 });
+}
+
+/* 🔢 OTP digit — soft gentle blip, rising per digit */
+function sfx_otpdig(i) {
+  const f = [523, 587, 659, 784][i] || 600;
+  playTone({ freq:f, type:'sine', gain:0.055, attack:.008, sustain:.025, release:.18, cutoff:2200 });
+}
+
+/* 🟢 OTP complete — soft pleasant resolve */
+function sfx_unlock() {
+  [{f:523,d:0},{f:784,d:.09},{f:1047,d:.19}].forEach((n,i) =>
+    playTone({ freq:n.f, type:'sine', gain:0.07-i*.013, attack:.015, sustain:.05, release:.42, delay:n.d, cutoff:2600 }));
+}
+
+/* 🌆 City skyline reveal — low soft pad */
+function sfx_city() {
+  playTone({ freq:90, freq2:140, type:'sine', gain:0.045, attack:.3, sustain:.5, release:.7, cutoff:500 });
+}
+
+/* init audio on first user interaction */
+document.addEventListener('click', () => getACtx(), { once:true });
+document.addEventListener('keydown', () => getACtx(), { once:true });
+/* auto-init after short delay (works in most browsers) */
+setTimeout(() => { try { getACtx(); } catch(e) {} }, 500);
+
+/* ════════════════════════════════════════════════
+   VIDEO RECORDER — captures the animation + the
+   Web Audio sound directly (clean, no microphone).
+   Activate by opening the page with  ?record  in the URL.
+════════════════════════════════════════════════ */
+let mediaRec = null, recChunks = [], recStream = null;
+
+async function startRecording(btn){
+  try{
+    /* 1) video: pick the tab to capture BEFORE starting animation */
+    const display = await navigator.mediaDevices.getDisplayMedia({
+      video:{ frameRate:60, width:1920, height:1080 },
+      audio:false
+    });
+
+    /* 2) audio: tap the synth master bus straight into a stream */
+    const ctx = getACtx();
+    if(ctx.state==='suspended') await ctx.resume();
+    getMaster();                                   /* ensures _softBus exists */
+    if(!recTapNode){
+      recTapNode = ctx.createMediaStreamDestination();
+      window._softBus.connect(recTapNode);
+    }
+
+    /* 3) combine video + clean audio into one stream */
+    recStream = new MediaStream([
+      ...display.getVideoTracks(),
+      ...recTapNode.stream.getAudioTracks()
+    ]);
+
+    /* 4) start recording */
+    recChunks = [];
+    const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+      ? 'video/webm;codecs=vp9,opus' : 'video/webm';
+    mediaRec = new MediaRecorder(recStream,{ mimeType:mime, videoBitsPerSecond:12000000 });
+    mediaRec.ondataavailable = e=>{ if(e.data.size) recChunks.push(e.data); };
+    mediaRec.onstop = ()=>{
+      const blob = new Blob(recChunks,{type:'video/webm'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = 'gig-claims.webm'; a.click();
+      display.getTracks().forEach(t=>t.stop());
+      btn.textContent='● سجّل وشغّل'; btn.dataset.on='0';
+    };
+    mediaRec.start();
+    btn.textContent='⏹ جاري التسجيل…'; btn.dataset.on='1';
+
+    /* 5) run animation, then auto-stop when it finishes */
+    await run();
+    if(mediaRec && mediaRec.state!=='inactive') mediaRec.stop();
+
+  }catch(err){
+    alert('تعذّر بدء التسجيل: '+err.message);
+    btn.textContent='● سجّل وشغّل'; btn.dataset.on='0';
+  }
+}
+
+const IS_RECORD = location.search.includes('record');
+const IS_EMBED  = location.search.includes('embed');
+window.run = run;                       /* allow a parent page to start it */
+
+if(IS_RECORD){
+  window.addEventListener('load',()=>{
+    scaleScene();                /* scale but do NOT auto-run */
+    const b=document.createElement('button');
+    b.textContent='● سجّل وشغّل'; b.dataset.on='0';
+    b.style.cssText='position:fixed;top:12px;left:12px;z-index:99999;'+
+      'background:#19058c;color:#fff;border:none;border-radius:8px;'+
+      'padding:10px 16px;font:700 14px Almarai,sans-serif;cursor:pointer;'+
+      'box-shadow:0 4px 16px rgba(0,0,0,.3);';
+    b.onclick=()=>{ if(b.dataset.on==='0') startRecording(b); };
+    document.body.appendChild(b);
+  });
+}
+
+if(IS_EMBED){
+  /* embedded inside presentation.html — scale only, parent calls run() */
+  window.addEventListener('load',()=>{ scaleScene(); });
+}
+
+if(!IS_RECORD && !IS_EMBED){
+  window.addEventListener('load',()=>{ scaleScene(); setTimeout(run,200); });
+}
+</script>
+</body>
+</html>

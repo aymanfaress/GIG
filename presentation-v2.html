@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>GIG — Presentation V2 (2 دقيقة)</title>
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Kufam:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-family:'Almarai',sans-serif;}
+
+/* ── 1920×1080 stage, scaled to fit ── */
+#stage{
+  width:1920px;height:1080px;position:fixed;top:0;left:0;
+  transform-origin:top left;overflow:hidden;
+}
+#bg{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+
+/* ── 3D tablet ── */
+#tablet-wrap{
+  position:absolute;left:150px;top:95px;
+  width:1045px;height:825px;
+  perspective:1800px;perspective-origin:50% 50%;
+}
+#tablet{
+  width:100%;height:100%;position:relative;
+  transform-style:preserve-3d;
+  border-radius:34px;
+  background:linear-gradient(155deg,#15151c 0%,#26262f 48%,#15151c 100%);
+  box-shadow:
+    0 60px 120px -30px rgba(10,8,40,.55),
+    0 30px 60px -20px rgba(10,8,40,.4),
+    inset 0 0 0 2px rgba(255,255,255,.05);
+  padding:26px;
+}
+/* subtle camera bump / front speaker */
+#tablet::before{
+  content:'';position:absolute;top:50%;right:11px;transform:translateY(-50%);
+  width:7px;height:7px;border-radius:50%;
+  background:radial-gradient(circle,#3a3a45,#15151c);
+}
+#screen{
+  width:100%;height:100%;border-radius:14px;overflow:hidden;
+  background:#fff;position:relative;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.35);
+}
+#screen iframe{
+  width:100%;height:100%;border:0;display:block;background:#fff;
+}
+/* soft screen glare */
+#glare{
+  position:absolute;inset:0;pointer-events:none;border-radius:14px;
+  background:linear-gradient(115deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 28%);
+  opacity:.6;
+}
+
+/* ── right-side headlines ── */
+#head{
+  position:absolute;right:75px;top:0;height:1080px;width:560px;
+  display:flex;flex-direction:column;justify-content:center;
+  align-items:flex-end;padding-bottom:420px;
+}
+#eyebrow{
+  font-family:'Almarai',sans-serif;font-weight:700;font-size:21px;
+  color:#d28c64;letter-spacing:.5px;margin-bottom:14px;opacity:0;
+  width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
+}
+#title{
+  font-family:'Kufam',sans-serif;font-weight:900;font-size:52px;
+  line-height:1.2;color:#19058c;opacity:0;
+  width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
+}
+#subtitle{
+  font-family:'Almarai',sans-serif;font-weight:300;font-size:24px;
+  line-height:1.6;color:rgba(25,5,140,.58);margin-top:20px;opacity:0;
+  width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
+  min-height:44px;
+}
+
+/* ── address-bar intro ── */
+#addrbar{
+  position:absolute;inset:0;
+  z-index:20;pointer-events:none;opacity:0;
+}
+#ab-glow{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:1000px;height:560px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(210,140,100,.22) 0%,rgba(25,5,140,.12) 38%,rgba(25,5,140,0) 70%);
+  filter:blur(36px);opacity:0;pointer-events:none;z-index:1;
+}
+#addrbar-center{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  z-index:2;
+}
+#addrbar-pill{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.9);
+  -webkit-backdrop-filter:blur(22px) saturate(140%);
+  backdrop-filter:blur(22px) saturate(140%);
+  border-radius:60px;
+  padding:24px 46px;width:780px;height:88px;
+  box-shadow:
+    0 44px 110px rgba(10,8,40,.26),
+    0 10px 34px rgba(10,8,40,.14),
+    inset 0 1.5px 0 rgba(255,255,255,.75);
+  border:1.5px solid rgba(255,255,255,.7);
+}
+#ab-lock{
+  position:absolute;left:40px;
+  display:flex;align-items:center;opacity:.75;
+}
+#ab-url{
+  font-family:'Almarai',sans-serif;font-weight:400;font-size:30px;
+  color:#19058c;letter-spacing:.5px;direction:ltr;white-space:nowrap;
+  text-align:center;
+}
+#ab-cursor{
+  width:2.5px;height:32px;background:#19058c;
+  border-radius:2px;flex-shrink:0;display:inline-block;
+}
+#ab-loadbar{
+  position:relative;z-index:2;
+  width:780px;height:5px;background:rgba(25,5,140,.12);
+  border-radius:4px;overflow:hidden;
+}
+#ab-loadfill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#19058c 0%,#7b5bd6 55%,#d28c64 100%);
+  border-radius:4px;box-shadow:0 0 14px rgba(123,91,214,.6);
+}
+#ab-flash{
+  position:absolute;inset:0;background:#fff;opacity:0;
+  z-index:30;pointer-events:none;
+}
+
+/* ── tablet light sweep ── */
+#tablet-shine{
+  position:absolute;inset:0;border-radius:14px;
+  pointer-events:none;z-index:7;
+}
+#shine-beam{
+  position:absolute;top:-15%;left:0;
+  width:44%;height:130%;
+  background:linear-gradient(
+    108deg,
+    transparent 0%,
+    rgba(255,255,255,0)   18%,
+    rgba(255,255,255,.10) 40%,
+    rgba(255,255,255,.22) 50%,
+    rgba(255,255,255,.10) 60%,
+    rgba(255,255,255,0)   82%,
+    transparent 100%
+  );
+  transform:skewX(-8deg);
+  opacity:0;pointer-events:none;
+}
+
+/* ── controls ── */
+.pbtn{
+  position:fixed;z-index:99999;border:none;border-radius:10px;cursor:pointer;
+  font:700 15px Almarai,sans-serif;color:#fff;padding:12px 20px;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+}
+#playBtn{top:14px;left:14px;background:#19058c;}
+#recBtn {top:14px;left:150px;background:#c0392b;}
+.pbtn.hide{display:none;}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <img id="bg" src="images/bg-presentation.png" alt="">
+
+  <!-- address-bar intro overlay -->
+  <div id="addrbar">
+    <div id="ab-glow"></div>
+    <div id="addrbar-center">
+      <div id="addrbar-pill">
+        <span id="ab-lock">
+          <svg width="20" height="22" viewBox="0 0 18 20" fill="none">
+            <rect x="1.5" y="8.5" width="15" height="11" rx="2.5" stroke="#19058c" stroke-width="1.6" fill="none"/>
+            <path d="M4.5 8.5V6A4.5 4.5 0 0 1 13.5 6v2.5" stroke="#19058c" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            <circle cx="9" cy="14" r="1.8" fill="#19058c"/>
+          </svg>
+        </span>
+        <span id="ab-url"></span>
+        <span id="ab-cursor"></span>
+      </div>
+      <div id="ab-loadbar"><div id="ab-loadfill"></div></div>
+    </div>
+  </div>
+  <div id="ab-flash"></div>
+
+  <div id="tablet-wrap">
+    <div id="tablet">
+      <div id="screen">
+        <iframe id="frame" src="index-tablet-v2.html?embed" title="GIG"></iframe>
+        <div id="glare"></div>
+        <div id="tablet-shine"><div id="shine-beam"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="head">
+    <div id="eyebrow"></div>
+    <div id="title"></div>
+    <div id="subtitle"></div>
+  </div>
+</div>
+
+<button id="playBtn" class="pbtn">▶ تشغيل العرض</button>
+<button id="recBtn"  class="pbtn">● تسجيل وحفظ</button>
+
+<script>
+const $ = id => document.getElementById(id);
+const stage = $('stage'), frame = $('frame');
+
+/* ── headline copy per scene (easy to edit) ── */
+const HEAD = {
+  s1:       { eye:'آلية تقديم المطالبات', t:'التحقق من هوية الأفراد' },
+  otp:      { eye:'آلية تقديم المطالبات', t:'رمز التحقق الأمني' },
+  s3:       { eye:'آلية تقديم المطالبات', t:'التحقق — الشركات والبنوك' },
+  najm:     { eye:'تفاصيل الحادث',        t:'المطالبة عبر تقرير نجم' },
+  basher:   { eye:'تفاصيل الحادث',        t:'المطالبة عبر باشر / المرور' },
+  other:    { eye:'تفاصيل الحادث',        t:'المطالبة لعملاء جي آي جي' },
+  estimate: { eye:'تقدير الأضرار',        t:'التقدير والبيانات البنكية' },
+  review:   { eye:'الخطوة الأخيرة',       t:'مراجعة وتقديم المطالبة' },
+  end:      { eye:'',                      t:'' }
+};
+
+/* ── scale stage to viewport (contain) ── */
+function scaleStage(){
+  const sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+  const tx = (window.innerWidth-1920*sc)/2, ty=(window.innerHeight-1080*sc)/2;
+  stage.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`;
+}
+scaleStage(); window.addEventListener('resize',scaleStage);
+
+/* ── tablet resting pose + hidden start ── */
+function setTabletStart(){
+  gsap.set('#tablet',{y:920, rotationY:0, rotationX:0, x:0, z:0, scale:1, opacity:0, transformOrigin:'50% 50%'});
+  gsap.set(['#eyebrow','#title','#subtitle'],{opacity:0});
+}
+setTabletStart();
+
+function tabletEnter(){
+  return new Promise(res=>{
+    const tl = gsap.timeline({onComplete:res});
+    tl.to('#tablet',{y:0, opacity:1, duration:1.6, ease:'power3.out'})
+      .to('#tablet',{y:-6, duration:0.6, ease:'sine.inOut'},'-=0.1')
+      .to('#tablet',{y:0,  duration:0.5, ease:'sine.inOut'});
+  });
+}
+
+/* ── headline switching ── */
+let curKey=null;
+function showHead(key){
+  if(key===curKey) return; curKey=key;
+  const h = HEAD[key]; if(!h) return;
+  const tl = gsap.timeline();
+  /* soft exit — drift up gently */
+  tl.to('#eyebrow',  {opacity:0, y:-10, duration:.55, ease:'power2.inOut'})
+    .to('#title',    {opacity:0, y:-8,  duration:.55, ease:'power2.inOut'}, '-=0.45')
+    .to('#subtitle', {opacity:0,        duration:.3,  ease:'power1.in'},   '-=0.35');
+
+  /* end scene: just fade out, nothing new to animate in */
+  if(!h.t && !h.eye){ curAction=null; return; }
+
+  tl.add(()=>{
+      $('eyebrow').textContent  = h.eye;
+      $('title').textContent    = h.t;
+      $('subtitle').textContent = '';
+      curAction = null;
+    })
+    /* silky entrance — each element glides in from below */
+    .fromTo('#eyebrow', {opacity:0,y:14},{opacity:(h.eye?1:0),y:0,duration:.65,ease:'power4.out'})
+    .fromTo('#title',   {opacity:0,y:18},{opacity:(h.t?1:0),  y:0,duration:.8, ease:'power4.out'},'-=0.45')
+    .set('#subtitle',{opacity:0,y:0});
+}
+
+/* ── live action caption: updates ONLY subtitle — glides in, never shifts layout ── */
+let curAction=null;
+function showAction(txt){
+  if(txt===curAction) return; curAction=txt;
+  const el=$('subtitle');
+  gsap.killTweensOf(el);
+  gsap.to(el,{opacity:0, duration:.18, ease:'power1.in',
+    onComplete:()=>{
+      el.textContent=txt||'';
+      gsap.fromTo(el,{opacity:0, y:10},{opacity:(txt?1:0), y:0, duration:.55, ease:'power4.out'});
+    }
+  });
+}
+
+window.addEventListener('message', e=>{
+  if(!e.data) return;
+  if(e.data.gigScene) showHead(e.data.gigScene);
+  if(typeof e.data.gigAction==='string') showAction(e.data.gigAction);
+});
+
+/* ── premium tech sound design (Apple-inspired — pure sine, subtle, precise) ── */
+function getAudio(){
+  try{
+    const fw=frame.contentWindow;
+    const ctx=fw.getACtx(); fw.getMaster();
+    const dest=fw._softBus || ctx.destination;
+    return {ctx,dest};
+  }catch(e){ return null; }
+}
+
+/* soft sine sweep — clean modal "appear" feel */
+function sfxAppear(a){
+  const {ctx,dest}=a, t=ctx.currentTime;
+  const o=ctx.createOscillator(); o.type='sine';
+  o.frequency.setValueAtTime(1800,t);
+  o.frequency.exponentialRampToValueAtTime(3200,t+.28);
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(.0001,t);
+  g.gain.exponentialRampToValueAtTime(.045,t+.05);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.28);
+  o.connect(g); g.connect(dest);
+  o.start(t); o.stop(t+.3);
+}
+
+/* ultra-clean keyboard tock — MacBook-style */
+function sfxKey(a){
+  const {ctx,dest}=a, t=ctx.currentTime;
+  /* mechanical body (low transient) */
+  const lo=ctx.createOscillator(); lo.type='sine';
+  lo.frequency.setValueAtTime(340,t);
+  lo.frequency.exponentialRampToValueAtTime(180,t+.022);
+  const lg=ctx.createGain();
+  lg.gain.setValueAtTime(.0001,t); lg.gain.exponentialRampToValueAtTime(.038,t+.003);
+  lg.gain.exponentialRampToValueAtTime(.0001,t+.022);
+  lo.connect(lg); lg.connect(dest); lo.start(t); lo.stop(t+.025);
+  /* click transient (high sine) */
+  const hi=ctx.createOscillator(); hi.type='sine';
+  hi.frequency.setValueAtTime(3800,t);
+  hi.frequency.exponentialRampToValueAtTime(2600,t+.018);
+  const hg=ctx.createGain();
+  hg.gain.setValueAtTime(.0001,t); hg.gain.exponentialRampToValueAtTime(.022,t+.002);
+  hg.gain.exponentialRampToValueAtTime(.0001,t+.018);
+  hi.connect(hg); hg.connect(dest); hi.start(t); hi.stop(t+.02);
+}
+
+/* two-tone ascending chime — Apple notification quality */
+function sfxChime(a){
+  const {ctx,dest}=a, t=ctx.currentTime;
+  [[1047,.0],[1319,.09],[1568,.18]].forEach(([f,dt])=>{
+    const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f;
+    const g=ctx.createGain(); const st=t+dt;
+    g.gain.setValueAtTime(.0001,st);
+    g.gain.exponentialRampToValueAtTime(.055,st+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,st+.55);
+    o.connect(g); g.connect(dest); o.start(st); o.stop(st+.6);
+  });
+}
+
+/* launch — clean ascending sweep + gentle arpeggio (iOS/macOS quality) */
+function sfxLaunch(a){
+  const {ctx,dest}=a, t=ctx.currentTime;
+  /* clean pitch sweep */
+  const sw=ctx.createOscillator(); sw.type='sine';
+  sw.frequency.setValueAtTime(520,t);
+  sw.frequency.exponentialRampToValueAtTime(2080,t+.38);
+  const sg=ctx.createGain();
+  sg.gain.setValueAtTime(.0001,t);
+  sg.gain.exponentialRampToValueAtTime(.055,t+.04);
+  sg.gain.exponentialRampToValueAtTime(.0001,t+.38);
+  sw.connect(sg); sg.connect(dest); sw.start(t); sw.stop(t+.4);
+  /* staggered arpeggio — C major (clean, universal, uplifting) */
+  [[523.25,.06],[659.25,.13],[783.99,.20],[1046.5,.28]].forEach(([f,dt])=>{
+    const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f;
+    const g=ctx.createGain(); const st=t+dt;
+    g.gain.setValueAtTime(.0001,st);
+    g.gain.exponentialRampToValueAtTime(.05,st+.015);
+    g.gain.exponentialRampToValueAtTime(.0001,st+.75);
+    o.connect(g); g.connect(dest); o.start(st); o.stop(st+.8);
+  });
+}
+
+/* ── tablet light sweep ── fires once after tablet finishes entering */
+function tabletShine(){
+  gsap.set('#shine-beam',{xPercent:-120,opacity:1});
+  gsap.to('#shine-beam',{
+    xPercent:230, duration:1.05, ease:'power1.inOut',
+    onComplete:()=>gsap.set('#shine-beam',{opacity:0})
+  });
+}
+
+/* ── address bar intro ── */
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function addressBarIntro(){
+  const urlEl=$('ab-url'), curEl=$('ab-cursor'), fillEl=$('ab-loadfill');
+  const a=getAudio();
+
+  /* reset everything */
+  urlEl.textContent='';
+  gsap.set('#addrbar',{display:'block',opacity:1});
+  gsap.set('#addrbar-center',{y:50,scale:.88,opacity:0});
+  gsap.set('#ab-glow',{opacity:0,scale:.6});
+  gsap.set('#ab-loadbar',{opacity:0,y:0});
+  gsap.set('#ab-loadfill',{width:'0%'});
+  gsap.set(curEl,{opacity:1});
+  gsap.set('#ab-flash',{opacity:0});
+
+  /* 1. glow builds slowly in background */
+  gsap.to('#ab-glow',{opacity:1,scale:1,duration:2.2,ease:'power2.out'});
+
+  /* 2. pill glides in from below */
+  await delay(150);
+  if(a) sfxAppear(a);
+  await new Promise(res=>gsap.to('#addrbar-center',{
+    y:0,scale:1,opacity:1,duration:.85,ease:'back.out(1.4)',onComplete:res
+  }));
+
+  await delay(280);
+
+  /* 3. cursor blinks, then URL types character by character */
+  const blinkTween=gsap.to(curEl,{opacity:0,duration:.45,repeat:-1,yoyo:true,ease:'power1.inOut'});
+  const url='www.gig.sa';
+  for(let i=0;i<=url.length;i++){
+    urlEl.textContent=url.slice(0,i);
+    if(a && i>0) sfxKey(a);
+    await delay(i===0?320:78);
+  }
+
+  /* 4. pause after typing completes, cursor stops */
+  await delay(480);
+  blinkTween.kill();
+  gsap.set(curEl,{opacity:0});
+
+  /* 5. loadbar slides in below pill — only NOW, after typing */
+  await new Promise(res=>gsap.fromTo('#ab-loadbar',
+    {opacity:0,y:-8},
+    {opacity:1,y:0,duration:.42,ease:'power3.out',onComplete:res}
+  ));
+  await delay(140);
+
+  /* 6. fill loadbar with chime */
+  if(a) sfxChime(a);
+  await new Promise(res=>gsap.to(fillEl,{width:'100%',duration:1.15,ease:'power2.inOut',onComplete:res}));
+
+  await delay(360);
+
+  /* 7. cinematic exit: scale up + fade, then flash */
+  if(a) sfxLaunch(a);
+  await new Promise(res=>{
+    const tl=gsap.timeline({onComplete:res});
+    tl.to('#addrbar-center',{scale:1.1,opacity:0,duration:.6,ease:'power2.in'},0)
+      .to('#ab-glow',{scale:1.45,opacity:0,duration:.65,ease:'power2.in'},0)
+      .to('#ab-flash',{opacity:.8,duration:.16,ease:'power2.out'},.1)
+      .to('#ab-flash',{opacity:0,duration:.55,ease:'power2.in'},'>');
+  });
+  gsap.set('#addrbar',{display:'none'});
+}
+
+/* ── start the show (with optional recording) ── */
+let mediaRec=null, recChunks=[], recTap=null;
+
+async function start(record, btn){
+  $('playBtn').classList.add('hide'); $('recBtn').classList.add('hide');
+
+  const fw = frame.contentWindow;
+
+  /* resume the iframe's audio engine on this user gesture */
+  try{ const c = fw.getACtx(); if(c.state==='suspended') await c.resume(); }catch(e){}
+
+  if(record){
+    try{
+      const display = await navigator.mediaDevices.getDisplayMedia({
+        video:{ frameRate:60, width:1920, height:1080 }, audio:false });
+      const ctx = fw.getACtx(); fw.getMaster();
+      if(!recTap){ recTap = ctx.createMediaStreamDestination(); fw._softBus.connect(recTap); }
+      const stream = new MediaStream([...display.getVideoTracks(), ...recTap.stream.getAudioTracks()]);
+      const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+        ? 'video/webm;codecs=vp9,opus' : 'video/webm';
+      mediaRec = new MediaRecorder(stream,{mimeType:mime, videoBitsPerSecond:16000000});
+      recChunks=[];
+      mediaRec.ondataavailable=ev=>{ if(ev.data.size) recChunks.push(ev.data); };
+      mediaRec.onstop=()=>{
+        const blob=new Blob(recChunks,{type:'video/webm'});
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(blob); a.download='gig-presentation.webm'; a.click();
+        display.getTracks().forEach(t=>t.stop());
+      };
+      mediaRec.start();
+    }catch(err){ alert('تعذّر بدء التسجيل: '+err.message); }
+  }
+
+  /* 1) address bar types URL, 2) tablet rises, 3) headlines, 4) run */
+  await addressBarIntro();
+  showHead('s1');
+  await tabletEnter();
+  tabletShine(); /* light sweep — fire-and-forget, runs concurrently */
+  await delay(300);
+  try{ fw.run(); }catch(e){}
+}
+
+/* auto-stop recording when the iframe signals the end */
+window.addEventListener('message', e=>{
+  if(e.data && e.data.gigScene==='end'){
+    setTimeout(()=>{ if(mediaRec && mediaRec.state!=='inactive') mediaRec.stop(); }, 1200);
+  }
+});
+
+$('playBtn').onclick = ()=>start(false);
+$('recBtn').onclick  = ()=>start(true);
+</script>
+</body>
+</html>
