@@ -2668,7 +2668,7 @@ let mediaRec = null, recChunks = [], recStream = null;
 
 async function startRecording(btn){
   try{
-    /* 1) video: capture the browser tab the user picks */
+    /* 1) video: pick the tab to capture BEFORE starting animation */
     const display = await navigator.mediaDevices.getDisplayMedia({
       video:{ frameRate:60, width:1920, height:1080 },
       audio:false
@@ -2680,7 +2680,7 @@ async function startRecording(btn){
     getMaster();                                   /* ensures _softBus exists */
     if(!recTapNode){
       recTapNode = ctx.createMediaStreamDestination();
-      window._softBus.connect(recTapNode);         /* clean audio source */
+      window._softBus.connect(recTapNode);
     }
 
     /* 3) combine video + clean audio into one stream */
@@ -2689,7 +2689,7 @@ async function startRecording(btn){
       ...recTapNode.stream.getAudioTracks()
     ]);
 
-    /* 4) record */
+    /* 4) start recording */
     recChunks = [];
     const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
       ? 'video/webm;codecs=vp9,opus' : 'video/webm';
@@ -2697,42 +2697,43 @@ async function startRecording(btn){
     mediaRec.ondataavailable = e=>{ if(e.data.size) recChunks.push(e.data); };
     mediaRec.onstop = ()=>{
       const blob = new Blob(recChunks,{type:'video/webm'});
-      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = 'gig-claims.webm'; a.click();
+      a.href = URL.createObjectURL(blob); a.download = 'gig-claims.webm'; a.click();
       display.getTracks().forEach(t=>t.stop());
       btn.textContent='● سجّل وشغّل'; btn.dataset.on='0';
     };
     mediaRec.start();
+    btn.textContent='⏹ جاري التسجيل…'; btn.dataset.on='1';
 
-    /* 5) restart the whole animation from the top so the recording is clean */
-    location.hash = '';                            /* (no-op placeholder) */
-    btn.textContent='■ إيقاف وحفظ'; btn.dataset.on='1';
-    /* give the tab-picker a beat, then replay from scene 1 */
-    setTimeout(()=>{ try{ run(); }catch(e){} }, 400);
+    /* 5) run animation, then auto-stop when it finishes */
+    await run();
+    if(mediaRec && mediaRec.state!=='inactive') mediaRec.stop();
+
   }catch(err){
     alert('تعذّر بدء التسجيل: '+err.message);
+    btn.textContent='● سجّل وشغّل'; btn.dataset.on='0';
   }
 }
 
-function stopRecording(btn){
-  if(mediaRec && mediaRec.state!=='inactive') mediaRec.stop();
-}
+const IS_RECORD = location.search.includes('record');
 
-if(location.search.includes('record')){
+if(IS_RECORD){
   window.addEventListener('load',()=>{
+    scaleScene();                /* scale but do NOT auto-run */
     const b=document.createElement('button');
     b.textContent='● سجّل وشغّل'; b.dataset.on='0';
     b.style.cssText='position:fixed;top:12px;left:12px;z-index:99999;'+
       'background:#19058c;color:#fff;border:none;border-radius:8px;'+
       'padding:10px 16px;font:700 14px Almarai,sans-serif;cursor:pointer;'+
       'box-shadow:0 4px 16px rgba(0,0,0,.3);';
-    b.onclick=()=>{ b.dataset.on==='1' ? stopRecording(b) : startRecording(b); };
+    b.onclick=()=>{ if(b.dataset.on==='0') startRecording(b); };
     document.body.appendChild(b);
   });
 }
 
-window.addEventListener('load',()=>{ scaleScene(); setTimeout(run,200); });
+if(!IS_RECORD){
+  window.addEventListener('load',()=>{ scaleScene(); setTimeout(run,200); });
+}
 </script>
 </body>
 </html>
