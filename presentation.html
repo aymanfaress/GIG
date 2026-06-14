@@ -62,7 +62,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 }
 #eyebrow{
   font-family:'Almarai',sans-serif;font-weight:700;font-size:21px;
-  color:#d28c64;letter-spacing:.5px;margin-bottom:12px;opacity:0;
+  color:#d28c64;letter-spacing:.5px;margin-bottom:14px;opacity:0;
   width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
 }
 #title{
@@ -71,9 +71,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
 }
 #subtitle{
-  font-family:'Almarai',sans-serif;font-weight:300;font-size:19px;
-  line-height:1.65;color:rgba(25,5,140,.62);margin-top:18px;opacity:0;
+  font-family:'Almarai',sans-serif;font-weight:300;font-size:24px;
+  line-height:1.6;color:rgba(25,5,140,.58);margin-top:20px;opacity:0;
   width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
+  min-height:44px;          /* reserves space so it never pushes title up */
+}
 }
 
 /* ── address-bar intro ── */
@@ -226,28 +228,34 @@ function showHead(key){
   if(key===curKey) return; curKey=key;
   const h = HEAD[key]; if(!h) return;
   const tl = gsap.timeline();
-  tl.to(['#eyebrow','#title','#subtitle'],{opacity:0, y:-14, duration:.3, ease:'power2.in'})
+  /* soft exit — drift up gently, don't snap */
+  tl.to('#eyebrow',  {opacity:0, y:-10, duration:.4, ease:'power2.inOut'})
+    .to('#title',    {opacity:0, y:-8,  duration:.4, ease:'power2.inOut'}, '-=0.35')
+    .to('#subtitle', {opacity:0,        duration:.25, ease:'power1.in'},   '-=0.3')
     .add(()=>{
       $('eyebrow').textContent  = h.eye;
       $('title').textContent    = h.t;
-      $('subtitle').textContent = '';   /* cleared; live act() fills it */
+      $('subtitle').textContent = '';
       curAction = null;
     })
-    .fromTo('#eyebrow', {opacity:0,y:18},{opacity:1,y:0,duration:.45,ease:'power3.out'})
-    .fromTo('#title',   {opacity:0,y:22},{opacity:(h.t?1:0),y:0,duration:.55,ease:'power3.out'},'-=0.3')
-    .set('#subtitle',{opacity:0});
+    /* silky entrance — each element glides in from below */
+    .fromTo('#eyebrow',  {opacity:0, y:14}, {opacity:1, y:0, duration:.6,  ease:'power4.out'})
+    .fromTo('#title',    {opacity:0, y:18}, {opacity:(h.t?1:0), y:0, duration:.75, ease:'power4.out'}, '-=0.42')
+    .set('#subtitle', {opacity:0});
 }
 
-/* ── live action caption: updates ONLY the subtitle, in sync with each step ── */
+/* ── live action caption: updates ONLY subtitle — glides in, never shifts layout ── */
 let curAction=null;
 function showAction(txt){
   if(txt===curAction) return; curAction=txt;
   const el=$('subtitle');
   gsap.killTweensOf(el);
-  const tl=gsap.timeline();
-  tl.to(el,{opacity:0,y:-10,duration:.22,ease:'power2.in'})
-    .add(()=>{ el.textContent=txt||''; })
-    .fromTo(el,{opacity:0,y:12},{opacity:(txt?1:0),y:0,duration:.4,ease:'power3.out'});
+  gsap.to(el,{opacity:0, duration:.18, ease:'power1.in',
+    onComplete:()=>{
+      el.textContent=txt||'';
+      gsap.fromTo(el,{opacity:0, y:10},{opacity:(txt?1:0), y:0, duration:.55, ease:'power4.out'});
+    }
+  });
 }
 
 window.addEventListener('message', e=>{
