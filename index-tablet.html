@@ -403,8 +403,10 @@ html, body {
 #s7-sidebar, #s8-sidebar { width:200px; flex-shrink:0; background:#fff; border-left:1px solid #ebebeb; padding:28px 0 0; display:flex; flex-direction:column; opacity:0; z-index:25; position:relative; }
 #s7-btn, #s8-btn { width:100%; padding:15px; background:#19058c; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:700; font-family:'Almarai',sans-serif; cursor:pointer; margin-top:6px; margin-bottom:26px; letter-spacing:.3px; opacity:0; position:relative; overflow:hidden; transition:background .25s; }
 #s7-btn:hover, #s8-btn:hover { background:#2a1aaa; }
-.fld-2col { display:flex; direction:rtl; gap:14px; }
+.fld-2col { display:flex; direction:rtl; gap:14px; align-items:flex-end; }
 .fld-2col > .acc-fld { flex:1; margin-bottom:16px; }
+/* date field chk goes to the outer-left so it doesn't clash with the adjacent field */
+#bfld-date .chk, #cfld-date .chk { right:auto; left:-38px; }
 .date-fld { position:relative; }
 .date-fld > svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none; }
 .acc-select { width:100%; border:1.5px solid #e0e0e0; border-radius:8px; padding:12px 15px; font-size:13.5px; font-family:'Almarai',sans-serif; color:#c8c8c8; background:#fff; display:flex; direction:rtl; align-items:center; justify-content:space-between; cursor:pointer; transition:border-color .25s,box-shadow .25s,color .25s,background .4s; }
