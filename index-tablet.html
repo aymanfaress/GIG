@@ -1601,6 +1601,7 @@ async function runScene1(){
   const s1form=$('s1-form'), s1cont=$('s1-content');
 
   /* ── FIELD 1 ── */
+  act('إدخال رقم الهوية الوطنية');
   pingOn(); dim.classList.add('on');
   sfx_zoomin(); await zoomTo(s1form,s1cont,$('fg1'),1.55,0.95);
   spotOn(1); lblOn(1);
@@ -1615,6 +1616,7 @@ async function runScene1(){
   sfx_zoomout(); await zoomOut(s1form,0.9); setP(36); await sleep(360);
 
   /* ── FIELD 2 ── */
+  act('إدخال رقم الجوال');
   pingOn(); dim.classList.add('on');
   sfx_zoomin(); await zoomTo(s1form,s1cont,$('fg2'),1.55,0.95);
   spotOn(2); lblOn(2);
@@ -1630,6 +1632,7 @@ async function runScene1(){
   sfx_zoomout(); await zoomOut(s1form,0.9); setP(54); await sleep(360);
 
   /* ── FIELD 3 ── */
+  act('إدخال البريد الإلكتروني');
   pingOn(); dim.classList.add('on');
   sfx_zoomin(); await zoomTo(s1form,s1cont,$('fg3'),1.55,0.95);
   spotOn(3); lblOn(3);
@@ -1647,6 +1650,7 @@ async function runScene1(){
   $('line1').classList.add('done'); await sleep(400);
 
   /* ── BUTTON ── */
+  act('تأكيد البيانات والمتابعة');
   gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(420);
   shimBtn('s1-btn'); await sleep(500);
   sfx_zoomin(); await zoomTo(s1form,s1cont,$('s1-btn'),1.3,0.85,80);
@@ -1706,6 +1710,7 @@ async function runScene2(isFinal=true){
   const s2form=$('s2-form'), s2cont=$('s2-main');
 
   /* ── OTP BOXES (no dim / no zoom — clean, nothing gets clipped) ── */
+  act('إدخال رمز التحقق المُرسَل للجوال');
   gsap.to($('otp-spot'),{opacity:1,duration:.28}); await sleep(220);
 
   const b1r=$('b1').getBoundingClientRect();
@@ -1729,6 +1734,7 @@ async function runScene2(isFinal=true){
   gsap.to($('otp-spot'),{opacity:0,duration:.28}); await sleep(340);
 
   /* ── BUTTON ACTIVATES ── */
+  act('تأكيد رمز التحقق');
   sfx_unlock(); $('s2-btn').classList.add('ready'); shimBtn('s2-btn'); await sleep(480);
   const rb=$('s2-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
@@ -1787,6 +1793,7 @@ async function runScene3(){
   const f=$('s3-form'), c=$('s3-content');
 
   /* ── FIELD 4 — owner / company ID ── */
+  act('إدخال رقم هوية المالك / المنشأة');
   pingOn('stp1c'); dim.classList.add('on');
   sfx_zoomin(); await zoomTo(f,c,$('fg4'),1.55,0.95);
   spotOn(4); lblOn(4);
@@ -1801,6 +1808,7 @@ async function runScene3(){
   sfx_zoomout(); await zoomOut(f,0.9); setP(30); await sleep(340);
 
   /* ── FIELD 5 — driver ID ── */
+  act('إدخال رقم هوية السائق');
   pingOn('stp1c'); dim.classList.add('on');
   sfx_zoomin(); await zoomTo(f,c,$('fg5'),1.55,0.95);
   spotOn(5); lblOn(5);
@@ -1814,6 +1822,7 @@ async function runScene3(){
   sfx_zoomout(); await zoomOut(f,0.9); setP(44); await sleep(340);
 
   /* ── FIELD 6 — mobile ── */
+  act('إدخال رقم الجوال');
   pingOn('stp1c'); dim.classList.add('on');
   sfx_zoomin(); await zoomTo(f,c,$('fg6'),1.55,0.95);
   spotOn(6); lblOn(6);
@@ -1829,6 +1838,7 @@ async function runScene3(){
   sfx_zoomout(); await zoomOut(f,0.9); setP(58); await sleep(360);
 
   /* ── FIELD 7 — email (same as Scene 1) ── */
+  act('إدخال البريد الإلكتروني');
   pingOn('stp1c'); dim.classList.add('on');
   sfx_zoomin(); await zoomTo(f,c,$('fg7'),1.55,0.95);
   spotOn(7); lblOn(7);
@@ -1846,6 +1856,7 @@ async function runScene3(){
   $('line1c').classList.add('done'); await sleep(400);
 
   /* ── BUTTON ── */
+  act('تأكيد البيانات والمتابعة');
   gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(420);
   shimBtn('s3-btn'); await sleep(500);
   sfx_zoomin(); await zoomTo(f,c,$('s3-btn'),1.3,0.85,80);
@@ -1919,6 +1930,7 @@ async function runScene4(){
   pingOn('s4-stp2');
 
   /* ── 1) SOURCE = نجم (cursor goes straight to نجم) ── */
+  act('اختيار مصدر البلاغ: نجم');
   await scrollToEl(f,c,$('sec-source'),.6,.5);
   accSpot('spot-src',true); await sleep(160);
   const rnajm=$('src-najm').getBoundingClientRect();
@@ -1936,6 +1948,7 @@ async function runScene4(){
   setP(28);
 
   /* ── 2) TYPE = أضرار في المركبة ── */
+  act('اختيار نوع الحادث: أضرار في المركبة');
   await scrollToEl(f,c,$('sec-type'),.7,.45);
   accSpot('spot-type',true); await sleep(140);
   const rveh=$('type-veh').getBoundingClientRect();
@@ -1945,6 +1958,7 @@ async function runScene4(){
   accSpot('spot-type',false); setP(42); await sleep(240);
 
   /* ── 3) OWNER = لا → driver identity ── */
+  act('تحديد المالك وإدخال رقم هوية السائق');
   await scrollToEl(f,c,$('sec-owner'),.7,.4);
   accSpot('spot-owner',true); await sleep(140);
   const rno=$('own-no').getBoundingClientRect();
@@ -1967,6 +1981,7 @@ async function runScene4(){
   accSpot('spot-owner',false); setP(58); await sleep(240);
 
   /* ── 4) NAJM REPORT NUMBER ── */
+  act('إدخال رقم تقرير نجم');
   await scrollToEl(f,c,$('fld-najm'),.7,.45);
   accSpot('spot-najm',true);
   $('lbl-najm').classList.add('active'); await sleep(120);
@@ -1979,6 +1994,7 @@ async function runScene4(){
   accSpot('spot-najm',false); setP(72); await sleep(220);
 
   /* ── 5) SERIAL / CUSTOMS NUMBER ── */
+  act('إدخال الرقم التسلسلي للمركبة');
   await scrollToEl(f,c,$('fld-serial'),.6,.45);
   accSpot('spot-serial',true);
   $('lbl-serial').classList.add('active'); await sleep(120);
@@ -1995,6 +2011,7 @@ async function runScene4(){
   $('s4-line2').classList.add('done'); await sleep(320);
 
   /* ── BUTTON ── */
+  act('حفظ تفاصيل الحادث والمتابعة');
   await scrollToEl(f,c,$('s4-btn'),.6,.5);
   sfx_btnpop(); shimBtn('s4-btn'); await sleep(360);
   const rb=$('s4-btn').getBoundingClientRect();
@@ -2062,6 +2079,7 @@ async function runScene5(){
   await s5scroll($('veh-card'),.6,.45); await sleep(420);
 
   /* ── 1) EVALUATION TYPE = تقدير ── */
+  act('اختيار نوع التقييم: تقدير');
   await s5scroll($('sec-evaltype'),.6,.5);
   accSpot('spot-evaltype',true); await sleep(140);
   const re=$('eval-est').getBoundingClientRect();
@@ -2071,6 +2089,7 @@ async function runScene5(){
   accSpot('spot-evaltype',false); setP(78); await sleep(220);
 
   /* ── 2) EVALUATION NUMBER + تحقق ── */
+  act('إدخال رقم التقييم والتحقق منه');
   await s5scroll($('sec-evalnum'),.65,.45);
   accSpot('spot-evalnum',true); $('lbl-evalnum').classList.add('active'); await sleep(120);
   const ren=$('inp-evalnum').getBoundingClientRect();
@@ -2089,6 +2108,7 @@ async function runScene5(){
   accSpot('spot-evalnum',false); setP(80); await sleep(220);
 
   /* ── 3) ESTIMATE DOCUMENT (upload) ── */
+  act('إرفاق مستند التقدير');
   await s5scroll($('sec-doc1'),.6,.5);
   accSpot('spot-doc1',true); await sleep(120);
   const rd1=$('file-doc1').getBoundingClientRect();
@@ -2098,6 +2118,7 @@ async function runScene5(){
   accSpot('spot-doc1',false); setP(82); await sleep(220);
 
   /* ── 4) SETTLEMENT TYPE = تعويض ── */
+  act('اختيار طريقة التسوية: تعويض نقدي');
   await s5scroll($('sec-settle'),.6,.5);
   accSpot('spot-settle',true); await sleep(140);
   const rc=$('settle-comp').getBoundingClientRect();
@@ -2107,6 +2128,7 @@ async function runScene5(){
   accSpot('spot-settle',false); setP(84); await sleep(220);
 
   /* ── 5) IBAN ── */
+  act('إدخال رقم الآيبان البنكي');
   await s5scroll($('sec-iban'),.65,.45);
   accSpot('spot-iban',true); $('lbl-iban').classList.add('active'); await sleep(120);
   const ri=$('inp-iban').getBoundingClientRect();
@@ -2118,6 +2140,7 @@ async function runScene5(){
   accSpot('spot-iban',false); setP(86); await sleep(220);
 
   /* ── 6) IBAN CERTIFICATE (upload) ── */
+  act('إرفاق شهادة الآيبان البنكي');
   await s5scroll($('sec-doc2'),.6,.5);
   accSpot('spot-doc2',true); await sleep(120);
   const rd2=$('file-doc2').getBoundingClientRect();
@@ -2131,6 +2154,7 @@ async function runScene5(){
   $('s5-line3').classList.add('done'); await sleep(320);
 
   /* ── BUTTON ── */
+  act('حفظ البيانات البنكية والمتابعة');
   await s5scroll($('s5-btn'),.6,.5);
   sfx_btnpop(); shimBtn('s5-btn'); await sleep(360);
   const rb=$('s5-btn').getBoundingClientRect();
@@ -2184,15 +2208,18 @@ async function runScene6(isFinal=false){
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
 
   /* review the data — gentle highlights */
+  act('مراجعة البيانات الشخصية');
   const rp=$('rev-personal').getBoundingClientRect();
   await moveTo(rp.left+rp.width*.5,rp.top+rp.height*.5,1.0);
   hl('rev-personal',true); await sleep(680); hl('rev-personal',false);
+  act('مراجعة بيانات الوثيقة');
   const rpo=$('rev-policy').getBoundingClientRect();
   await moveTo(rpo.left+rpo.width*.5,rpo.top+rpo.height*.5,.55);
   hl('rev-policy',true); await sleep(680); hl('rev-policy',false);
   setP(95);
 
   /* glance over the claim card, scrolling to the bank section */
+  act('مراجعة تفاصيل المطالبة والبيانات البنكية');
   hl('rev-claim',true);
   const rc=$('rev-claim').getBoundingClientRect();
   await moveTo(rc.left+rc.width*.5,rc.top+rc.height*.4,.7);
@@ -2202,6 +2229,7 @@ async function runScene6(isFinal=false){
   setP(98);
 
   /* ── SUBMIT ── */
+  act('تقديم المطالبة');
   sfx_btnpop(); shimBtn('s6-submit'); await sleep(360);
   const rb=$('s6-submit').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
@@ -2261,6 +2289,7 @@ async function runScene7(){
   pingOn('s7-stp2');
 
   /* 1) SOURCE = باشر / المرور */
+  act('اختيار مصدر البلاغ: باشر / المرور');
   await scrollToEl(f,c,$('bsec-source'),.6,.5);
   accSpot('bspot-source',true); await sleep(160);
   let r=$('bsrc-basher').getBoundingClientRect();
@@ -2277,6 +2306,7 @@ async function runScene7(){
   setP(22);
 
   /* 2) TYPE = أضرار في المركبة */
+  act('اختيار نوع الحادث: أضرار في المركبة');
   await scrollToEl(f,c,$('bsec-type'),.65,.45);
   accSpot('bspot-type',true); await sleep(140);
   r=$('btype-veh').getBoundingClientRect();
@@ -2286,6 +2316,7 @@ async function runScene7(){
   accSpot('bspot-type',false); setP(34); await sleep(220);
 
   /* 3) باشر report number */
+  act('إدخال رقم بلاغ باشر');
   await scrollToEl(f,c,$('bfld-report'),.6,.45);
   accSpot('bspot-report',true); $('blbl-report').classList.add('active'); await sleep(120);
   r=$('binp-report').getBoundingClientRect();
@@ -2296,6 +2327,7 @@ async function runScene7(){
   accSpot('bspot-report',false); setP(46); await sleep(200);
 
   /* 4) serial number */
+  act('إدخال الرقم التسلسلي للمركبة');
   await scrollToEl(f,c,$('bfld-serial'),.6,.42);
   accSpot('bspot-serial',true); $('blbl-serial').classList.add('active'); await sleep(120);
   r=$('binp-serial').getBoundingClientRect();
@@ -2306,6 +2338,7 @@ async function runScene7(){
   accSpot('bspot-serial',false); setP(55); await sleep(160);
 
   /* 5) accident date */
+  act('إدخال تاريخ وقوع الحادث');
   accSpot('bspot-date',true); $('blbl-date').classList.add('active'); await sleep(120);
   r=$('binp-date').getBoundingClientRect();
   await moveTo(r.left+r.width*.5,r.top+r.height*.5,.55);
@@ -2315,6 +2348,7 @@ async function runScene7(){
   accSpot('bspot-date',false); setP(63); await sleep(200);
 
   /* 6) insured by GIG = لا */
+  act('تحديد جهة التأمين على المركبة');
   await scrollToEl(f,c,$('bsec-ins'),.6,.5);
   accSpot('bspot-ins',true); await sleep(140);
   r=$('bins-no').getBoundingClientRect();
@@ -2324,6 +2358,7 @@ async function runScene7(){
   accSpot('bspot-ins',false); setP(70); await sleep(200);
 
   /* 7) required documents (3 uploads) */
+  act('إرفاق المستندات المطلوبة');
   const docs=[['bfld-doc1','bspot-doc1','bfile-report',78],['bfld-doc2','bspot-doc2','bfile-license',85],['bfld-doc3','bspot-doc3','bfile-form',92]];
   for(const [fld,spot,file,p] of docs){
     await scrollToEl(f,c,$(fld),.55,.45);
@@ -2340,6 +2375,7 @@ async function runScene7(){
   $('s7-line2').classList.add('done'); await sleep(320);
 
   /* BUTTON */
+  act('حفظ تفاصيل الحادث والمتابعة');
   await scrollToEl(f,c,$('s7-btn'),.6,.55);
   sfx_btnpop(); shimBtn('s7-btn'); await sleep(360);
   const rb=$('s7-btn').getBoundingClientRect();
@@ -2381,6 +2417,7 @@ async function runScene8(){
   pingOn('s8-stp2');
 
   /* 1) SOURCE = أخرى */
+  act('اختيار مصدر البلاغ: أخرى');
   await scrollToEl(f,c,$('csec-source'),.6,.5);
   accSpot('cspot-source',true); await sleep(160);
   let r=$('csrc-other').getBoundingClientRect();
@@ -2396,6 +2433,7 @@ async function runScene8(){
   setP(20);
 
   /* 2) TYPE = أضرار في الزجاج */
+  act('اختيار نوع الحادث: أضرار في الزجاج');
   await scrollToEl(f,c,$('csec-type'),.65,.45);
   accSpot('cspot-type',true); await sleep(140);
   r=$('ctype-glass').getBoundingClientRect();
@@ -2405,6 +2443,7 @@ async function runScene8(){
   accSpot('cspot-type',false); setP(32); await sleep(220);
 
   /* 3) serial number */
+  act('إدخال الرقم التسلسلي للمركبة');
   await scrollToEl(f,c,$('cfld-serial'),.6,.45);
   accSpot('cspot-serial',true); $('clbl-serial').classList.add('active'); await sleep(120);
   r=$('cinp-serial').getBoundingClientRect();
@@ -2415,6 +2454,7 @@ async function runScene8(){
   accSpot('cspot-serial',false); setP(42); await sleep(180);
 
   /* 4) city dropdown = الرياض */
+  act('اختيار مدينة وقوع الحادث');
   await scrollToEl(f,c,$('cfld-city'),.6,.42);
   accSpot('cspot-city',true); await sleep(120);
   r=$('csel-city').getBoundingClientRect();
@@ -2426,6 +2466,7 @@ async function runScene8(){
   accSpot('cspot-city',false); setP(46); await sleep(160);
 
   /* 5) accident date */
+  act('إدخال تاريخ وقوع الحادث');
   accSpot('cspot-date',true); $('clbl-date').classList.add('active'); await sleep(120);
   r=$('cinp-date').getBoundingClientRect();
   await moveTo(r.left+r.width*.5,r.top+r.height*.5,.55);
@@ -2435,6 +2476,7 @@ async function runScene8(){
   accSpot('cspot-date',false); setP(52); await sleep(180);
 
   /* 6) accident description */
+  act('كتابة وصف الحادث');
   await scrollToEl(f,c,$('cfld-desc'),.6,.4);
   accSpot('cspot-desc',true); $('clbl-desc').classList.add('active'); await sleep(120);
   r=$('cinp-desc').getBoundingClientRect();
@@ -2445,6 +2487,7 @@ async function runScene8(){
   accSpot('cspot-desc',false); setP(57); await sleep(180);
 
   /* 7) required documents (3 required uploads) */
+  act('إرفاق المستندات المطلوبة');
   const docs=[['cfld-doc1','cspot-doc1','cfile-photos',60],['cfld-doc2','cspot-doc2','cfile-form',64],['cfld-doc3','cspot-doc3','cfile-license',68]];
   for(const [fld,spot,file,p] of docs){
     await scrollToEl(f,c,$(fld),.55,.45);
@@ -2461,6 +2504,7 @@ async function runScene8(){
   $('s8-line2').classList.add('done'); await sleep(320);
 
   /* BUTTON */
+  act('حفظ تفاصيل الحادث والمتابعة');
   await scrollToEl(f,c,$('s8-btn'),.6,.55);
   sfx_btnpop(); shimBtn('s8-btn'); await sleep(360);
   const rb=$('s8-btn').getBoundingClientRect();
@@ -2478,6 +2522,8 @@ async function runScene8(){
 
 /* ── tell a parent presentation page which scene is on screen ── */
 function sig(key){ try{ parent.postMessage({gigScene:key}, '*'); }catch(e){} }
+/* ── live action caption: updates the parent's subtitle per micro-step ── */
+function act(txt){ try{ parent.postMessage({gigAction:txt}, '*'); }catch(e){} }
 
 /* ══ MASTER SEQUENCE ══ */
 async function run(){

@@ -239,14 +239,29 @@ function showHead(key){
       $('eyebrow').textContent = h.eye;
       $('title').textContent   = h.t;
       $('subtitle').textContent= h.sub||'';
+      curAction = h.sub||'';     /* keep action tracker in sync on scene change */
     })
     .fromTo('#eyebrow', {opacity:0,y:18},{opacity:1,y:0,duration:.45,ease:'power3.out'})
     .fromTo('#title',   {opacity:0,y:22},{opacity:(h.t?1:0),y:0,duration:.55,ease:'power3.out'},'-=0.3')
     .fromTo('#subtitle',{opacity:0,y:16},{opacity:(h.sub?1:0),y:0,duration:.5,ease:'power3.out'},'-=0.3');
 }
 
+/* ── live action caption: updates ONLY the subtitle, in sync with each step ── */
+let curAction=null;
+function showAction(txt){
+  if(txt===curAction) return; curAction=txt;
+  const el=$('subtitle');
+  gsap.killTweensOf(el);
+  const tl=gsap.timeline();
+  tl.to(el,{opacity:0,y:-10,duration:.22,ease:'power2.in'})
+    .add(()=>{ el.textContent=txt||''; })
+    .fromTo(el,{opacity:0,y:12},{opacity:(txt?1:0),y:0,duration:.4,ease:'power3.out'});
+}
+
 window.addEventListener('message', e=>{
-  if(e.data && e.data.gigScene) showHead(e.data.gigScene);
+  if(!e.data) return;
+  if(e.data.gigScene) showHead(e.data.gigScene);
+  if(typeof e.data.gigAction==='string') showAction(e.data.gigAction);
 });
 
 /* ── premium tech sound design (Apple-inspired — pure sine, subtle, precise) ── */
