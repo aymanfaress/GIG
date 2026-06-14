@@ -2513,6 +2513,7 @@ function getACtx() {
 
 /* ── Shared soft master bus (gentle volume + a touch of high-cut warmth) ── */
 let master = null;
+let recTapNode = null;          /* extra output used by the video recorder */
 function getMaster() {
   const ctx = getACtx();
   if (!master) {
@@ -2521,6 +2522,7 @@ function getMaster() {
     const soft = ctx.createBiquadFilter();
     soft.type = 'lowpass'; soft.frequency.value = 6500; soft.Q.value = 0.4;
     master.connect(soft); soft.connect(ctx.destination);
+    window._softBus = soft;     /* exposed so the recorder can tap it */
   }
   return master;
 }
@@ -2656,6 +2658,79 @@ document.addEventListener('click', () => getACtx(), { once:true });
 document.addEventListener('keydown', () => getACtx(), { once:true });
 /* auto-init after short delay (works in most browsers) */
 setTimeout(() => { try { getACtx(); } catch(e) {} }, 500);
+
+/* ════════════════════════════════════════════════
+   VIDEO RECORDER — captures the animation + the
+   Web Audio sound directly (clean, no microphone).
+   Activate by opening the page with  ?record  in the URL.
+════════════════════════════════════════════════ */
+let mediaRec = null, recChunks = [], recStream = null;
+
+async function startRecording(btn){
+  try{
+    /* 1) video: capture the browser tab the user picks */
+    const display = await navigator.mediaDevices.getDisplayMedia({
+      video:{ frameRate:60, width:1920, height:1080 },
+      audio:false
+    });
+
+    /* 2) audio: tap the synth master bus straight into a stream */
+    const ctx = getACtx();
+    if(ctx.state==='suspended') await ctx.resume();
+    getMaster();                                   /* ensures _softBus exists */
+    if(!recTapNode){
+      recTapNode = ctx.createMediaStreamDestination();
+      window._softBus.connect(recTapNode);         /* clean audio source */
+    }
+
+    /* 3) combine video + clean audio into one stream */
+    recStream = new MediaStream([
+      ...display.getVideoTracks(),
+      ...recTapNode.stream.getAudioTracks()
+    ]);
+
+    /* 4) record */
+    recChunks = [];
+    const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+      ? 'video/webm;codecs=vp9,opus' : 'video/webm';
+    mediaRec = new MediaRecorder(recStream,{ mimeType:mime, videoBitsPerSecond:12000000 });
+    mediaRec.ondataavailable = e=>{ if(e.data.size) recChunks.push(e.data); };
+    mediaRec.onstop = ()=>{
+      const blob = new Blob(recChunks,{type:'video/webm'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'gig-claims.webm'; a.click();
+      display.getTracks().forEach(t=>t.stop());
+      btn.textContent='● سجّل وشغّل'; btn.dataset.on='0';
+    };
+    mediaRec.start();
+
+    /* 5) restart the whole animation from the top so the recording is clean */
+    location.hash = '';                            /* (no-op placeholder) */
+    btn.textContent='■ إيقاف وحفظ'; btn.dataset.on='1';
+    /* give the tab-picker a beat, then replay from scene 1 */
+    setTimeout(()=>{ try{ run(); }catch(e){} }, 400);
+  }catch(err){
+    alert('تعذّر بدء التسجيل: '+err.message);
+  }
+}
+
+function stopRecording(btn){
+  if(mediaRec && mediaRec.state!=='inactive') mediaRec.stop();
+}
+
+if(location.search.includes('record')){
+  window.addEventListener('load',()=>{
+    const b=document.createElement('button');
+    b.textContent='● سجّل وشغّل'; b.dataset.on='0';
+    b.style.cssText='position:fixed;top:12px;left:12px;z-index:99999;'+
+      'background:#19058c;color:#fff;border:none;border-radius:8px;'+
+      'padding:10px 16px;font:700 14px Almarai,sans-serif;cursor:pointer;'+
+      'box-shadow:0 4px 16px rgba(0,0,0,.3);';
+    b.onclick=()=>{ b.dataset.on==='1' ? stopRecording(b) : startRecording(b); };
+    document.body.appendChild(b);
+  });
+}
 
 window.addEventListener('load',()=>{ scaleScene(); setTimeout(run,200); });
 </script>
