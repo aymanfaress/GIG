@@ -80,7 +80,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 
 /* ── address-bar intro ── */
 #addrbar{
-  position:absolute;left:0;top:0;width:1920px;height:1080px;
+  position:absolute;inset:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:18px;z-index:20;pointer-events:none;opacity:0;
 }
@@ -359,7 +359,7 @@ async function addressBarIntro(){
   const urlEl=$('ab-url'), curEl=$('ab-cursor'), fillEl=$('ab-loadfill');
   const a=getAudio();
 
-  gsap.set('#addrbar',{opacity:0,scale:1});
+  gsap.set('#addrbar',{display:'flex',opacity:0,scale:1});
   gsap.set('#addrbar-pill',{y:46,scale:.86,opacity:0});
   gsap.set('#ab-glow',{opacity:0,scale:.7});
   gsap.set('#ab-loadbar',{opacity:0,y:8});
