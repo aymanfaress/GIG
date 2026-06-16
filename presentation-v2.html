@@ -187,28 +187,23 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 /* ── outro / end card ── */
 #outro{
   position:absolute;inset:0;z-index:50;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;
-  background:radial-gradient(ellipse at 50% 46%, #ffffff 0%, #f5f2fc 52%, #ece6f7 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  background:#ffffff;
   opacity:0;pointer-events:none;
 }
 #outro-glow{
-  position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
-  width:1100px;height:700px;border-radius:50%;
-  background:radial-gradient(ellipse,rgba(210,140,100,.55) 0%,rgba(25,5,140,.28) 42%,rgba(25,5,140,0) 72%);
-  filter:blur(48px);opacity:0;
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:1000px;height:560px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(210,140,100,.22) 0%,rgba(25,5,140,.12) 38%,rgba(25,5,140,0) 70%);
+  filter:blur(36px);opacity:0;pointer-events:none;z-index:1;
 }
 #outro-logo{
-  position:relative;z-index:2;width:460px;height:auto;object-fit:contain;opacity:0;
-  filter:drop-shadow(0 26px 64px rgba(25,5,140,.22));
-}
-#outro-line{
-  position:relative;z-index:2;width:0;height:2px;border-radius:2px;
-  background:linear-gradient(90deg,rgba(25,5,140,0) 0%,#19058c 30%,#d28c64 70%,rgba(210,140,100,0) 100%);
-  opacity:0;
+  position:relative;z-index:2;width:420px;height:auto;object-fit:contain;opacity:0;
+  filter:drop-shadow(0 20px 50px rgba(25,5,140,.18));
 }
 #outro-url{
   position:relative;z-index:2;
-  font-family:'Almarai',sans-serif;font-weight:700;font-size:30px;
+  font-family:'Almarai',sans-serif;font-weight:700;font-size:28px;
   color:#19058c;letter-spacing:3px;direction:ltr;opacity:0;
 }
 
@@ -303,7 +298,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   <div id="outro">
     <div id="outro-glow"></div>
     <img id="outro-logo" src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG">
-    <div id="outro-line"></div>
     <div id="outro-url">www.gig.sa</div>
   </div>
 
@@ -763,7 +757,6 @@ async function showOutro(){
   gsap.set('#outro',{opacity:0,display:'flex'});
   gsap.set('#outro-glow',{opacity:0,scale:.72});
   gsap.set('#outro-logo',{opacity:0,scale:.84,y:16});
-  gsap.set('#outro-line',{opacity:0,width:0});
   gsap.set('#outro-url',{opacity:0,y:16});
 
   /* 1. light background fades in */
@@ -778,11 +771,7 @@ async function showOutro(){
   await new Promise(res=>gsap.to('#outro-logo',
     {opacity:1,scale:1,y:0,duration:.95,ease:'back.out(1.5)',onComplete:res}));
 
-  /* 4. accent line draws out */
-  await new Promise(res=>gsap.to('#outro-line',
-    {opacity:1,width:340,duration:.6,ease:'power3.out',onComplete:res}));
-
-  /* 5. url fades in — bookends the intro */
+  /* 4. url fades in below logo */
   await new Promise(res=>gsap.to('#outro-url',
     {opacity:1,y:0,duration:.55,ease:'power3.out',onComplete:res}));
 
