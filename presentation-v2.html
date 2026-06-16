@@ -133,14 +133,20 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 }
 #ab-ring{
   position:absolute;
-  inset:-6px;
-  width:calc(100% + 12px);
-  height:calc(100% + 12px);
+  left:-6px;top:-6px;
+  width:792px;height:100px;
   opacity:0;
   z-index:0;
   pointer-events:none;
   overflow:visible;
-  filter:drop-shadow(0 0 8px rgba(25,5,140,.7));
+  filter:drop-shadow(0 0 10px rgba(25,5,140,.75));
+}
+@keyframes pill-trace{
+  from{ stroke-dashoffset:0; }
+  to  { stroke-dashoffset:-1662; }
+}
+#ab-ring-path.running{
+  animation:pill-trace 1.3s cubic-bezier(.4,0,.2,1) forwards;
 }
 #ab-flash{
   position:absolute;inset:0;background:#fff;opacity:0;
@@ -511,7 +517,9 @@ async function addressBarIntro(){
   gsap.set('#addrbar-center',{y:50,scale:.88,opacity:0});
   gsap.set('#ab-glow',{opacity:0,scale:.6});
   gsap.set('#ab-ring',{opacity:0});
-  gsap.set('#ab-ring-path',{attr:{strokeDashoffset:0}});
+  const ringPath=$('ab-ring-path');
+  ringPath.classList.remove('running');
+  ringPath.style.strokeDashoffset='0';
   gsap.set(curEl,{opacity:1});
   gsap.set('#ab-flash',{opacity:0});
 
@@ -541,16 +549,14 @@ async function addressBarIntro(){
   blinkTween.kill();
   gsap.set(curEl,{opacity:0});
 
-  /* 5. stroke travels all the way around the pill perimeter then fades */
+  /* 5. stroke traces around the full pill perimeter via CSS animation */
   gsap.to('#ab-ring',{opacity:1,duration:.28,ease:'power2.out'});
   await delay(100);
   if(a) sfxChime(a);
-  /* perimeter of pill (w=780,h=88,rx=44): 2*(780-88)+π*88 ≈ 1662 */
-  await new Promise(res=>gsap.to('#ab-ring-path',{
-    attr:{strokeDashoffset:-1662},
-    duration:1.2, ease:'power1.inOut', onComplete:res
-  }));
+  ringPath.classList.add('running');   /* CSS handles the stroke travel */
+  await delay(1350);                   /* wait for animation to finish   */
   await new Promise(res=>gsap.to('#ab-ring',{opacity:0,duration:.35,ease:'power2.in',onComplete:res}));
+  ringPath.classList.remove('running');
 
   await delay(360);
 
