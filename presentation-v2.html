@@ -133,14 +133,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 }
 #ab-ring{
   position:absolute;
-  inset:-5px;
-  border-radius:65px;
-  background:conic-gradient(from var(--ab-angle),
-    #19058c 0%,#d28c64 35%,#19058c 65%,#d28c64 100%);
-  --ab-angle:0deg;
+  inset:-6px;
+  width:calc(100% + 12px);
+  height:calc(100% + 12px);
   opacity:0;
   z-index:0;
   pointer-events:none;
+  overflow:visible;
+  filter:drop-shadow(0 0 8px rgba(25,5,140,.7));
 }
 #ab-flash{
   position:absolute;inset:0;background:#fff;opacity:0;
@@ -264,7 +264,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
     <div id="ab-glow"></div>
     <div id="addrbar-center">
       <div id="addrbar-pill-wrap">
-        <div id="ab-ring"></div>
+        <svg id="ab-ring" viewBox="0 0 792 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ring-grad" x1="0" y1="0" x2="792" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%"   stop-color="#19058c"/>
+              <stop offset="50%"  stop-color="#d28c64"/>
+              <stop offset="100%" stop-color="#19058c"/>
+            </linearGradient>
+          </defs>
+          <rect id="ab-ring-path" x="6" y="6" width="780" height="88" rx="44"
+                fill="none" stroke="url(#ring-grad)" stroke-width="4"
+                stroke-dasharray="260 1402" stroke-dashoffset="0"
+                stroke-linecap="round"/>
+        </svg>
         <div id="addrbar-pill">
         <span id="ab-lock">
           <svg width="20" height="22" viewBox="0 0 18 20" fill="none">
@@ -498,7 +510,8 @@ async function addressBarIntro(){
   gsap.set('#addrbar',{display:'block',opacity:1});
   gsap.set('#addrbar-center',{y:50,scale:.88,opacity:0});
   gsap.set('#ab-glow',{opacity:0,scale:.6});
-  gsap.set('#ab-ring',{'--ab-angle':'0deg',opacity:0});
+  gsap.set('#ab-ring',{opacity:0});
+  gsap.set('#ab-ring-path',{attr:{strokeDashoffset:0}});
   gsap.set(curEl,{opacity:1});
   gsap.set('#ab-flash',{opacity:0});
 
@@ -528,18 +541,16 @@ async function addressBarIntro(){
   blinkTween.kill();
   gsap.set(curEl,{opacity:0});
 
-  /* 5. ring fades in then spins around the pill — chime at start */
-  gsap.to('#ab-ring',{opacity:1,duration:.32,ease:'power2.out'});
-  await delay(120);
+  /* 5. stroke travels all the way around the pill perimeter then fades */
+  gsap.to('#ab-ring',{opacity:1,duration:.28,ease:'power2.out'});
+  await delay(100);
   if(a) sfxChime(a);
-  /* spin 1.5 turns via a proxy object so GSAP drives the angle each frame */
-  const ringEl=$('ab-ring'), proxy={angle:0};
-  await new Promise(res=>gsap.to(proxy,{
-    angle:540, duration:1.15, ease:'power2.inOut',
-    onUpdate(){ ringEl.style.setProperty('--ab-angle', proxy.angle+'deg'); },
-    onComplete:res
+  /* perimeter of pill (w=780,h=88,rx=44): 2*(780-88)+π*88 ≈ 1662 */
+  await new Promise(res=>gsap.to('#ab-ring-path',{
+    attr:{strokeDashoffset:-1662},
+    duration:1.2, ease:'power1.inOut', onComplete:res
   }));
-  gsap.to('#ab-ring',{opacity:0,duration:.3,ease:'power2.in'});
+  await new Promise(res=>gsap.to('#ab-ring',{opacity:0,duration:.35,ease:'power2.in',onComplete:res}));
 
   await delay(360);
 
