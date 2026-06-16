@@ -543,7 +543,11 @@ async function runCountdown(secs){
     gsap.fromTo(num,{scale:.6,opacity:0},{scale:1,opacity:1,duration:.35,ease:'power3.out'});
     await delay(1000);
   }
+  /* clear and hide, then wait two frames so the empty overlay is actually
+     painted before recording starts — keeps the numbers out of the video */
+  num.textContent='';
   el.style.display = 'none';
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 }
 
 async function addressBarIntro(){
@@ -723,6 +727,9 @@ async function start(record, btn){
   /* arm recording (screen picker appears now) — the recorder is prepared but
      not started yet, so the lead-in countdown below is NOT captured */
   if(record){
+    /* go fullscreen so the 16:9 stage fills the screen — removes the dark
+       top/bottom margins that otherwise show up as black bars in the video */
+    try{ if(!document.fullscreenElement) await document.documentElement.requestFullscreen(); }catch(e){}
     try{
       const display = await navigator.mediaDevices.getDisplayMedia({
         video:{ frameRate:60, width:1920, height:1080 }, audio:false });
@@ -741,8 +748,12 @@ async function start(record, btn){
         a.href=URL.createObjectURL(blob);
         a.download='gig-presentation.'+(isMp4?'mp4':'webm'); a.click();
         display.getTracks().forEach(t=>t.stop());
+        try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
       };
-    }catch(err){ alert('تعذّر بدء التسجيل: '+err.message); }
+    }catch(err){
+      try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e2){}
+      alert('تعذّر بدء التسجيل: '+err.message);
+    }
   }
 
   /* lead-in buffer so you can get a recorder rolling before the show begins */
