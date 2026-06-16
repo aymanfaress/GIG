@@ -519,6 +519,22 @@ function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 /* ── lead-in countdown: seconds of buffer before the show starts, so an
    external screen recorder can be rolling before frame one ── */
 const START_DELAY = 5;
+
+/* pick the best supported recording format — prefer MP4 (H.264/AAC),
+   fall back to WebM only if the browser can't record MP4 */
+function pickRecMime(){
+  const prefs = [
+    'video/mp4;codecs=avc1.640028,mp4a.40.2',
+    'video/mp4;codecs=avc1,mp4a.40.2',
+    'video/mp4;codecs=h264,aac',
+    'video/mp4',
+    'video/webm;codecs=vp9,opus',
+    'video/webm'
+  ];
+  for(const m of prefs){ try{ if(MediaRecorder.isTypeSupported(m)) return m; }catch(e){} }
+  return '';
+}
+
 async function runCountdown(secs){
   const el = $('countdown'), num = $('cd-num');
   el.style.display = 'flex';
@@ -713,15 +729,17 @@ async function start(record, btn){
       const ctx = fw.getACtx(); fw.getMaster();
       if(!recTap){ recTap = ctx.createMediaStreamDestination(); fw._softBus.connect(recTap); }
       const stream = new MediaStream([...display.getVideoTracks(), ...recTap.stream.getAudioTracks()]);
-      const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
-        ? 'video/webm;codecs=vp9,opus' : 'video/webm';
-      mediaRec = new MediaRecorder(stream,{mimeType:mime, videoBitsPerSecond:16000000});
+      const mime = pickRecMime();
+      mediaRec = new MediaRecorder(stream, mime ? {mimeType:mime, videoBitsPerSecond:16000000}
+                                                : {videoBitsPerSecond:16000000});
       recChunks=[];
       mediaRec.ondataavailable=ev=>{ if(ev.data.size) recChunks.push(ev.data); };
       mediaRec.onstop=()=>{
-        const blob=new Blob(recChunks,{type:'video/webm'});
+        const isMp4 = (mediaRec.mimeType||mime||'').indexOf('mp4')>=0;
+        const blob=new Blob(recChunks,{type: isMp4 ? 'video/mp4':'video/webm'});
         const a=document.createElement('a');
-        a.href=URL.createObjectURL(blob); a.download='gig-presentation.webm'; a.click();
+        a.href=URL.createObjectURL(blob);
+        a.download='gig-presentation.'+(isMp4?'mp4':'webm'); a.click();
         display.getTracks().forEach(t=>t.stop());
       };
     }catch(err){ alert('تعذّر بدء التسجيل: '+err.message); }
