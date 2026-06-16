@@ -138,6 +138,37 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   z-index:30;pointer-events:none;
 }
 
+/* ── intro title card (very first scene) ── */
+#intro-title{
+  position:absolute;inset:0;z-index:60;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 48%, #ffffff 0%, #f5f2fc 52%, #ece6f7 100%);
+  opacity:0;pointer-events:none;
+}
+#it-glow{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:1100px;height:620px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(210,140,100,.20) 0%,rgba(25,5,140,.11) 40%,rgba(25,5,140,0) 72%);
+  filter:blur(44px);opacity:0;
+}
+#it-stack{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:30px;
+}
+#it-text{
+  font-family:'Kufam',sans-serif;font-weight:900;
+  font-size:66px;line-height:1.3;color:#19058c;
+  text-align:center;direction:rtl;
+  text-shadow:0 18px 50px rgba(25,5,140,.14);
+}
+#it-text .it-word{ display:inline-block; margin:0 12px; }
+#it-text .it-brand{ color:#19058c; }
+#it-line{
+  width:0;height:3px;border-radius:3px;
+  background:linear-gradient(90deg,rgba(25,5,140,0) 0%,#19058c 28%,#d28c64 72%,rgba(210,140,100,0) 100%);
+  opacity:0;
+}
+
 /* ── outro / end card ── */
 #outro{
   position:absolute;inset:0;z-index:50;
@@ -203,6 +234,21 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 
 <div id="stage">
   <img id="bg" src="images/bg-presentation.png" alt="">
+
+  <!-- intro title card (very first scene) -->
+  <div id="intro-title">
+    <div id="it-glow"></div>
+    <div id="it-stack">
+      <div id="it-text">
+        <span class="it-word">تقديم</span>
+        <span class="it-word">مطالبات</span>
+        <span class="it-word">التأمين</span>
+        <span class="it-word">مع</span>
+        <span class="it-word it-brand">جي آي جي</span>
+      </div>
+      <div id="it-line"></div>
+    </div>
+  </div>
 
   <!-- address-bar intro overlay -->
   <div id="addrbar">
@@ -536,8 +582,10 @@ function stopMusic(){
 async function start(record, btn){
   $('playBtn').classList.add('hide'); $('recBtn').classList.add('hide');
 
-  /* reset outro + music state (allows replay) */
-  outroDone=false; gsap.set('#outro',{opacity:0,display:'none'});
+  /* reset intro/outro + music state (allows replay) */
+  outroDone=false;
+  gsap.set('#outro',{opacity:0,display:'none'});
+  gsap.set('#intro-title',{opacity:0,display:'none'});
   stopMusic();
 
   const fw = frame.contentWindow;
@@ -570,13 +618,51 @@ async function start(record, btn){
     }catch(err){ alert('تعذّر بدء التسجيل: '+err.message); }
   }
 
-  /* 1) address bar types URL, 2) tablet rises, 3) headlines, 4) run */
+  /* 0) opening title, 1) address bar types URL, 2) tablet rises, 3) run */
+  await showIntroTitle();
   await addressBarIntro();
   showHead('s1');
   await tabletEnter();
   tabletShine(); /* light sweep — fire-and-forget, runs concurrently */
   await delay(300);
   try{ fw.run(); }catch(e){}
+}
+
+/* ── opening title card: "تقديم مطالبات التأمين مع جي آي جي" ── */
+async function showIntroTitle(){
+  const a=getAudio();
+  gsap.set('#intro-title',{opacity:0,display:'flex'});
+  gsap.set('#it-glow',{opacity:0,scale:.72});
+  gsap.set('#it-text .it-word',{opacity:0,y:28});
+  gsap.set('#it-line',{opacity:0,width:0});
+
+  /* 1. background fades in */
+  await new Promise(res=>gsap.to('#intro-title',{opacity:1,duration:.6,ease:'power2.out',onComplete:res}));
+
+  /* 2. glow blooms */
+  gsap.to('#it-glow',{opacity:1,scale:1,duration:1.8,ease:'power2.out'});
+
+  /* 3. words rise in, right-to-left, with a soft chime */
+  if(a) sfxAppear(a);
+  await new Promise(res=>gsap.to('#it-text .it-word',
+    {opacity:1,y:0,duration:.7,stagger:.09,ease:'power4.out',onComplete:res}));
+
+  /* 4. accent line draws out */
+  await new Promise(res=>gsap.to('#it-line',
+    {opacity:1,width:320,duration:.55,ease:'power3.out',onComplete:res}));
+
+  /* 5. hold */
+  await delay(1100);
+
+  /* 6. graceful exit → reveals the address bar */
+  await new Promise(res=>{
+    const tl=gsap.timeline({onComplete:res});
+    tl.to('#it-text .it-word',{opacity:0,y:-20,duration:.5,stagger:.05,ease:'power2.in'},0)
+      .to('#it-line',{opacity:0,duration:.4,ease:'power2.in'},0)
+      .to('#it-glow',{opacity:0,scale:1.3,duration:.6,ease:'power2.in'},0)
+      .to('#intro-title',{opacity:0,duration:.5,ease:'power2.in'},'-=0.15');
+  });
+  gsap.set('#intro-title',{display:'none'});
 }
 
 /* ── cinematic outro: brand logo end card ── */
