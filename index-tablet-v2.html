@@ -1582,21 +1582,21 @@ async function runScene1(){
   await sleep(120);
   setP(2);
 
-  /* page builds fast — header + footer + sidebar come in together */
+  /* page builds — header + footer + sidebar come in together */
   gsap.to('.site-hdr',{y:0,opacity:1,duration:.55,ease:'power3.out',stagger:.06});
   gsap.to($('s1-ftr'),{opacity:1,duration:.5,delay:.12});
   gsap.to($('s1-sidebar'),{x:0,opacity:1,duration:.6,ease:'power3.out',delay:.18});
-  await sleep(300);
+  await sleep(420);
   gsap.to($('s1-form'),{y:0,scale:1,opacity:1,duration:.55,ease:'power3.out'});
-  await sleep(240);
+  await sleep(340);
   gsap.to($('s1-title'),{y:0,opacity:1,duration:.55,ease:'back.out(1.5)'});
-  await sleep(160);
+  await sleep(220);
   gsap.to($('fg1'),{x:0,opacity:1,duration:.45,ease:'power2.out'});
-  await sleep(90);
+  await sleep(120);
   gsap.to($('fg2'),{x:0,opacity:1,duration:.45,ease:'power2.out'});
-  await sleep(90);
+  await sleep(120);
   gsap.to($('fg3'),{x:0,opacity:1,duration:.45,ease:'power2.out'});
-  await sleep(180);
+  await sleep(260);
   setP(18);
 
   const s1form=$('s1-form'), s1cont=$('s1-content');
@@ -1610,11 +1610,11 @@ async function runScene1(){
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
   await moveTo(r1.left+r1.width*.62,r1.top+r1.height*.5,1.1);
   await clickAt(r1.left+r1.width*.62,r1.top+r1.height*.5);
-  $('inp1').focus(); await sleep(180);
-  await typeIn($('inp1'),'2341968192',70);
-  lblOff(1); showChk(1); sfx_check(); await sleep(340);
+  $('inp1').focus(); await sleep(240);
+  await typeIn($('inp1'),'2341968192',80);
+  lblOff(1); showChk(1); sfx_check(); await sleep(480);
   spotOff(1); pingOff(); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(s1form,0.9); setP(36); await sleep(360);
+  sfx_zoomout(); await zoomOut(s1form,0.9); setP(36); await sleep(500);
 
   /* ── FIELD 2 ── */
   act('إدخال رقم الجوال');
@@ -1625,12 +1625,12 @@ async function runScene1(){
   await moveTo(r2.left+r2.width*.55,r2.top+r2.height*.5,.55);
   await clickAt(r2.left+r2.width*.55,r2.top+r2.height*.5);
   $('inp2').classList.add('focused'); $('phcode').style.borderColor='#d28c64';
-  await sleep(180);
-  await typeIn($('inp2'),'537077897',74);
+  await sleep(240);
+  await typeIn($('inp2'),'537077897',84);
   $('phcode').style.borderColor='#c8d8ff';
-  lblOff(2); showChk(2); sfx_check(); await sleep(340);
+  lblOff(2); showChk(2); sfx_check(); await sleep(480);
   spotOff(2); pingOff(); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(s1form,0.9); setP(54); await sleep(360);
+  sfx_zoomout(); await zoomOut(s1form,0.9); setP(54); await sleep(500);
 
   /* ── FIELD 3 ── */
   act('إدخال البريد الإلكتروني');
@@ -1641,32 +1641,32 @@ async function runScene1(){
   await moveTo(r3.left+r3.width*.55,r3.top+r3.height*.5,.55);
   await clickAt(r3.left+r3.width*.55,r3.top+r3.height*.5);
   $('inp3').focus(); $('inp3').classList.add('focused');
-  await sleep(180);
-  await typeIn($('inp3'),'ahmed@example.com',62);
-  lblOff(3); showChk(3); sfx_check(); await sleep(340);
+  await sleep(240);
+  await typeIn($('inp3'),'ahmed@example.com',72);
+  lblOff(3); showChk(3); sfx_check(); await sleep(480);
   spotOff(3); pingOff(); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(s1form,0.9); setP(70); await sleep(360);
+  sfx_zoomout(); await zoomOut(s1form,0.9); setP(70); await sleep(500);
 
   /* sidebar progress line */
-  $('line1').classList.add('done'); await sleep(400);
+  $('line1').classList.add('done'); await sleep(560);
 
   /* ── BUTTON ── */
   act('تأكيد البيانات والمتابعة');
-  gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(420);
-  shimBtn('s1-btn'); await sleep(500);
+  gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(580);
+  shimBtn('s1-btn'); await sleep(660);
   sfx_zoomin(); await zoomTo(s1form,s1cont,$('s1-btn'),1.3,0.85,80);
-  await sleep(320);
+  await sleep(440);
   const rb=$('s1-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  await sleep(380); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s1-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s1-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s1-btn').style.background='#19058c'; shimBtn('s1-btn'); },200)
   });
 
-  setP(82); await sleep(500);
-  await zoomOut(s1form,0.85); await sleep(180);
+  setP(82); await sleep(660);
+  await zoomOut(s1form,0.85); await sleep(260);
   sfx_success(); await successFlash($('s1-flash'));
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
@@ -1780,15 +1780,15 @@ async function runScene3(){
 
   /* page builds */
   gsap.to($('s3-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(480);
+  await sleep(640);
   gsap.to($('s3-form'),{y:0,scale:1,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(360);
+  await sleep(480);
   gsap.to($('s3-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.5)'});
-  await sleep(260);
-  gsap.to($('fg4'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
-  gsap.to($('fg5'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
-  gsap.to($('fg6'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
-  gsap.to($('fg7'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  await sleep(340);
+  gsap.to($('fg4'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(150);
+  gsap.to($('fg5'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(150);
+  gsap.to($('fg6'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(150);
+  gsap.to($('fg7'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(360);
   setP(16);
 
   const f=$('s3-form'), c=$('s3-content');
@@ -1802,11 +1802,11 @@ async function runScene3(){
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
   await moveTo(r4.left+r4.width*.62,r4.top+r4.height*.5,1.1);
   await clickAt(r4.left+r4.width*.62,r4.top+r4.height*.5);
-  $('inp4').focus(); await sleep(180);
-  await typeIn($('inp4'),'7001689913',70);
-  lblOff(4); showChk(4); sfx_check(); await sleep(340);
+  $('inp4').focus(); await sleep(240);
+  await typeIn($('inp4'),'7001689913',80);
+  lblOff(4); showChk(4); sfx_check(); await sleep(480);
   spotOff(4); pingOff('stp1c'); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.9); setP(30); await sleep(340);
+  sfx_zoomout(); await zoomOut(f,0.9); setP(30); await sleep(480);
 
   /* ── FIELD 5 — driver ID ── */
   act('إدخال رقم هوية السائق');
@@ -1816,11 +1816,11 @@ async function runScene3(){
   const r5=$('inp5').getBoundingClientRect();
   await moveTo(r5.left+r5.width*.62,r5.top+r5.height*.5,.6);
   await clickAt(r5.left+r5.width*.62,r5.top+r5.height*.5);
-  $('inp5').focus(); await sleep(180);
-  await typeIn($('inp5'),'2341968192',70);
-  lblOff(5); showChk(5); sfx_check(); await sleep(340);
+  $('inp5').focus(); await sleep(240);
+  await typeIn($('inp5'),'2341968192',80);
+  lblOff(5); showChk(5); sfx_check(); await sleep(480);
   spotOff(5); pingOff('stp1c'); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.9); setP(44); await sleep(340);
+  sfx_zoomout(); await zoomOut(f,0.9); setP(44); await sleep(480);
 
   /* ── FIELD 6 — mobile ── */
   act('إدخال رقم الجوال');
@@ -1831,14 +1831,14 @@ async function runScene3(){
   await moveTo(r6.left+r6.width*.55,r6.top+r6.height*.5,.55);
   await clickAt(r6.left+r6.width*.55,r6.top+r6.height*.5);
   $('inp6').classList.add('focused'); $('phcode3').style.borderColor='#d28c64';
-  await sleep(180);
-  await typeIn($('inp6'),'537077897',74);
+  await sleep(240);
+  await typeIn($('inp6'),'537077897',84);
   $('phcode3').style.borderColor='#c8d8ff';
-  lblOff(6); showChk(6); sfx_check(); await sleep(340);
+  lblOff(6); showChk(6); sfx_check(); await sleep(480);
   spotOff(6); pingOff('stp1c'); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.9); setP(58); await sleep(360);
+  sfx_zoomout(); await zoomOut(f,0.9); setP(58); await sleep(500);
 
-  /* ── FIELD 7 — email (same as Scene 1) ── */
+  /* ── FIELD 7 — email ── */
   act('إدخال البريد الإلكتروني');
   pingOn('stp1c'); dim.classList.add('on');
   sfx_zoomin(); await zoomTo(f,c,$('fg7'),1.55,0.95);
@@ -1847,32 +1847,32 @@ async function runScene3(){
   await moveTo(r7.left+r7.width*.55,r7.top+r7.height*.5,.55);
   await clickAt(r7.left+r7.width*.55,r7.top+r7.height*.5);
   $('inp7').focus(); $('inp7').classList.add('focused');
-  await sleep(180);
-  await typeIn($('inp7'),'ahmed@example.com',62);
-  lblOff(7); showChk(7); sfx_check(); await sleep(340);
+  await sleep(240);
+  await typeIn($('inp7'),'ahmed@example.com',72);
+  lblOff(7); showChk(7); sfx_check(); await sleep(480);
   spotOff(7); pingOff('stp1c'); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.9); setP(72); await sleep(360);
+  sfx_zoomout(); await zoomOut(f,0.9); setP(72); await sleep(500);
 
   /* sidebar progress line */
-  $('line1c').classList.add('done'); await sleep(400);
+  $('line1c').classList.add('done'); await sleep(560);
 
   /* ── BUTTON ── */
   act('تأكيد البيانات والمتابعة');
-  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(420);
-  shimBtn('s3-btn'); await sleep(500);
+  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(580);
+  shimBtn('s3-btn'); await sleep(660);
   sfx_zoomin(); await zoomTo(f,c,$('s3-btn'),1.3,0.85,80);
-  await sleep(320);
+  await sleep(440);
   const rb=$('s3-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  await sleep(380); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s3-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s3-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s3-btn').style.background='#19058c'; shimBtn('s3-btn'); },200)
   });
 
-  setP(82); await sleep(500);
-  await zoomOut(f,0.85); await sleep(180);
+  setP(82); await sleep(660);
+  await zoomOut(f,0.85); await sleep(260);
   sfx_success(); await successFlash($('s3-flash'));
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
@@ -1916,100 +1916,100 @@ async function runScene4(){
 
   /* build in (header/footer static) */
   gsap.to($('s4-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(420);
+  await sleep(560);
   gsap.to($('s4-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(360);
+  await sleep(480);
   gsap.to($('s4-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'});
-  await sleep(320);
+  await sleep(420);
   gsap.to($('s4-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'});
-  await sleep(260);
+  await sleep(340);
   gsap.to('#sec-source',{y:0,opacity:1,duration:.55,ease:'power2.out'});
-  await sleep(360);
+  await sleep(480);
   setP(14);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
   pingOn('s4-stp2');
 
-  /* ── 1) SOURCE = نجم (cursor goes straight to نجم) ── */
+  /* ── 1) SOURCE = نجم ── */
   act('اختيار مصدر البلاغ: نجم');
   await scrollToEl(f,c,$('sec-source'),.6,.5);
-  accSpot('spot-src',true); await sleep(160);
+  accSpot('spot-src',true); await sleep(220);
   const rnajm=$('src-najm').getBoundingClientRect();
   await moveTo(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2,.95);
   sfx_confirm(); await clickAt(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2);
-  selCard('src-najm'); sfx_check(); await sleep(340);
-  accSpot('spot-src',false); await sleep(220);
+  selCard('src-najm'); sfx_check(); await sleep(480);
+  accSpot('spot-src',false); await sleep(300);
 
   /* reveal the rest of the form */
-  gsap.to('#sec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
-  gsap.to('#sec-owner',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
-  gsap.to('#sec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(140);
-  gsap.to('#s4-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(60);
-  gsap.to('#s4-back',{y:0,opacity:1,duration:.4}); await sleep(300);
+  gsap.to('#sec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(190);
+  gsap.to('#sec-owner',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(190);
+  gsap.to('#sec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(190);
+  gsap.to('#s4-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(80);
+  gsap.to('#s4-back',{y:0,opacity:1,duration:.4}); await sleep(400);
   setP(28);
 
   /* ── 2) TYPE = أضرار في المركبة ── */
   act('اختيار نوع الحادث: أضرار في المركبة');
   await scrollToEl(f,c,$('sec-type'),.7,.45);
-  accSpot('spot-type',true); await sleep(140);
+  accSpot('spot-type',true); await sleep(200);
   const rveh=$('type-veh').getBoundingClientRect();
   await moveTo(rveh.left+rveh.width/2,rveh.top+rveh.height/2,.7);
   sfx_confirm(); await clickAt(rveh.left+rveh.width/2,rveh.top+rveh.height/2);
-  selCard('type-veh'); sfx_check(); await sleep(340);
-  accSpot('spot-type',false); setP(42); await sleep(240);
+  selCard('type-veh'); sfx_check(); await sleep(480);
+  accSpot('spot-type',false); setP(42); await sleep(340);
 
   /* ── 3) OWNER = لا → driver identity ── */
   act('تحديد المالك وإدخال رقم هوية السائق');
   await scrollToEl(f,c,$('sec-owner'),.7,.4);
-  accSpot('spot-owner',true); await sleep(140);
+  accSpot('spot-owner',true); await sleep(200);
   const rno=$('own-no').getBoundingClientRect();
   await moveTo(rno.left+rno.width/2,rno.top+rno.height/2,.7);
   sfx_click(); await clickAt(rno.left+rno.width/2,rno.top+rno.height/2);
-  $('own-no').classList.add('sel'); sfx_check(); await sleep(220);
+  $('own-no').classList.add('sel'); sfx_check(); await sleep(300);
 
   /* driver field slides in */
   $('fld-driver').style.display='block';
   gsap.fromTo($('fld-driver'),{opacity:0,y:-8},{opacity:1,y:0,duration:.45,ease:'power2.out'});
-  await sleep(320);
+  await sleep(420);
   await scrollToEl(f,c,$('fld-driver'),.55,.5);
   $('lbl-driver').classList.add('active');
   const rdrv=$('inp-driver').getBoundingClientRect();
   await moveTo(rdrv.left+rdrv.width*.55,rdrv.top+rdrv.height*.5,.6);
   await clickAt(rdrv.left+rdrv.width*.55,rdrv.top+rdrv.height*.5);
-  await sleep(160);
-  await typeIn($('inp-driver'),'2094309909',68);
-  $('lbl-driver').classList.remove('active'); $('chk-driver').classList.add('show'); sfx_check(); await sleep(340);
-  accSpot('spot-owner',false); setP(58); await sleep(240);
+  await sleep(220);
+  await typeIn($('inp-driver'),'2094309909',78);
+  $('lbl-driver').classList.remove('active'); $('chk-driver').classList.add('show'); sfx_check(); await sleep(480);
+  accSpot('spot-owner',false); setP(58); await sleep(340);
 
   /* ── 4) NAJM REPORT NUMBER ── */
   act('إدخال رقم تقرير نجم');
   await scrollToEl(f,c,$('fld-najm'),.7,.45);
   accSpot('spot-najm',true);
-  $('lbl-najm').classList.add('active'); await sleep(120);
+  $('lbl-najm').classList.add('active'); await sleep(180);
   const rn=$('inp-najm').getBoundingClientRect();
   await moveTo(rn.left+rn.width*.55,rn.top+rn.height*.5,.7);
   await clickAt(rn.left+rn.width*.55,rn.top+rn.height*.5);
-  await sleep(160);
-  await typeIn($('inp-najm'),'RD1805262256',58);
-  $('lbl-najm').classList.remove('active'); $('chk-najm').classList.add('show'); sfx_check(); await sleep(340);
-  accSpot('spot-najm',false); setP(72); await sleep(220);
+  await sleep(220);
+  await typeIn($('inp-najm'),'RD1805262256',68);
+  $('lbl-najm').classList.remove('active'); $('chk-najm').classList.add('show'); sfx_check(); await sleep(480);
+  accSpot('spot-najm',false); setP(72); await sleep(320);
 
   /* ── 5) SERIAL / CUSTOMS NUMBER ── */
   act('إدخال الرقم التسلسلي للمركبة');
   await scrollToEl(f,c,$('fld-serial'),.6,.45);
   accSpot('spot-serial',true);
-  $('lbl-serial').classList.add('active'); await sleep(120);
+  $('lbl-serial').classList.add('active'); await sleep(180);
   const rs=$('inp-serial').getBoundingClientRect();
   await moveTo(rs.left+rs.width*.55,rs.top+rs.height*.5,.7);
   await clickAt(rs.left+rs.width*.55,rs.top+rs.height*.5);
-  await sleep(160);
-  await typeIn($('inp-serial'),'956423220',62);
-  $('lbl-serial').classList.remove('active'); $('chk-serial').classList.add('show'); sfx_check(); await sleep(340);
-  accSpot('spot-serial',false); setP(86); await sleep(240);
+  await sleep(220);
+  await typeIn($('inp-serial'),'956423220',72);
+  $('lbl-serial').classList.remove('active'); $('chk-serial').classList.add('show'); sfx_check(); await sleep(480);
+  accSpot('spot-serial',false); setP(86); await sleep(340);
 
   /* step 2 line completes */
   pingOff('s4-stp2');
-  $('s4-line2').classList.add('done'); await sleep(320);
+  $('s4-line2').classList.add('done'); await sleep(440);
 
   /* ── BUTTON ── */
   act('حفظ تفاصيل الحادث والمتابعة');
