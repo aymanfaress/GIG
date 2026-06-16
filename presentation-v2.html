@@ -500,16 +500,53 @@ async function addressBarIntro(){
 /* ── start the show (with optional recording) ── */
 let mediaRec=null, recChunks=[], recTap=null;
 
+/* ── background music — routed through the iframe's soft bus so it is
+   both audible AND captured by the recorder; fades in/out gracefully ── */
+const MUSIC_FILE = 'Interview%2001.mp3';   /* URL-encoded (space → %20) */
+const MUSIC_VOL  = 0.18;                    /* level under the SFX / VO  */
+let musicSrc=null, musicGain=null;
+async function startMusic(){
+  try{
+    const fw  = frame.contentWindow;
+    const ctx = fw.getACtx(); fw.getMaster();           /* ensure soft bus exists */
+    const bus = fw._softBus || ctx.destination;
+    const res = await fetch(MUSIC_FILE);
+    if(!res.ok){ console.warn('music not found:', MUSIC_FILE); return; }
+    const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+    musicSrc = ctx.createBufferSource();
+    musicSrc.buffer = buf; musicSrc.loop = true;        /* loop if shorter than 2 min */
+    musicGain = ctx.createGain();
+    const t = ctx.currentTime;
+    musicGain.gain.setValueAtTime(0.0001, t);
+    musicGain.gain.exponentialRampToValueAtTime(MUSIC_VOL, t+2.2);   /* fade in */
+    musicSrc.connect(musicGain); musicGain.connect(bus);
+    musicSrc.start(t);
+  }catch(e){ console.warn('music error:', e); }
+}
+function stopMusic(){
+  if(!musicGain) return;
+  const ctx=musicGain.context, t=ctx.currentTime;
+  musicGain.gain.cancelScheduledValues(t);
+  musicGain.gain.setValueAtTime(musicGain.gain.value, t);
+  musicGain.gain.linearRampToValueAtTime(0.0001, t+3.0);            /* fade out */
+  try{ musicSrc.stop(t+3.2); }catch(e){}
+  musicSrc=null; musicGain=null;
+}
+
 async function start(record, btn){
   $('playBtn').classList.add('hide'); $('recBtn').classList.add('hide');
 
-  /* reset outro state (allows replay) */
+  /* reset outro + music state (allows replay) */
   outroDone=false; gsap.set('#outro',{opacity:0,display:'none'});
+  stopMusic();
 
   const fw = frame.contentWindow;
 
   /* resume the iframe's audio engine on this user gesture */
   try{ const c = fw.getACtx(); if(c.state==='suspended') await c.resume(); }catch(e){}
+
+  /* kick off background music from 0:00 (fire-and-forget; fades in) */
+  startMusic();
 
   if(record){
     try{
@@ -579,6 +616,7 @@ let outroDone=false;
 window.addEventListener('message', async e=>{
   if(e.data && e.data.gigScene==='end' && !outroDone){
     outroDone=true;
+    stopMusic();          /* fade music out as the outro begins */
     await delay(700);
     await showOutro();
     window.__outroEnd = performance.now();
