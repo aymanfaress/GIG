@@ -481,7 +481,6 @@ function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 async function addressBarIntro(){
   const urlEl=$('ab-url'), curEl=$('ab-cursor'), fillEl=$('ab-loadfill');
   const a=getAudio();
-  playVO('VO1/vo-01-intro.mp3');           /* intro narration plays over the address bar scene */
 
   /* reset everything */
   urlEl.textContent='';
@@ -693,6 +692,7 @@ async function start(record, btn){
 /* ── opening title card: "تقديم مطالبات التأمين مع جي آي جي" ── */
 async function showIntroTitle(){
   const a=getAudio();
+  playVO('VO1/vo-01-intro.mp3');           /* intro narration starts with the title card */
   gsap.set('#intro-title',{opacity:0,display:'flex'});
   gsap.set('#it-glow',{opacity:0,scale:.72});
   gsap.set('#it-text .it-word',{opacity:0,y:28});
