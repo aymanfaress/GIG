@@ -55,10 +55,8 @@ html, body {
 /* ══ CINEMATIC OPEN ══ */
 #cin {
   position:fixed; inset:0;
-  background:url('images/transition.png') center/cover no-repeat,
-             linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);
+  background:#ffffff;            /* clean cover — no opening transition graphic */
   z-index:9000; pointer-events:none;
-  transform:translateX(0%);
 }
 
 /* ══ DIM ══ */
@@ -1572,15 +1570,16 @@ async function runScene1(){
   gsap.set($('s1-btn'),{y:18,scale:.95,opacity:0});
   gsap.set($('s1-ftr'),{opacity:0});
 
-  /* cinematic open */
-  await sleep(200);
-  /* branded open: curtain sweeps right then exits */
+  /* clean open — no transition graphic (the wrapper already did the intro);
+     a plain white cover hides the un-built page during the tablet rise,
+     then simply fades away */
+  await sleep(150);
   const cin = $('cin');
-  gsap.set(cin, { background:"url('images/transition.png') center/cover no-repeat, linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%)" });
-  sfx_open();
-  gsap.to(cin, { x:'100%', duration:.85, ease:'power3.inOut',
-    onComplete:()=>{ cin.style.display='none'; gsap.set(cin,{x:'0%'}); }});
-  await sleep(900);
+  cin.style.display='block';
+  gsap.set(cin, { background:'#ffffff', x:'0%', opacity:1 });
+  gsap.to(cin, { opacity:0, duration:.5, ease:'power2.out',
+    onComplete:()=>{ cin.style.display='none'; }});
+  await sleep(300);
   setP(2);
 
   /* page builds off-screen */
