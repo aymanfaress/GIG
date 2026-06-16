@@ -481,7 +481,7 @@ function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 async function addressBarIntro(){
   const urlEl=$('ab-url'), curEl=$('ab-cursor'), fillEl=$('ab-loadfill');
   const a=getAudio();
-  playVO('VO1/vo-01-intro.mp3');           /* intro narration plays over the address bar scene */
+  playVO('VO2/vo-01-intro.mp3');           /* intro narration plays over the address bar scene */
 
   /* reset everything */
   urlEl.textContent='';
@@ -586,14 +586,14 @@ function stopMusic(){
 const VO_VOL = 0.82;            /* narration level — clear but not overpowering */
 const VO_DUCK = 0.06;           /* music level while narration plays             */
 const VO_MAP = {
-  s1:       'VO1/vo-02-individuals.mp3',
-  s3:       'VO1/vo-03-company.mp3',
-  otp:      'VO1/vo-04-otp.mp3',
-  najm:     'VO1/vo-05-najm.mp3',
-  estimate: ['VO1/vo-06-estimate.mp3','VO1/vo-10-estimate-final.mp3'],  /* runs twice */
-  review:   ['VO1/vo-07-review.mp3','VO1/vo-11-review-final.mp3'],      /* runs twice */
-  basher:   'VO1/vo-08-basher.mp3',
-  other:    'VO1/vo-09-other.mp3'
+  s1:       'VO2/vo-02-individuals.mp3',
+  s3:       'VO2/vo-03-company.mp3',
+  otp:      'VO2/vo-04-otp.mp3',
+  najm:     'VO2/vo-05-najm.mp3',
+  estimate: ['VO2/vo-06-estimate.mp3','VO2/vo-10-estimate-final.mp3'],  /* runs twice */
+  review:   ['VO2/vo-07-review.mp3','VO2/vo-11-review-final.mp3'],      /* runs twice */
+  basher:   'VO2/vo-08-basher.mp3',
+  other:    'VO2/vo-09-other.mp3'
 };
 let voSrc=null, voGain=null, voSeen={};
 function voForScene(key){
@@ -730,7 +730,7 @@ async function showIntroTitle(){
 /* ── cinematic outro: brand logo end card ── */
 async function showOutro(){
   const a=getAudio();
-  playVO('VO1/vo-12-outro.mp3');             /* closing narration */
+  playVO('VO2/vo-12-outro.mp3');             /* closing narration */
   gsap.set('#outro',{opacity:0,display:'flex'});
   gsap.set('#outro-glow',{opacity:0,scale:.72});
   gsap.set('#outro-logo',{opacity:0,scale:.84,y:16});
