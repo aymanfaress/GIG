@@ -624,7 +624,7 @@ async function start(record, btn){
   showHead('s1');
   await tabletEnter();
   tabletShine(); /* light sweep — fire-and-forget, runs concurrently */
-  await delay(300);
+  await delay(120);
   try{ fw.run(); }catch(e){}
 }
 
