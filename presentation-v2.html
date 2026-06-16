@@ -146,7 +146,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   to  { stroke-dashoffset:-1662; }
 }
 #ab-ring-path.running{
-  animation:pill-trace 1.3s cubic-bezier(.4,0,.2,1) forwards;
+  animation:pill-trace 3s linear forwards;
 }
 #ab-flash{
   position:absolute;inset:0;background:#fff;opacity:0;
@@ -549,19 +549,18 @@ async function addressBarIntro(){
   blinkTween.kill();
   gsap.set(curEl,{opacity:0});
 
-  /* 5. stroke traces around the full pill perimeter via CSS animation */
+  /* 5. ring fades in and starts its slow 3-second trace */
   gsap.to('#ab-ring',{opacity:1,duration:.28,ease:'power2.out'});
   await delay(100);
   if(a) sfxChime(a);
-  ringPath.classList.add('running');   /* CSS handles the stroke travel */
-  await delay(1350);                   /* wait for animation to finish   */
-  await new Promise(res=>gsap.to('#ab-ring',{opacity:0,duration:.35,ease:'power2.in',onComplete:res}));
-  ringPath.classList.remove('running');
+  ringPath.classList.add('running');
 
-  await delay(360);
+  /* let the ring travel for most of its 3s duration */
+  await delay(2600);
 
-  /* 7. cinematic exit: scale up + fade, then flash */
+  /* 7. cinematic exit — ring fades out simultaneously with the pill exit */
   if(a) sfxLaunch(a);
+  gsap.to('#ab-ring',{opacity:0,duration:.6,ease:'power2.in'});
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
     tl.to('#addrbar-center',{scale:1.1,opacity:0,duration:.6,ease:'power2.in'},0)
@@ -569,6 +568,7 @@ async function addressBarIntro(){
       .to('#ab-flash',{opacity:.8,duration:.16,ease:'power2.out'},.1)
       .to('#ab-flash',{opacity:0,duration:.55,ease:'power2.in'},'>');
   });
+  ringPath.classList.remove('running');
   gsap.set('#addrbar',{display:'none'});
 }
 
