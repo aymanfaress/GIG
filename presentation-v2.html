@@ -333,9 +333,9 @@ setTabletStart();
 function tabletEnter(){
   return new Promise(res=>{
     const tl = gsap.timeline({onComplete:res});
-    tl.to('#tablet',{y:0, opacity:1, duration:1.6, ease:'power3.out'})
-      .to('#tablet',{y:-6, duration:0.6, ease:'sine.inOut'},'-=0.1')
-      .to('#tablet',{y:0,  duration:0.5, ease:'sine.inOut'});
+    tl.to('#tablet',{y:0, opacity:1, duration:1.1, ease:'power3.out'})
+      .to('#tablet',{y:-5, duration:0.35, ease:'sine.inOut'},'-=0.05')
+      .to('#tablet',{y:0,  duration:0.25, ease:'sine.inOut'});
   });
 }
 
@@ -618,14 +618,16 @@ async function start(record, btn){
     }catch(err){ alert('تعذّر بدء التسجيل: '+err.message); }
   }
 
-  /* 0) opening title, 1) address bar types URL, 2) tablet rises, 3) run */
+  /* 0) opening title, 1) address bar types URL, 2) tablet rises while the
+     scene builds inside it, settling just before the cursor enters */
   await showIntroTitle();
   await addressBarIntro();
   showHead('s1');
-  await tabletEnter();
-  tabletShine(); /* light sweep — fire-and-forget, runs concurrently */
-  await delay(120);
-  try{ fw.run(); }catch(e){}
+  const entering = tabletEnter();          /* start the rise (don't block) */
+  await delay(450);                        /* a beat into the climb */
+  try{ fw.run(); }catch(e){}               /* build the page while it rises */
+  await entering;                          /* tablet settles, page is ready */
+  tabletShine();                           /* light sweep on the settled tablet */
 }
 
 /* ── opening title card: "تقديم مطالبات التأمين مع جي آي جي" ── */
