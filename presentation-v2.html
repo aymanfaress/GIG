@@ -202,9 +202,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   filter:drop-shadow(0 20px 50px rgba(25,5,140,.18));
 }
 #outro-url{
-  position:relative;z-index:2;
+  position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
+  z-index:2;
   font-family:'Almarai',sans-serif;font-weight:700;font-size:28px;
-  color:#19058c;letter-spacing:3px;direction:ltr;opacity:0;
+  color:#19058c;letter-spacing:3px;direction:ltr;opacity:0;white-space:nowrap;
 }
 
 /* ── tablet light sweep ── */
@@ -757,7 +758,7 @@ async function showOutro(){
   gsap.set('#outro',{opacity:0,display:'flex'});
   gsap.set('#outro-glow',{opacity:0,scale:.72});
   gsap.set('#outro-logo',{opacity:0,scale:.84,y:16});
-  gsap.set('#outro-url',{opacity:0,y:16});
+  gsap.set('#outro-url',{opacity:0});
 
   /* 1. light background fades in */
   await new Promise(res=>gsap.to('#outro',{opacity:1,duration:.7,ease:'power2.out',onComplete:res}));
@@ -771,9 +772,9 @@ async function showOutro(){
   await new Promise(res=>gsap.to('#outro-logo',
     {opacity:1,scale:1,y:0,duration:.95,ease:'back.out(1.5)',onComplete:res}));
 
-  /* 4. url fades in below logo */
+  /* 4. url fades in at bottom */
   await new Promise(res=>gsap.to('#outro-url',
-    {opacity:1,y:0,duration:.55,ease:'power3.out',onComplete:res}));
+    {opacity:1,duration:.55,ease:'power3.out',onComplete:res}));
 
   /* 6. hold */
   await delay(2200);
