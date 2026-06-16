@@ -1573,32 +1573,30 @@ async function runScene1(){
   /* clean open — no transition graphic (the wrapper already did the intro);
      a plain white cover hides the un-built page during the tablet rise,
      then simply fades away */
-  await sleep(150);
+  await sleep(80);
   const cin = $('cin');
   cin.style.display='block';
   gsap.set(cin, { background:'#ffffff', x:'0%', opacity:1 });
-  gsap.to(cin, { opacity:0, duration:.5, ease:'power2.out',
+  gsap.to(cin, { opacity:0, duration:.32, ease:'power2.out',
     onComplete:()=>{ cin.style.display='none'; }});
-  await sleep(300);
+  await sleep(120);
   setP(2);
 
-  /* page builds off-screen */
-  gsap.to('.site-hdr',{y:0,opacity:1,duration:.75,ease:'power3.out',stagger:.08});
-  await sleep(650);
-  gsap.to($('s1-ftr'),{opacity:1,duration:.55});
-  await sleep(250);
-  gsap.to($('s1-sidebar'),{x:0,opacity:1,duration:.75,ease:'power3.out'});
-  await sleep(560);
-  gsap.to($('s1-form'),{y:0,scale:1,opacity:1,duration:.75,ease:'power3.out'});
-  await sleep(400);
-  gsap.to($('s1-title'),{y:0,opacity:1,duration:.65,ease:'back.out(1.5)'});
+  /* page builds fast — header + footer + sidebar come in together */
+  gsap.to('.site-hdr',{y:0,opacity:1,duration:.55,ease:'power3.out',stagger:.06});
+  gsap.to($('s1-ftr'),{opacity:1,duration:.5,delay:.12});
+  gsap.to($('s1-sidebar'),{x:0,opacity:1,duration:.6,ease:'power3.out',delay:.18});
   await sleep(300);
-  gsap.to($('fg1'),{x:0,opacity:1,duration:.5,ease:'power2.out'});
-  await sleep(120);
-  gsap.to($('fg2'),{x:0,opacity:1,duration:.5,ease:'power2.out'});
-  await sleep(120);
-  gsap.to($('fg3'),{x:0,opacity:1,duration:.5,ease:'power2.out'});
-  await sleep(300);
+  gsap.to($('s1-form'),{y:0,scale:1,opacity:1,duration:.55,ease:'power3.out'});
+  await sleep(240);
+  gsap.to($('s1-title'),{y:0,opacity:1,duration:.55,ease:'back.out(1.5)'});
+  await sleep(160);
+  gsap.to($('fg1'),{x:0,opacity:1,duration:.45,ease:'power2.out'});
+  await sleep(90);
+  gsap.to($('fg2'),{x:0,opacity:1,duration:.45,ease:'power2.out'});
+  await sleep(90);
+  gsap.to($('fg3'),{x:0,opacity:1,duration:.45,ease:'power2.out'});
+  await sleep(180);
   setP(18);
 
   const s1form=$('s1-form'), s1cont=$('s1-content');
