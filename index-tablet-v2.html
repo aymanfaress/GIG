@@ -40,7 +40,9 @@ html, body {
 /* sliding curtain element */
 #trans-curtain {
   position:absolute; inset:0;
-  background:linear-gradient(135deg, #19058c 0%, #2a1aaa 40%, #d28c64 100%);
+  /* transition.png on top, gradient as graceful fallback if image missing */
+  background:url('images/transition.png') center/cover no-repeat,
+             linear-gradient(135deg, #19058c 0%, #2a1aaa 40%, #d28c64 100%);
   transform:translateX(-100%);
 }
 /* shine layer */
@@ -53,7 +55,8 @@ html, body {
 /* ══ CINEMATIC OPEN ══ */
 #cin {
   position:fixed; inset:0;
-  background:linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);
+  background:url('images/transition.png') center/cover no-repeat,
+             linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);
   z-index:9000; pointer-events:none;
   transform:translateX(0%);
 }
@@ -1573,7 +1576,7 @@ async function runScene1(){
   await sleep(200);
   /* branded open: curtain sweeps right then exits */
   const cin = $('cin');
-  gsap.set(cin, { background:'linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%)' });
+  gsap.set(cin, { background:"url('images/transition.png') center/cover no-repeat, linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%)" });
   sfx_open();
   gsap.to(cin, { x:'100%', duration:.85, ease:'power3.inOut',
     onComplete:()=>{ cin.style.display='none'; gsap.set(cin,{x:'0%'}); }});
@@ -1754,7 +1757,7 @@ async function runScene2(isFinal=true){
   if(isFinal){
     /* cinematic close — branded curtain sweeps in */
     const end = document.createElement('div');
-    end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
+    end.style.cssText = "position:fixed;inset:0;background:url('images/transition.png') center/cover no-repeat, linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;";
     document.body.appendChild(end);
     gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
     gsap.to(cur, { opacity:0, duration:.5 });
@@ -2280,7 +2283,7 @@ async function runScene6(isFinal=false){
   /* cinematic close — only on the very last run */
   if(isFinal){
     const end = document.createElement('div');
-    end.style.cssText = 'position:fixed;inset:0;background:linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;';
+    end.style.cssText = "position:fixed;inset:0;background:url('images/transition.png') center/cover no-repeat, linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;";
     document.body.appendChild(end);
     gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
   } else {
