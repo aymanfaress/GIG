@@ -2044,9 +2044,36 @@ async function s5scroll(targetEl, dur=0.65, frac=0.45){
   return new Promise(res=>gsap.to(f,{y:s5y,duration:dur,ease:'power2.inOut',onComplete:res}));
 }
 
+/* clear all filled fields/selections so the scene starts empty each run */
+function resetScene5(){
+  /* text inputs */
+  ['inp-evalnum','inp-iban'].forEach(id=>{
+    const el=$(id); if(!el) return;
+    el.value=''; el.classList.remove('focused','pulse','filled','fill-flash');
+  });
+  /* selectable option cards */
+  ['eval-est','eval-other','settle-comp','settle-fix'].forEach(id=>{
+    const el=$(id); if(el) el.classList.remove('sel','pop');
+  });
+  /* check marks */
+  ['chk-evalnum','chk-iban'].forEach(id=>{ const el=$(id); if(el) el.classList.remove('show'); });
+  /* uploaded files */
+  ['file-doc1','file-doc2'].forEach(id=>{ const el=$(id); if(el) el.classList.remove('attached'); });
+  /* active labels + verify button + completed step line */
+  ['lbl-evalnum','lbl-iban'].forEach(id=>{ const el=$(id); if(el) el.classList.remove('active'); });
+  if($('vrf-eval')) $('vrf-eval').classList.remove('pressed');
+  if($('s5-line3')) $('s5-line3').classList.remove('done');
+  /* spotlights off */
+  ['spot-evaltype','spot-evalnum','spot-doc1','spot-settle','spot-iban','spot-doc2']
+    .forEach(id=>{ const el=$(id); if(el) el.style.opacity=0; });
+}
+
 async function runScene5(){
   const f=$('s5-form'), c=$('s5-content');
   s5y=0;
+
+  /* clear any state left over from the previous run (this scene runs twice) */
+  resetScene5();
 
   /* init */
   gsap.set($('s5-sidebar'),{x:32,opacity:0});
