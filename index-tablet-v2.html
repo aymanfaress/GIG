@@ -1916,15 +1916,15 @@ async function runScene4(){
 
   /* build in (header/footer static) */
   gsap.to($('s4-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(1100);
+  await sleep(1560);
   gsap.to($('s4-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(960);
+  await sleep(1360);
   gsap.to($('s4-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'});
-  await sleep(820);
+  await sleep(1160);
   gsap.to($('s4-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'});
-  await sleep(700);
+  await sleep(1000);
   gsap.to('#sec-source',{y:0,opacity:1,duration:.55,ease:'power2.out'});
-  await sleep(960);
+  await sleep(1360);
   setP(14);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
@@ -1933,98 +1933,98 @@ async function runScene4(){
   /* ── 1) SOURCE = نجم ── */
   act('اختيار مصدر البلاغ: نجم');
   await scrollToEl(f,c,$('sec-source'),.6,.5);
-  accSpot('spot-src',true); await sleep(440);
+  accSpot('spot-src',true); await sleep(620);
   const rnajm=$('src-najm').getBoundingClientRect();
   await moveTo(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2,.95);
   sfx_confirm(); await clickAt(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2);
-  selCard('src-najm'); sfx_check(); await sleep(960);
-  accSpot('spot-src',false); await sleep(600);
+  selCard('src-najm'); sfx_check(); await sleep(1360);
+  accSpot('spot-src',false); await sleep(860);
 
   /* reveal the rest of the form */
-  gsap.to('#sec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(400);
-  gsap.to('#sec-owner',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(400);
-  gsap.to('#sec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(400);
-  gsap.to('#s4-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(200);
-  gsap.to('#s4-back',{y:0,opacity:1,duration:.4}); await sleep(800);
+  gsap.to('#sec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(560);
+  gsap.to('#sec-owner',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(560);
+  gsap.to('#sec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(560);
+  gsap.to('#s4-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  gsap.to('#s4-back',{y:0,opacity:1,duration:.4}); await sleep(1140);
   setP(28);
 
   /* ── 2) TYPE = أضرار في المركبة ── */
   act('اختيار نوع الحادث: أضرار في المركبة');
   await scrollToEl(f,c,$('sec-type'),.7,.45);
-  accSpot('spot-type',true); await sleep(420);
+  accSpot('spot-type',true); await sleep(600);
   const rveh=$('type-veh').getBoundingClientRect();
   await moveTo(rveh.left+rveh.width/2,rveh.top+rveh.height/2,.7);
   sfx_confirm(); await clickAt(rveh.left+rveh.width/2,rveh.top+rveh.height/2);
-  selCard('type-veh'); sfx_check(); await sleep(960);
-  accSpot('spot-type',false); setP(42); await sleep(700);
+  selCard('type-veh'); sfx_check(); await sleep(1360);
+  accSpot('spot-type',false); setP(42); await sleep(1000);
 
   /* ── 3) OWNER = لا → driver identity ── */
   act('تحديد المالك وإدخال رقم هوية السائق');
   await scrollToEl(f,c,$('sec-owner'),.7,.4);
-  accSpot('spot-owner',true); await sleep(420);
+  accSpot('spot-owner',true); await sleep(600);
   const rno=$('own-no').getBoundingClientRect();
   await moveTo(rno.left+rno.width/2,rno.top+rno.height/2,.7);
   sfx_click(); await clickAt(rno.left+rno.width/2,rno.top+rno.height/2);
-  $('own-no').classList.add('sel'); sfx_check(); await sleep(600);
+  $('own-no').classList.add('sel'); sfx_check(); await sleep(860);
 
   /* driver field slides in */
   $('fld-driver').style.display='block';
   gsap.fromTo($('fld-driver'),{opacity:0,y:-8},{opacity:1,y:0,duration:.45,ease:'power2.out'});
-  await sleep(820);
+  await sleep(1160);
   await scrollToEl(f,c,$('fld-driver'),.55,.5);
   $('lbl-driver').classList.add('active');
   const rdrv=$('inp-driver').getBoundingClientRect();
   await moveTo(rdrv.left+rdrv.width*.55,rdrv.top+rdrv.height*.5,.6);
   await clickAt(rdrv.left+rdrv.width*.55,rdrv.top+rdrv.height*.5);
-  await sleep(440);
-  await typeIn($('inp-driver'),'2094309909',140);
-  $('lbl-driver').classList.remove('active'); $('chk-driver').classList.add('show'); sfx_check(); await sleep(960);
-  accSpot('spot-owner',false); setP(58); await sleep(700);
+  await sleep(620);
+  await typeIn($('inp-driver'),'2094309909',200);
+  $('lbl-driver').classList.remove('active'); $('chk-driver').classList.add('show'); sfx_check(); await sleep(1360);
+  accSpot('spot-owner',false); setP(58); await sleep(1000);
 
   /* ── 4) NAJM REPORT NUMBER ── */
   act('إدخال رقم تقرير نجم');
   await scrollToEl(f,c,$('fld-najm'),.7,.45);
   accSpot('spot-najm',true);
-  $('lbl-najm').classList.add('active'); await sleep(400);
+  $('lbl-najm').classList.add('active'); await sleep(560);
   const rn=$('inp-najm').getBoundingClientRect();
   await moveTo(rn.left+rn.width*.55,rn.top+rn.height*.5,.7);
   await clickAt(rn.left+rn.width*.55,rn.top+rn.height*.5);
-  await sleep(440);
-  await typeIn($('inp-najm'),'RD1805262256',140);
-  $('lbl-najm').classList.remove('active'); $('chk-najm').classList.add('show'); sfx_check(); await sleep(960);
-  accSpot('spot-najm',false); setP(72); await sleep(640);
+  await sleep(620);
+  await typeIn($('inp-najm'),'RD1805262256',200);
+  $('lbl-najm').classList.remove('active'); $('chk-najm').classList.add('show'); sfx_check(); await sleep(1360);
+  accSpot('spot-najm',false); setP(72); await sleep(900);
 
   /* ── 5) SERIAL / CUSTOMS NUMBER ── */
   act('إدخال الرقم التسلسلي للمركبة');
   await scrollToEl(f,c,$('fld-serial'),.6,.45);
   accSpot('spot-serial',true);
-  $('lbl-serial').classList.add('active'); await sleep(400);
+  $('lbl-serial').classList.add('active'); await sleep(560);
   const rs=$('inp-serial').getBoundingClientRect();
   await moveTo(rs.left+rs.width*.55,rs.top+rs.height*.5,.7);
   await clickAt(rs.left+rs.width*.55,rs.top+rs.height*.5);
-  await sleep(440);
-  await typeIn($('inp-serial'),'956423220',140);
-  $('lbl-serial').classList.remove('active'); $('chk-serial').classList.add('show'); sfx_check(); await sleep(960);
-  accSpot('spot-serial',false); setP(86); await sleep(700);
+  await sleep(620);
+  await typeIn($('inp-serial'),'956423220',200);
+  $('lbl-serial').classList.remove('active'); $('chk-serial').classList.add('show'); sfx_check(); await sleep(1360);
+  accSpot('spot-serial',false); setP(86); await sleep(1000);
 
   /* step 2 line completes */
   pingOff('s4-stp2');
-  $('s4-line2').classList.add('done'); await sleep(880);
+  $('s4-line2').classList.add('done'); await sleep(1260);
 
   /* ── BUTTON ── */
   act('حفظ تفاصيل الحادث والمتابعة');
   await scrollToEl(f,c,$('s4-btn'),.6,.5);
-  sfx_btnpop(); shimBtn('s4-btn'); await sleep(720);
+  sfx_btnpop(); shimBtn('s4-btn'); await sleep(1020);
   const rb=$('s4-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(520); sfx_confirm(); await clickAt(xb,yb);
+  await sleep(740); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s4-btn'),{scale:.97,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s4-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s4-btn').style.background='#19058c'; shimBtn('s4-btn'); },200)
   });
 
-  setP(70); await sleep(880);
+  setP(70); await sleep(1260);
   sfx_success(); await successFlash($('s4-flash'));
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
