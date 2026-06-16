@@ -123,15 +123,13 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   width:2.5px;height:32px;background:#19058c;
   border-radius:2px;flex-shrink:0;display:inline-block;
 }
-#ab-loadbar{
-  position:relative;z-index:2;
-  width:780px;height:5px;background:rgba(25,5,140,.12);
-  border-radius:4px;overflow:hidden;
-}
-#ab-loadfill{
-  height:100%;width:0%;
+#ab-progress{
+  position:absolute;bottom:0;left:0;
+  width:0%;height:3px;
   background:linear-gradient(90deg,#19058c 0%,#7b5bd6 55%,#d28c64 100%);
-  border-radius:4px;box-shadow:0 0 14px rgba(123,91,214,.6);
+  border-radius:0 0 60px 60px;
+  box-shadow:0 0 10px rgba(123,91,214,.7);
+  opacity:0;
 }
 #ab-flash{
   position:absolute;inset:0;background:#fff;opacity:0;
@@ -255,6 +253,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
     <div id="ab-glow"></div>
     <div id="addrbar-center">
       <div id="addrbar-pill">
+        <div id="ab-progress"></div>
         <span id="ab-lock">
           <svg width="20" height="22" viewBox="0 0 18 20" fill="none">
             <rect x="1.5" y="8.5" width="15" height="11" rx="2.5" stroke="#19058c" stroke-width="1.6" fill="none"/>
@@ -265,7 +264,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
         <span id="ab-url"></span>
         <span id="ab-cursor"></span>
       </div>
-      <div id="ab-loadbar"><div id="ab-loadfill"></div></div>
     </div>
   </div>
   <div id="ab-flash"></div>
@@ -479,7 +477,7 @@ function tabletShine(){
 function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 async function addressBarIntro(){
-  const urlEl=$('ab-url'), curEl=$('ab-cursor'), fillEl=$('ab-loadfill');
+  const urlEl=$('ab-url'), curEl=$('ab-cursor');
   const a=getAudio();
 
   /* reset everything */
@@ -487,8 +485,7 @@ async function addressBarIntro(){
   gsap.set('#addrbar',{display:'block',opacity:1});
   gsap.set('#addrbar-center',{y:50,scale:.88,opacity:0});
   gsap.set('#ab-glow',{opacity:0,scale:.6});
-  gsap.set('#ab-loadbar',{opacity:0,y:0});
-  gsap.set('#ab-loadfill',{width:'0%'});
+  gsap.set('#ab-progress',{width:'0%',opacity:0});
   gsap.set(curEl,{opacity:1});
   gsap.set('#ab-flash',{opacity:0});
 
@@ -518,16 +515,13 @@ async function addressBarIntro(){
   blinkTween.kill();
   gsap.set(curEl,{opacity:0});
 
-  /* 5. loadbar slides in below pill — only NOW, after typing */
-  await new Promise(res=>gsap.fromTo('#ab-loadbar',
-    {opacity:0,y:-8},
-    {opacity:1,y:0,duration:.42,ease:'power3.out',onComplete:res}
-  ));
-  await delay(140);
+  /* 5. progress line fades in on the bar itself */
+  gsap.to('#ab-progress',{opacity:1,duration:.28,ease:'power2.out'});
+  await delay(100);
 
-  /* 6. fill loadbar with chime */
+  /* 6. sweep across the bottom of the pill like Chrome — chime at start */
   if(a) sfxChime(a);
-  await new Promise(res=>gsap.to(fillEl,{width:'100%',duration:1.15,ease:'power2.inOut',onComplete:res}));
+  await new Promise(res=>gsap.to('#ab-progress',{width:'100%',duration:1.15,ease:'power2.inOut',onComplete:res}));
 
   await delay(360);
 
