@@ -178,9 +178,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 }
 #outro-glow{
   position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
-  width:960px;height:600px;border-radius:50%;
-  background:radial-gradient(ellipse,rgba(210,140,100,.22) 0%,rgba(25,5,140,.11) 40%,rgba(25,5,140,0) 72%);
-  filter:blur(42px);opacity:0;
+  width:1100px;height:700px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(210,140,100,.55) 0%,rgba(25,5,140,.28) 42%,rgba(25,5,140,0) 72%);
+  filter:blur(48px);opacity:0;
 }
 #outro-logo{
   position:relative;z-index:2;width:460px;height:auto;object-fit:contain;opacity:0;
@@ -741,7 +741,8 @@ async function showOutro(){
   await new Promise(res=>gsap.to('#outro',{opacity:1,duration:.7,ease:'power2.out',onComplete:res}));
 
   /* 2. glow blooms behind logo */
-  gsap.to('#outro-glow',{opacity:1,scale:1,duration:1.8,ease:'power2.out'});
+  gsap.to('#outro-glow',{opacity:1,scale:1,duration:1.6,ease:'power2.out'});
+  await delay(600);   /* let the glow partially bloom before the logo appears */
 
   /* 3. logo reveal + chime */
   if(a) sfxChime(a);
