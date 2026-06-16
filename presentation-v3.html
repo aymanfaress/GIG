@@ -239,6 +239,18 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 #playBtn{top:14px;left:14px;background:#19058c;}
 #recBtn {top:14px;left:150px;background:#c0392b;}
 .pbtn.hide{display:none;}
+
+/* ── start countdown overlay ── */
+#countdown{
+  position:fixed;inset:0;z-index:99998;
+  display:none;align-items:center;justify-content:center;
+  background:#0a0a14;
+}
+#cd-num{
+  font-family:'Kufam',sans-serif;font-weight:900;
+  font-size:300px;line-height:1;color:#fff;
+  text-shadow:0 30px 90px rgba(25,5,140,.45);
+}
 </style>
 </head>
 <body>
@@ -321,6 +333,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 
 <button id="playBtn" class="pbtn">▶ تشغيل العرض</button>
 <button id="recBtn"  class="pbtn">● تسجيل وحفظ</button>
+
+<div id="countdown"><span id="cd-num">5</span></div>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -502,6 +516,20 @@ function tabletShine(){
 /* ── address bar intro ── */
 function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
+/* ── lead-in countdown: seconds of buffer before the show starts, so an
+   external screen recorder can be rolling before frame one ── */
+const START_DELAY = 5;
+async function runCountdown(secs){
+  const el = $('countdown'), num = $('cd-num');
+  el.style.display = 'flex';
+  for(let n=secs; n>=1; n--){
+    num.textContent = n;
+    gsap.fromTo(num,{scale:.6,opacity:0},{scale:1,opacity:1,duration:.35,ease:'power3.out'});
+    await delay(1000);
+  }
+  el.style.display = 'none';
+}
+
 async function addressBarIntro(){
   const urlEl=$('ab-url'), curEl=$('ab-cursor');
   const a=getAudio();
@@ -676,9 +704,8 @@ async function start(record, btn){
   /* resume the iframe's audio engine on this user gesture */
   try{ const c = fw.getACtx(); if(c.state==='suspended') await c.resume(); }catch(e){}
 
-  /* kick off background music from 0:00 (fire-and-forget; fades in) */
-  startMusic();
-
+  /* arm recording (screen picker appears now) — the recorder is prepared but
+     not started yet, so the lead-in countdown below is NOT captured */
   if(record){
     try{
       const display = await navigator.mediaDevices.getDisplayMedia({
@@ -697,9 +724,17 @@ async function start(record, btn){
         a.href=URL.createObjectURL(blob); a.download='gig-presentation.webm'; a.click();
         display.getTracks().forEach(t=>t.stop());
       };
-      mediaRec.start();
     }catch(err){ alert('تعذّر بدء التسجيل: '+err.message); }
   }
+
+  /* lead-in buffer so you can get a recorder rolling before the show begins */
+  await runCountdown(START_DELAY);
+
+  /* start the recording cleanly (countdown excluded), then the music */
+  if(record && mediaRec){ try{ mediaRec.start(); }catch(e){} }
+
+  /* kick off background music from 0:00 (fire-and-forget; fades in) */
+  startMusic();
 
   /* 0) opening title, 1) address bar types URL, 2) tablet rises while the
      scene builds inside it, settling just before the cursor enters */
