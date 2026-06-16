@@ -481,6 +481,7 @@ function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
 async function addressBarIntro(){
   const urlEl=$('ab-url'), curEl=$('ab-cursor'), fillEl=$('ab-loadfill');
   const a=getAudio();
+  playVO('VO1/vo-01-intro.mp3');           /* intro narration plays over the address bar scene */
 
   /* reset everything */
   urlEl.textContent='';
@@ -582,17 +583,17 @@ function stopMusic(){
 /* ── voice-over: per-scene segments played in sync with each scene ──
    Files are optional — if one is missing, nothing plays (no error).
    Routed through the iframe's soft bus so the recorder captures it. */
-const VO_VOL = 0.95;            /* narration sits on top of the music */
-const VO_DUCK = 0.07;           /* music level while narration plays   */
+const VO_VOL = 0.82;            /* narration level — clear but not overpowering */
+const VO_DUCK = 0.06;           /* music level while narration plays             */
 const VO_MAP = {
-  s1:       'vo-02-individuals.mp3',
-  s3:       'vo-03-company.mp3',
-  otp:      'vo-04-otp.mp3',
-  najm:     'vo-05-najm.mp3',
-  estimate: ['vo-06-estimate.mp3','vo-10-estimate-final.mp3'],  /* runs twice */
-  review:   ['vo-07-review.mp3','vo-11-review-final.mp3'],      /* runs twice */
-  basher:   'vo-08-basher.mp3',
-  other:    'vo-09-other.mp3'
+  s1:       'VO1/vo-02-individuals.mp3',
+  s3:       'VO1/vo-03-company.mp3',
+  otp:      'VO1/vo-04-otp.mp3',
+  najm:     'VO1/vo-05-najm.mp3',
+  estimate: ['VO1/vo-06-estimate.mp3','VO1/vo-10-estimate-final.mp3'],  /* runs twice */
+  review:   ['VO1/vo-07-review.mp3','VO1/vo-11-review-final.mp3'],      /* runs twice */
+  basher:   'VO1/vo-08-basher.mp3',
+  other:    'VO1/vo-09-other.mp3'
 };
 let voSrc=null, voGain=null, voSeen={};
 function voForScene(key){
@@ -624,6 +625,15 @@ async function playVO(file){
       musicGain.gain.setValueAtTime(musicGain.gain.value,t);
       musicGain.gain.linearRampToValueAtTime(VO_DUCK,t+0.4);
     }
+    /* restore music smoothly when narration ends */
+    voSrc.onended=()=>{
+      if(musicGain){
+        const t=musicGain.context.currentTime;
+        musicGain.gain.cancelScheduledValues(t);
+        musicGain.gain.setValueAtTime(musicGain.gain.value,t);
+        musicGain.gain.linearRampToValueAtTime(MUSIC_VOL,t+0.8);
+      }
+    };
     voSrc.start(ctx.currentTime);
   }catch(e){ /* ignore */ }
 }
@@ -683,7 +693,6 @@ async function start(record, btn){
 /* ── opening title card: "تقديم مطالبات التأمين مع جي آي جي" ── */
 async function showIntroTitle(){
   const a=getAudio();
-  playVO('vo-01-intro.mp3');               /* opening narration */
   gsap.set('#intro-title',{opacity:0,display:'flex'});
   gsap.set('#it-glow',{opacity:0,scale:.72});
   gsap.set('#it-text .it-word',{opacity:0,y:28});
@@ -721,7 +730,7 @@ async function showIntroTitle(){
 /* ── cinematic outro: brand logo end card ── */
 async function showOutro(){
   const a=getAudio();
-  playVO('vo-12-outro.mp3');                /* closing narration */
+  playVO('VO1/vo-12-outro.mp3');             /* closing narration */
   gsap.set('#outro',{opacity:0,display:'flex'});
   gsap.set('#outro-glow',{opacity:0,scale:.72});
   gsap.set('#outro-logo',{opacity:0,scale:.84,y:16});
