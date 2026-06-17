@@ -1599,65 +1599,38 @@ async function runScene1(){
   await sleep(360);
   setP(18);
 
-  const s1form=$('s1-form'), s1cont=$('s1-content');
-
-  /* ── single grouped data entry: one calm zoom, fill all fields ── */
+  /* ── grouped data entry — no zoom, all fields fill at the same time ── */
   act('قم بتعبئة بياناتك');
-  pingOn(); dim.classList.add('on');
-  sfx_zoomin(); await zoomTo(s1form,s1cont,s1cont,1.18,0.9);
-  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
-
-  /* national ID */
-  spotOn(1); lblOn(1);
-  const r1=$('inp1').getBoundingClientRect();
-  await moveTo(r1.left+r1.width*.62,r1.top+r1.height*.5,.9);
-  await clickAt(r1.left+r1.width*.62,r1.top+r1.height*.5);
-  $('inp1').focus(); await sleep(220);
-  await typeIn($('inp1'),'2341968192',95);
-  lblOff(1); showChk(1); sfx_check(); spotOff(1); setP(40); await sleep(280);
-
-  /* mobile */
-  spotOn(2); lblOn(2);
-  const r2=$('inp2').getBoundingClientRect();
-  await moveTo(r2.left+r2.width*.55,r2.top+r2.height*.5,.5);
-  await clickAt(r2.left+r2.width*.55,r2.top+r2.height*.5);
-  $('inp2').classList.add('focused'); $('phcode').style.borderColor='#d28c64';
-  await sleep(200);
-  await typeIn($('inp2'),'537077897',95);
+  spotOn(1); spotOn(2); spotOn(3);
+  lblOn(1); lblOn(2); lblOn(3);
+  $('phcode').style.borderColor='#d28c64';
+  await sleep(260);
+  await Promise.all([
+    typeIn($('inp1'),'2341968192',95),
+    typeIn($('inp2'),'537077897',95),
+    typeIn($('inp3'),'ahmed@example.com',85)
+  ]);
   $('phcode').style.borderColor='#c8d8ff';
-  lblOff(2); showChk(2); sfx_check(); spotOff(2); setP(58); await sleep(280);
+  lblOff(1); lblOff(2); lblOff(3);
+  showChk(1); showChk(2); showChk(3); sfx_check();
+  spotOff(1); spotOff(2); spotOff(3);
+  setP(72); $('line1').classList.add('done'); await sleep(420);
 
-  /* email */
-  spotOn(3); lblOn(3);
-  const r3=$('inp3').getBoundingClientRect();
-  await moveTo(r3.left+r3.width*.55,r3.top+r3.height*.5,.5);
-  await clickAt(r3.left+r3.width*.55,r3.top+r3.height*.5);
-  $('inp3').focus(); $('inp3').classList.add('focused');
-  await sleep(200);
-  await typeIn($('inp3'),'ahmed@example.com',85);
-  lblOff(3); showChk(3); sfx_check(); spotOff(3); setP(72); await sleep(320);
-
-  pingOff(); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(s1form,0.9);
-  $('line1').classList.add('done'); await sleep(520);
-
-  /* ── BUTTON ── */
+  /* ── BUTTON (no zoom) ── */
   act('تأكيد البيانات والمتابعة');
-  gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(640);
-  shimBtn('s1-btn'); await sleep(560);
-  sfx_zoomin(); await zoomTo(s1form,s1cont,$('s1-btn'),1.3,0.85,80);
-  await sleep(440);
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(560);
+  shimBtn('s1-btn'); await sleep(420);
   const rb=$('s1-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(540); sfx_confirm(); await clickAt(xb,yb);
+  await sleep(360); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s1-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s1-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s1-btn').style.background='#19058c'; shimBtn('s1-btn'); },200)
   });
 
-  setP(82); await sleep(920);
-  await zoomOut(s1form,0.85); await sleep(360);
+  setP(82); await sleep(620);
   sfx_success(); await successFlash($('s1-flash'));
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
@@ -1784,72 +1757,39 @@ async function runScene3(){
 
   const f=$('s3-form'), c=$('s3-content');
 
-  /* ── single grouped data entry: one calm zoom, fill all fields ── */
+  /* ── grouped data entry — no zoom, all fields fill at the same time ── */
   act('قم بتعبئة بياناتك');
-  pingOn('stp1c'); dim.classList.add('on');
-  sfx_zoomin(); await zoomTo(f,c,c,1.12,0.9);
-  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
-
-  /* owner / company ID */
-  spotOn(4); lblOn(4);
-  const r4=$('inp4').getBoundingClientRect();
-  await moveTo(r4.left+r4.width*.62,r4.top+r4.height*.5,.9);
-  await clickAt(r4.left+r4.width*.62,r4.top+r4.height*.5);
-  $('inp4').focus(); await sleep(200);
-  await typeIn($('inp4'),'7001689913',95);
-  lblOff(4); showChk(4); sfx_check(); spotOff(4); setP(34); await sleep(260);
-
-  /* driver ID */
-  spotOn(5); lblOn(5);
-  const r5=$('inp5').getBoundingClientRect();
-  await moveTo(r5.left+r5.width*.62,r5.top+r5.height*.5,.5);
-  await clickAt(r5.left+r5.width*.62,r5.top+r5.height*.5);
-  $('inp5').focus(); await sleep(200);
-  await typeIn($('inp5'),'2341968192',95);
-  lblOff(5); showChk(5); sfx_check(); spotOff(5); setP(48); await sleep(260);
-
-  /* mobile */
-  spotOn(6); lblOn(6);
-  const r6=$('inp6').getBoundingClientRect();
-  await moveTo(r6.left+r6.width*.55,r6.top+r6.height*.5,.5);
-  await clickAt(r6.left+r6.width*.55,r6.top+r6.height*.5);
-  $('inp6').classList.add('focused'); $('phcode3').style.borderColor='#d28c64';
-  await sleep(200);
-  await typeIn($('inp6'),'537077897',95);
+  spotOn(4); spotOn(5); spotOn(6); spotOn(7);
+  lblOn(4); lblOn(5); lblOn(6); lblOn(7);
+  $('phcode3').style.borderColor='#d28c64';
+  await sleep(260);
+  await Promise.all([
+    typeIn($('inp4'),'7001689913',95),
+    typeIn($('inp5'),'2341968192',95),
+    typeIn($('inp6'),'537077897',95),
+    typeIn($('inp7'),'ahmed@example.com',85)
+  ]);
   $('phcode3').style.borderColor='#c8d8ff';
-  lblOff(6); showChk(6); sfx_check(); spotOff(6); setP(60); await sleep(260);
+  lblOff(4); lblOff(5); lblOff(6); lblOff(7);
+  showChk(4); showChk(5); showChk(6); showChk(7); sfx_check();
+  spotOff(4); spotOff(5); spotOff(6); spotOff(7);
+  setP(72); $('line1c').classList.add('done'); await sleep(420);
 
-  /* email */
-  spotOn(7); lblOn(7);
-  const r7=$('inp7').getBoundingClientRect();
-  await moveTo(r7.left+r7.width*.55,r7.top+r7.height*.5,.5);
-  await clickAt(r7.left+r7.width*.55,r7.top+r7.height*.5);
-  $('inp7').focus(); $('inp7').classList.add('focused');
-  await sleep(200);
-  await typeIn($('inp7'),'ahmed@example.com',85);
-  lblOff(7); showChk(7); sfx_check(); spotOff(7); setP(72); await sleep(320);
-
-  pingOff('stp1c'); dim.classList.remove('on');
-  sfx_zoomout(); await zoomOut(f,0.9);
-  $('line1c').classList.add('done'); await sleep(520);
-
-  /* ── BUTTON ── */
+  /* ── BUTTON (no zoom) ── */
   act('تأكيد البيانات والمتابعة');
-  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(820);
-  shimBtn('s3-btn'); await sleep(920);
-  sfx_zoomin(); await zoomTo(f,c,$('s3-btn'),1.3,0.85,80);
-  await sleep(620);
+  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(560);
+  shimBtn('s3-btn'); await sleep(420);
   const rb=$('s3-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(540); sfx_confirm(); await clickAt(xb,yb);
+  await sleep(360); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s3-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s3-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s3-btn').style.background='#19058c'; shimBtn('s3-btn'); },200)
   });
 
-  setP(82); await sleep(920);
-  await zoomOut(f,0.85); await sleep(360);
+  setP(82); await sleep(620);
   sfx_success(); await successFlash($('s3-flash'));
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
