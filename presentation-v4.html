@@ -211,6 +211,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   opacity:0; max-width:1180px; margin-top:18px;
   text-shadow:0 14px 40px rgba(25,5,140,.10);
 }
+/* ── files uploaded around the address bar ── */
+#ab-uploads{ position:absolute; left:50%; top:50%; width:0; height:0; z-index:4; pointer-events:none; }
+.ab-file{ position:absolute; left:-34px; top:-42px; width:68px; height:84px; border-radius:12px;
+  background:#fff; box-shadow:0 16px 38px rgba(25,5,140,.18); border:1.6px solid rgba(25,5,140,.10);
+  display:flex; align-items:center; justify-content:center; opacity:0; }
+.ab-file svg{ width:36px; height:36px; }
+#ab-caption{ font-family:'Almarai',sans-serif; font-weight:800; font-size:40px; color:#19058c;
+  direction:rtl; text-align:center; opacity:0; margin-top:10px; text-shadow:0 12px 34px rgba(25,5,140,.10); }
 
 /* ── outro / end card ── */
 #outro{
@@ -380,6 +388,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   <div id="addrbar">
     <div id="ab-glow"></div>
     <div id="addrbar-center">
+      <div id="ab-uploads">
+        <div class="ab-file" id="ab-f1"><svg viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+        <div class="ab-file" id="ab-f2"><svg viewBox="0 0 24 24" fill="none" stroke="#35c4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M5 17l5-5 4 4 2-2 3 3"/></svg></div>
+        <div class="ab-file" id="ab-f3"><svg viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+        <div class="ab-file" id="ab-f4"><svg viewBox="0 0 24 24" fill="none" stroke="#35c4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M5 17l5-5 4 4 2-2 3 3"/></svg></div>
+      </div>
       <div id="addrbar-pill-wrap">
         <svg id="ab-ring" viewBox="0 0 792 100" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -406,6 +420,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
         <span id="ab-cursor"></span>
         </div><!-- end addrbar-pill -->
       </div><!-- end addrbar-pill-wrap -->
+      <div id="ab-caption">ارفع مستنداتك وصور الحادث عبر موقعنا</div>
     </div>
   </div>
   <div id="ab-flash"></div>
@@ -693,6 +708,8 @@ async function addressBarIntro(){
   ringPath.style.strokeDashoffset='0';
   gsap.set(curEl,{opacity:1});
   gsap.set('#ab-flash',{opacity:0});
+  gsap.set('#ab-caption',{opacity:0,y:8});
+  gsap.set('.ab-file',{opacity:0});
 
   /* 1. glow builds slowly in background */
   gsap.to('#ab-glow',{opacity:1,scale:1,duration:2.2,ease:'power2.out'});
@@ -703,6 +720,7 @@ async function addressBarIntro(){
   await new Promise(res=>gsap.to('#addrbar-center',{
     y:0,scale:1,opacity:1,duration:.85,ease:'back.out(1.4)',onComplete:res
   }));
+  gsap.to('#ab-caption',{opacity:1,y:0,duration:.5,ease:'power3.out'});
 
   await delay(160);
 
@@ -714,6 +732,16 @@ async function addressBarIntro(){
     if(a && i>0) sfxKey(a);
     await delay(i===0?200:45);
   }
+
+  /* 3.5 upload: documents & accident photos fly in around the bar and get absorbed */
+  const flyers=[['#ab-f1',-340,-150,-9],['#ab-f2',330,-180,8],['#ab-f3',-300,170,7],['#ab-f4',300,150,-8]];
+  flyers.forEach(([sel,fx,fy,rot],i)=>{
+    gsap.set(sel,{x:fx,y:fy,opacity:0,scale:1,rotation:rot});
+    gsap.to(sel,{opacity:1,duration:.28,delay:i*0.12});
+    gsap.to(sel,{x:0,y:0,scale:.22,opacity:0,duration:.72,delay:.42+i*0.15,ease:'power2.in',
+      onStart:()=>{ if(a) sfxKey(a); }});
+  });
+  await delay(1300);
 
   /* 4. pause after typing completes, cursor stops */
   await delay(280);
@@ -731,6 +759,7 @@ async function addressBarIntro(){
 
   /* 7. cinematic exit — ring fades out simultaneously with the pill exit */
   if(a) sfxLaunch(a);
+  gsap.to('#ab-caption',{opacity:0,y:-10,duration:.45,ease:'power2.in'});
   gsap.to('#ab-ring',{opacity:0,duration:.6,ease:'power2.in'});
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
@@ -1010,50 +1039,39 @@ async function introJourney(){
   await ijTween('#intro-title',{opacity:1,duration:.55,ease:'power2.out'});
   gsap.to('#it-glow',{opacity:1,scale:1,duration:2.0,ease:'power2.out'});
 
-  /* BEAT 1 — accident (~3.6s) */
+  /* BEAT 1 — accident */
   ijCap('لو صار لك حادث… لا قدّر الله');
   await playCrash(a);
-  await delay(2200);
+  await delay(3200);
 
-  /* BEAT 2 — reassurance (~4s) */
-  gsap.to('#it-cars',{opacity:0,duration:.45});
+  /* → BEAT 2 — reassurance: a shield DROPS down over the crash (connected) */
   ijCap('وتأمينك مع جي آي جي… ريّح بالك');
-  await ijIn('#ij-shield');
+  gsap.to('#it-cars',{opacity:0,duration:.6,ease:'power2.in'});
+  await new Promise(res=>gsap.fromTo('#ij-shield',{opacity:0,y:-160,scale:.9},
+    {opacity:1,y:0,scale:1,duration:.85,ease:'power3.out',onComplete:res}));
   ijDraw('#ij-shield-chk'); if(a) sfxAppear(a);
-  await delay(550);
-  gsap.to('#ij-shield',{scale:1.07,duration:.55,yoyo:true,repeat:1,ease:'sine.inOut'});
-  await delay(2600);
-  await ijOut('#ij-shield');
+  gsap.to('#ij-shield',{scale:1.06,duration:.6,yoyo:true,repeat:1,ease:'sine.inOut'});
+  await delay(3900);
 
-  /* BEAT 3 — easier (~3.9s) */
+  /* → BEAT 3 — easier: shield travels LEFT out as the checklist arrives from the RIGHT */
   ijCap('إجراءات المطالبة معك صارت أسهل');
-  gsap.set('#ij-list',{opacity:0});
-  await ijIn('#ij-list');
-  ijDraw('#ij-list-c1'); await delay(420);
+  gsap.to('#ij-shield',{x:-440,opacity:0,duration:.8,ease:'power2.inOut'});
+  await new Promise(res=>gsap.fromTo('#ij-list',{opacity:0,x:440,scale:.96},
+    {opacity:1,x:0,scale:1,duration:.8,ease:'power3.out',onComplete:res}));
+  ijDraw('#ij-list-c1'); await delay(440);
   ijDraw('#ij-list-c2'); if(a) sfxAppear(a);
-  await delay(2600);
-  await ijOut('#ij-list');
+  await delay(3800);
 
-  /* BEAT 4 — upload documents + accident photos (~3.3s) */
-  ijCap('ارفع مستنداتك وصور الحادث');
-  gsap.set('#ij-docs',{opacity:1,scale:1,y:0});
-  gsap.fromTo('#ij-doc',{y:36,opacity:0},{y:0,opacity:1,duration:.55,ease:'power2.out'});
-  gsap.fromTo('#ij-photo',{y:40,opacity:0},{y:0,opacity:1,duration:.55,delay:.14,ease:'power2.out'});
-  await delay(1550);
-  ijDraw('#ij-up');
-  gsap.to('#ij-doc',{y:-60,opacity:0,duration:.85,ease:'power2.in'});
-  gsap.to('#ij-photo',{y:-60,opacity:0,duration:.85,delay:.12,ease:'power2.in'});
-  if(a) sfxAppear(a);
-  await delay(1750);
-  gsap.set('#ij-docs',{opacity:0});
+  /* → hand off to the website bar: the checklist lifts away while the bar rises
+     beneath it — overlapping, so it reads as one continuous journey (no cut) */
+  gsap.to('#ij-list',{y:-150,opacity:0,duration:.7,ease:'power2.in'});
+  gsap.to('#ij-caption',{opacity:0,y:-12,duration:.5,ease:'power2.in',delay:.15});
+  gsap.to('#it-glow',{opacity:0,duration:.7,ease:'power2.in'});
+  gsap.to('#intro-title',{opacity:0,duration:.8,ease:'power2.inOut',delay:.2,
+    onComplete:()=>gsap.set('#intro-title',{display:'none'})});
+  await delay(300);
 
-  /* fade the icon stage out, then play the ORIGINAL website address-bar animation */
-  gsap.to('#ij-caption',{opacity:0,y:-10,duration:.4,ease:'power2.in'});
-  gsap.to('#it-glow',{opacity:0,scale:1.25,duration:.6,ease:'power2.in'});
-  await ijTween('#intro-title',{opacity:0,duration:.5,ease:'power2.in'});
-  gsap.set('#intro-title',{display:'none'});
-
-  /* BEAT 5 — عبر موقعنا : the original address-bar overlay */
+  /* BEAT 4 — عبر موقعنا + upload (documents/photos fly into the bar) */
   await addressBarIntro();
 }
 
