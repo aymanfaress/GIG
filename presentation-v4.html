@@ -189,6 +189,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 }
 #ij-stage{ position:relative; width:580px; height:240px; }
 #ij-stage .ij-ic, #ij-bar{ position:absolute; left:50%; top:50%; opacity:0; }
+#ij-stage .ij-ic, #it-cars, #it-cars .car, #ij-caption, #ij-bar, .ab-file, #addrbar-center{
+  will-change:transform,opacity; backface-visibility:hidden;
+}
+#ij-stage .ij-ic{ filter:drop-shadow(0 16px 28px rgba(25,5,140,.14)); }
 #it-cars{ position:absolute; left:50%; top:50%; width:420px; height:120px; margin-left:-210px; margin-top:-60px; }
 #it-cars .car{ position:absolute; top:50%; left:50%; width:150px; height:100px; margin-top:-50px; margin-left:-75px; }
 #it-crash{ position:absolute; top:50%; left:50%; width:96px; height:96px; margin-top:-52px; margin-left:-48px; opacity:0; pointer-events:none; }
@@ -310,20 +314,20 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
     <div id="it-stack">
       <div id="ij-stage">
         <div id="it-cars">
-          <svg class="car carL" viewBox="0 0 156 104" fill="none" stroke="#17171b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="car carL" viewBox="0 0 156 104" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M26 80 L26 58 L33 40 Q35 36 40 36 L86 36 L102 57 L132 59 Q139 60 139 66 L139 75 Q139 80 134 80 L118 80 A13 13 0 0 0 92 80 L70 80 A13 13 0 0 0 44 80 L26 80 Z"/>
             <line x1="66" y1="37" x2="66" y2="57"/>
             <line x1="34" y1="57" x2="101" y2="57"/>
             <circle cx="105" cy="80" r="11"/><circle cx="57" cy="80" r="11"/>
-            <line x1="129" y1="66" x2="136" y2="66" stroke="#35c4aa" stroke-width="6"/>
+            <line x1="129" y1="66" x2="136" y2="66" stroke="#d28c64" stroke-width="6"/>
           </svg>
-          <svg class="car carR" viewBox="0 0 156 104" fill="none" stroke="#17171b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="car carR" viewBox="0 0 156 104" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
             <g transform="translate(156,0) scale(-1,1)">
               <path d="M26 80 L26 58 L33 40 Q35 36 40 36 L86 36 L102 57 L132 59 Q139 60 139 66 L139 75 Q139 80 134 80 L118 80 A13 13 0 0 0 92 80 L70 80 A13 13 0 0 0 44 80 L26 80 Z"/>
               <line x1="66" y1="37" x2="66" y2="57"/>
               <line x1="34" y1="57" x2="101" y2="57"/>
               <circle cx="105" cy="80" r="11"/><circle cx="57" cy="80" r="11"/>
-              <line x1="129" y1="66" x2="136" y2="66" stroke="#35c4aa" stroke-width="6"/>
+              <line x1="129" y1="66" x2="136" y2="66" stroke="#d28c64" stroke-width="6"/>
             </g>
           </svg>
           <svg id="it-crash" viewBox="0 0 100 100">
@@ -339,19 +343,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 
         <svg id="ij-shield" class="ij-ic" viewBox="0 0 100 112" fill="none" stroke="#19058c" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
           <path d="M50 8 L86 22 V54 C86 80 69 97 50 104 C31 97 14 80 14 54 V22 Z"/>
-          <path id="ij-shield-chk" d="M33 56 L45 68 L69 42" stroke="#35c4aa" stroke-width="7"/>
+          <path id="ij-shield-chk" d="M33 56 L45 68 L69 42" stroke="#d28c64" stroke-width="7"/>
         </svg>
 
         <svg id="ij-list" class="ij-ic" viewBox="0 0 116 92" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="10" y="12" width="96" height="68" rx="12"/>
-          <path id="ij-list-c1" d="M24 32 L33 40 L48 25" stroke="#35c4aa"/>
+          <path id="ij-list-c1" d="M24 32 L33 40 L48 25" stroke="#d28c64"/>
           <line x1="60" y1="33" x2="92" y2="33"/>
-          <path id="ij-list-c2" d="M24 56 L33 64 L48 49" stroke="#35c4aa"/>
+          <path id="ij-list-c2" d="M24 56 L33 64 L48 49" stroke="#d28c64"/>
           <line x1="60" y1="57" x2="92" y2="57"/>
         </svg>
 
         <svg id="ij-docs" class="ij-ic" viewBox="0 0 150 130" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
-          <path id="ij-up" d="M75 58 V26 M62 39 L75 26 L88 39" stroke="#35c4aa" stroke-width="6"/>
+          <path id="ij-up" d="M75 58 V26 M62 39 L75 26 L88 39" stroke="#d28c64" stroke-width="6"/>
           <g id="ij-doc">
             <rect x="26" y="72" width="40" height="50" rx="5"/>
             <line x1="34" y1="86" x2="58" y2="86"/><line x1="34" y1="98" x2="58" y2="98"/><line x1="34" y1="110" x2="50" y2="110"/>
@@ -369,9 +373,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
         </div>
 
         <svg id="ij-money" class="ij-ic" viewBox="0 0 150 104" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
-          <g id="ij-speed" stroke="#35c4aa"><line x1="6" y1="34" x2="42" y2="34"/><line x1="0" y1="52" x2="36" y2="52"/><line x1="8" y1="70" x2="42" y2="70"/></g>
+          <g id="ij-speed" stroke="#d28c64"><line x1="6" y1="34" x2="42" y2="34"/><line x1="0" y1="52" x2="36" y2="52"/><line x1="8" y1="70" x2="42" y2="70"/></g>
           <circle cx="100" cy="52" r="32"/>
-          <path d="M88 52 L97 61 L114 42" stroke="#35c4aa" stroke-width="6"/>
+          <path d="M88 52 L97 61 L114 42" stroke="#d28c64" stroke-width="6"/>
         </svg>
       </div>
       <div id="ij-caption"></div>
@@ -390,9 +394,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
     <div id="addrbar-center">
       <div id="ab-uploads">
         <div class="ab-file" id="ab-f1"><svg viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
-        <div class="ab-file" id="ab-f2"><svg viewBox="0 0 24 24" fill="none" stroke="#35c4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M5 17l5-5 4 4 2-2 3 3"/></svg></div>
+        <div class="ab-file" id="ab-f2"><svg viewBox="0 0 24 24" fill="none" stroke="#d28c64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M5 17l5-5 4 4 2-2 3 3"/></svg></div>
         <div class="ab-file" id="ab-f3"><svg viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
-        <div class="ab-file" id="ab-f4"><svg viewBox="0 0 24 24" fill="none" stroke="#35c4aa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M5 17l5-5 4 4 2-2 3 3"/></svg></div>
+        <div class="ab-file" id="ab-f4"><svg viewBox="0 0 24 24" fill="none" stroke="#d28c64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M5 17l5-5 4 4 2-2 3 3"/></svg></div>
       </div>
       <div id="addrbar-pill-wrap">
         <svg id="ab-ring" viewBox="0 0 792 100" xmlns="http://www.w3.org/2000/svg">
@@ -990,9 +994,9 @@ function playCrash(a){
       .to('.carR',{x:70, rotation:7, duration:.12,ease:'power3.out'},'<')
       .to('#it-crash',{opacity:0,scale:1.55,duration:.5,ease:'power1.out'})
       /* settle back together with a soft elastic bounce */
-      .to('.carL',{x:-56,rotation:0,duration:.55,ease:'elastic.out(1,.62)'},'-=0.38')
-      .to('.carR',{x:56, rotation:0,duration:.55,ease:'elastic.out(1,.62)'},'<')
-      .to({},{duration:.2});
+      .to('.carL',{x:-56,rotation:0,duration:.5,ease:'back.out(1.3)'},'-=0.34')
+      .to('.carR',{x:56, rotation:0,duration:.5,ease:'back.out(1.3)'},'<')
+      .to({},{duration:.15});
   });
 }
 
@@ -1039,28 +1043,27 @@ async function introJourney(){
   await ijTween('#intro-title',{opacity:1,duration:.55,ease:'power2.out'});
   gsap.to('#it-glow',{opacity:1,scale:1,duration:2.0,ease:'power2.out'});
 
-  /* BEAT 1 — accident */
+  /* BEAT 1 — accident (~2s) */
   ijCap('لو صار لك حادث… لا قدّر الله');
   await playCrash(a);
-  await delay(3200);
+  await delay(520);
 
-  /* → BEAT 2 — reassurance: a shield DROPS down over the crash (connected) */
+  /* → BEAT 2 — reassurance: the shield glides down over the crash (~2s) */
   ijCap('وتأمينك مع جي آي جي… ريّح بالك');
-  gsap.to('#it-cars',{opacity:0,duration:.6,ease:'power2.in'});
-  await new Promise(res=>gsap.fromTo('#ij-shield',{opacity:0,y:-160,scale:.9},
-    {opacity:1,y:0,scale:1,duration:.85,ease:'power3.out',onComplete:res}));
+  gsap.to('#it-cars',{opacity:0,duration:.55,ease:'power2.inOut'});
+  await new Promise(res=>gsap.fromTo('#ij-shield',{opacity:0,y:-150,scale:.92},
+    {opacity:1,y:0,scale:1,duration:.8,ease:'power3.out',onComplete:res}));
   ijDraw('#ij-shield-chk'); if(a) sfxAppear(a);
-  gsap.to('#ij-shield',{scale:1.06,duration:.6,yoyo:true,repeat:1,ease:'sine.inOut'});
-  await delay(3900);
+  await delay(1150);
 
-  /* → BEAT 3 — easier: shield travels LEFT out as the checklist arrives from the RIGHT */
+  /* → BEAT 3 — easier: shield travels LEFT out as the checklist arrives from the RIGHT (~3s) */
   ijCap('إجراءات المطالبة معك صارت أسهل');
-  gsap.to('#ij-shield',{x:-440,opacity:0,duration:.8,ease:'power2.inOut'});
+  gsap.to('#ij-shield',{x:-440,opacity:0,duration:.75,ease:'power2.inOut'});
   await new Promise(res=>gsap.fromTo('#ij-list',{opacity:0,x:440,scale:.96},
     {opacity:1,x:0,scale:1,duration:.8,ease:'power3.out',onComplete:res}));
-  ijDraw('#ij-list-c1'); await delay(440);
+  ijDraw('#ij-list-c1'); await delay(420);
   ijDraw('#ij-list-c2'); if(a) sfxAppear(a);
-  await delay(3800);
+  await delay(1650);
 
   /* → hand off to the website bar: the checklist lifts away while the bar rises
      beneath it — overlapping, so it reads as one continuous journey (no cut) */
