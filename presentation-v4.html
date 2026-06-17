@@ -709,7 +709,7 @@ let mediaRec=null, recChunks=[], recTap=null;
 /* ── background music — routed through the iframe's soft bus so it is
    both audible AND captured by the recorder; fades in/out gracefully ── */
 const MUSIC_FILE = 'Interview%2001.mp3';   /* URL-encoded (space → %20) */
-const MUSIC_VOL  = 0.18;                    /* level under the SFX / VO  */
+const MUSIC_VOL  = 0.10;                    /* soft bed under the continuous narration */
 let musicSrc=null, musicGain=null;
 async function startMusic(){
   try{
@@ -737,6 +737,39 @@ function stopMusic(){
   musicGain.gain.linearRampToValueAtTime(0.0001, t+3.0);            /* fade out */
   try{ musicSrc.stop(t+3.2); }catch(e){}
   musicSrc=null; musicGain=null;
+}
+
+/* ── continuous program voice-over (single file for the whole video) ──
+   routed through the iframe's soft bus so the recorder captures it; sits
+   clearly on top of the soft music bed for a strong VO/music balance ── */
+const PROGRAM_VO     = 'VO/VO.mp3';
+const VO_PROGRAM_VOL = 0.95;
+let progVoSrc=null, progVoGain=null;
+async function playProgramVO(){
+  try{
+    const fw=frame.contentWindow;
+    const ctx=fw.getACtx(); fw.getMaster();
+    const bus=fw._softBus||ctx.destination;
+    const res=await fetch(PROGRAM_VO);
+    if(!res.ok){ console.warn('VO not found:', PROGRAM_VO); return; }
+    const buf=await ctx.decodeAudioData(await res.arrayBuffer());
+    progVoSrc=ctx.createBufferSource(); progVoSrc.buffer=buf;
+    progVoGain=ctx.createGain();
+    const t=ctx.currentTime;
+    progVoGain.gain.setValueAtTime(0.0001,t);
+    progVoGain.gain.exponentialRampToValueAtTime(VO_PROGRAM_VOL,t+0.4);  /* gentle fade-in */
+    progVoSrc.connect(progVoGain); progVoGain.connect(bus);
+    progVoSrc.start(t);
+  }catch(e){ console.warn('VO error:', e); }
+}
+function stopProgramVO(){
+  if(!progVoGain) return;
+  const ctx=progVoGain.context, t=ctx.currentTime;
+  progVoGain.gain.cancelScheduledValues(t);
+  progVoGain.gain.setValueAtTime(progVoGain.gain.value,t);
+  progVoGain.gain.linearRampToValueAtTime(0.0001,t+0.6);
+  try{ progVoSrc.stop(t+0.7); }catch(e){}
+  progVoSrc=null; progVoGain=null;
 }
 
 /* ── voice-over: per-scene segments played in sync with each scene ──
@@ -851,8 +884,9 @@ async function start(record, btn){
   /* start the recording cleanly (countdown excluded), then the music */
   if(record && mediaRec){ try{ mediaRec.start(); }catch(e){} }
 
-  /* kick off background music from 0:00 (fire-and-forget; fades in) */
+  /* kick off background music + continuous narration from 0:00 (fade in) */
   startMusic();
+  playProgramVO();
 
   /* on-screen elapsed timer — visible only when previewing, never while recording */
   $('vidTimer').classList.toggle('show', !record);
