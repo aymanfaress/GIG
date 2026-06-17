@@ -187,21 +187,29 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   position:relative;z-index:2;
   display:flex;flex-direction:column;align-items:center;gap:30px;
 }
-#it-cars{ position:relative; width:420px; height:120px; margin:0 auto 6px; }
+#ij-stage{ position:relative; width:520px; height:170px; }
+#ij-stage .ij-ic, #ij-bar{ position:absolute; left:50%; top:50%; opacity:0; }
+#it-cars{ position:absolute; left:50%; top:50%; width:420px; height:120px; margin-left:-210px; margin-top:-60px; }
 #it-cars .car{ position:absolute; top:50%; left:50%; width:150px; height:100px; margin-top:-50px; margin-left:-75px; }
 #it-crash{ position:absolute; top:50%; left:50%; width:96px; height:96px; margin-top:-52px; margin-left:-48px; opacity:0; pointer-events:none; }
-#it-text{
-  font-family:'Almarai',sans-serif;font-weight:900;
-  font-size:66px;line-height:1.3;color:#19058c;
-  text-align:center;direction:rtl;
-  text-shadow:0 18px 50px rgba(25,5,140,.14);
+#ij-shield{ width:120px; height:134px; margin-left:-60px; margin-top:-67px; }
+#ij-list{ width:152px; height:120px; margin-left:-76px; margin-top:-60px; }
+#ij-docs{ width:176px; height:150px; margin-left:-88px; margin-top:-75px; }
+#ij-money{ width:188px; height:128px; margin-left:-94px; margin-top:-64px; }
+#ij-bar{
+  width:360px; margin-left:-180px; margin-top:-34px;
+  display:flex; align-items:center; justify-content:center; gap:13px;
+  background:#fff; border:1.5px solid rgba(25,5,140,.16); border-radius:44px;
+  padding:17px 30px; box-shadow:0 18px 54px rgba(25,5,140,.16);
 }
-#it-text .it-word{ display:inline-block; margin:0 12px; }
-#it-text .it-brand{ color:#19058c; }
-#it-line{
-  width:0;height:3px;border-radius:3px;
-  background:linear-gradient(90deg,rgba(25,5,140,0) 0%,#19058c 28%,#d28c64 72%,rgba(210,140,100,0) 100%);
-  opacity:0;
+#ij-bar .ij-lock{ width:22px; height:22px; flex:none; }
+#ij-url{ font-family:'Almarai',sans-serif; font-weight:700; font-size:30px; color:#19058c; direction:ltr; white-space:nowrap; letter-spacing:.5px; }
+#ij-caret{ width:2.5px; height:30px; background:#19058c; border-radius:2px; flex:none; }
+#ij-caption{
+  font-family:'Almarai',sans-serif; font-weight:800; font-size:46px;
+  color:#19058c; text-align:center; direction:rtl; line-height:1.45;
+  opacity:0; max-width:1180px; margin-top:18px;
+  text-shadow:0 14px 40px rgba(25,5,140,.10);
 }
 
 /* ── outro / end card ── */
@@ -292,41 +300,73 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   <div id="intro-title">
     <div id="it-glow"></div>
     <div id="it-stack">
-      <div id="it-cars">
-        <svg class="car carL" viewBox="0 0 156 104" fill="none" stroke="#17171b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M26 80 L26 58 L33 40 Q35 36 40 36 L86 36 L102 57 L132 59 Q139 60 139 66 L139 75 Q139 80 134 80 L118 80 A13 13 0 0 0 92 80 L70 80 A13 13 0 0 0 44 80 L26 80 Z"/>
-          <line x1="66" y1="37" x2="66" y2="57"/>
-          <line x1="34" y1="57" x2="101" y2="57"/>
-          <circle cx="105" cy="80" r="11"/><circle cx="57" cy="80" r="11"/>
-          <line x1="129" y1="66" x2="136" y2="66" stroke="#35c4aa" stroke-width="6"/>
-        </svg>
-        <svg class="car carR" viewBox="0 0 156 104" fill="none" stroke="#17171b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
-          <g transform="translate(156,0) scale(-1,1)">
+      <div id="ij-stage">
+        <div id="it-cars">
+          <svg class="car carL" viewBox="0 0 156 104" fill="none" stroke="#17171b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M26 80 L26 58 L33 40 Q35 36 40 36 L86 36 L102 57 L132 59 Q139 60 139 66 L139 75 Q139 80 134 80 L118 80 A13 13 0 0 0 92 80 L70 80 A13 13 0 0 0 44 80 L26 80 Z"/>
             <line x1="66" y1="37" x2="66" y2="57"/>
             <line x1="34" y1="57" x2="101" y2="57"/>
             <circle cx="105" cy="80" r="11"/><circle cx="57" cy="80" r="11"/>
             <line x1="129" y1="66" x2="136" y2="66" stroke="#35c4aa" stroke-width="6"/>
+          </svg>
+          <svg class="car carR" viewBox="0 0 156 104" fill="none" stroke="#17171b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+            <g transform="translate(156,0) scale(-1,1)">
+              <path d="M26 80 L26 58 L33 40 Q35 36 40 36 L86 36 L102 57 L132 59 Q139 60 139 66 L139 75 Q139 80 134 80 L118 80 A13 13 0 0 0 92 80 L70 80 A13 13 0 0 0 44 80 L26 80 Z"/>
+              <line x1="66" y1="37" x2="66" y2="57"/>
+              <line x1="34" y1="57" x2="101" y2="57"/>
+              <circle cx="105" cy="80" r="11"/><circle cx="57" cy="80" r="11"/>
+              <line x1="129" y1="66" x2="136" y2="66" stroke="#35c4aa" stroke-width="6"/>
+            </g>
+          </svg>
+          <svg id="it-crash" viewBox="0 0 100 100">
+            <g stroke="#d28c64" stroke-width="5" stroke-linecap="round">
+              <line x1="50" y1="50" x2="50" y2="12"/><line x1="50" y1="50" x2="74" y2="20"/>
+              <line x1="50" y1="50" x2="88" y2="50"/><line x1="50" y1="50" x2="74" y2="80"/>
+              <line x1="50" y1="50" x2="50" y2="88"/><line x1="50" y1="50" x2="26" y2="80"/>
+              <line x1="50" y1="50" x2="12" y2="50"/><line x1="50" y1="50" x2="26" y2="20"/>
+            </g>
+            <circle cx="50" cy="50" r="8" fill="#19058c"/>
+          </svg>
+        </div>
+
+        <svg id="ij-shield" class="ij-ic" viewBox="0 0 100 112" fill="none" stroke="#19058c" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M50 8 L86 22 V54 C86 80 69 97 50 104 C31 97 14 80 14 54 V22 Z"/>
+          <path id="ij-shield-chk" d="M33 56 L45 68 L69 42" stroke="#35c4aa" stroke-width="7"/>
+        </svg>
+
+        <svg id="ij-list" class="ij-ic" viewBox="0 0 116 92" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="10" y="12" width="96" height="68" rx="12"/>
+          <path d="M24 32 L33 40 L48 25" stroke="#35c4aa"/>
+          <line x1="60" y1="33" x2="92" y2="33"/>
+          <path d="M24 56 L33 64 L48 49" stroke="#35c4aa"/>
+          <line x1="60" y1="57" x2="92" y2="57"/>
+        </svg>
+
+        <svg id="ij-docs" class="ij-ic" viewBox="0 0 150 130" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <path id="ij-up" d="M75 58 V26 M62 39 L75 26 L88 39" stroke="#35c4aa" stroke-width="6"/>
+          <g id="ij-doc">
+            <rect x="26" y="72" width="40" height="50" rx="5"/>
+            <line x1="34" y1="86" x2="58" y2="86"/><line x1="34" y1="98" x2="58" y2="98"/><line x1="34" y1="110" x2="50" y2="110"/>
+          </g>
+          <g id="ij-photo">
+            <rect x="84" y="78" width="46" height="40" rx="5"/>
+            <circle cx="96" cy="90" r="4"/>
+            <path d="M86 114 L102 99 L111 108 L120 100 L128 108"/>
           </g>
         </svg>
-        <svg id="it-crash" viewBox="0 0 100 100">
-          <g stroke="#d28c64" stroke-width="5" stroke-linecap="round">
-            <line x1="50" y1="50" x2="50" y2="12"/><line x1="50" y1="50" x2="74" y2="20"/>
-            <line x1="50" y1="50" x2="88" y2="50"/><line x1="50" y1="50" x2="74" y2="80"/>
-            <line x1="50" y1="50" x2="50" y2="88"/><line x1="50" y1="50" x2="26" y2="80"/>
-            <line x1="50" y1="50" x2="12" y2="50"/><line x1="50" y1="50" x2="26" y2="20"/>
-          </g>
-          <circle cx="50" cy="50" r="8" fill="#19058c"/>
+
+        <div id="ij-bar">
+          <svg class="ij-lock" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11 V8 a4 4 0 0 1 8 0 v3"/></svg>
+          <span id="ij-url"></span><span id="ij-caret"></span>
+        </div>
+
+        <svg id="ij-money" class="ij-ic" viewBox="0 0 150 104" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <g id="ij-speed" stroke="#35c4aa"><line x1="6" y1="34" x2="42" y2="34"/><line x1="0" y1="52" x2="36" y2="52"/><line x1="8" y1="70" x2="42" y2="70"/></g>
+          <circle cx="100" cy="52" r="32"/>
+          <path d="M88 52 L97 61 L114 42" stroke="#35c4aa" stroke-width="6"/>
         </svg>
       </div>
-      <div id="it-text">
-        <span class="it-word">تقديم</span>
-        <span class="it-word">مطالبات</span>
-        <span class="it-word">التأمين</span>
-        <span class="it-word">مع</span>
-        <span class="it-word it-brand">جي آي جي</span>
-      </div>
-      <div id="it-line"></div>
+      <div id="ij-caption"></div>
     </div>
   </div>
 
@@ -892,10 +932,9 @@ async function start(record, btn){
   $('vidTimer').classList.toggle('show', !record);
   startVidTimer();
 
-  /* 0) opening title, 1) address bar types URL, 2) tablet rises while the
-     scene builds inside it, settling just before the cursor enters */
-  await showIntroTitle();
-  await addressBarIntro();
+  /* 0) narrated opening journey (incl. the website address bar), then the
+     tablet rises while the scene builds inside it */
+  await introJourney();
   showHead('s1');
   const entering = tabletEnter();          /* start the rise (don't block) */
   await delay(450);                        /* a beat into the climb */
@@ -928,46 +967,98 @@ function playCrash(a){
   });
 }
 
-async function showIntroTitle(){
+/* ── intro-journey helpers ── */
+function ijTween(sel,vars){ return new Promise(res=>gsap.to(sel,Object.assign({},vars,{onComplete:res}))); }
+function ijCap(txt){
+  const el=$('ij-caption');
+  return new Promise(res=>{
+    gsap.to(el,{opacity:0,y:-8,duration:.2,ease:'power1.in',onComplete:()=>{
+      el.textContent=txt;
+      gsap.fromTo(el,{opacity:0,y:14},{opacity:1,y:0,duration:.5,ease:'power3.out',onComplete:res});
+    }});
+  });
+}
+function ijIn(sel){ return new Promise(res=>gsap.fromTo(sel,{opacity:0,scale:.8,y:14},{opacity:1,scale:1,y:0,duration:.55,ease:'back.out(1.4)',onComplete:res})); }
+function ijOut(sel){ return new Promise(res=>gsap.to(sel,{opacity:0,scale:.92,y:-12,duration:.34,ease:'power2.in',onComplete:res})); }
+function ijDraw(sel){
+  const el=document.querySelector(sel); if(!el||!el.getTotalLength) return;
+  const len=el.getTotalLength();
+  el.style.strokeDasharray=len; el.style.strokeDashoffset=len;
+  gsap.to(el,{strokeDashoffset:0,duration:.55,ease:'power2.out'});
+}
+async function ijBarType(url){
+  const u=$('ij-url'), caret=$('ij-caret');
+  u.textContent='';
+  await ijIn('#ij-bar');
+  const blink=gsap.to(caret,{opacity:0,duration:.45,repeat:-1,yoyo:true,ease:'power1.inOut'});
+  for(let i=0;i<=url.length;i++){ u.textContent=url.slice(0,i); await delay(i===0?180:70); }
+  await delay(320); blink.kill(); gsap.set(caret,{opacity:0});
+}
+
+/* ── opening motion-graphics journey, narrated by the voice-over ── */
+async function introJourney(){
   const a=getAudio();
-  playVO('VO2/vo-01-intro.mp3');           /* intro narration starts with the title card */
   gsap.set('#intro-title',{opacity:0,display:'flex'});
   gsap.set('#it-glow',{opacity:0,scale:.72});
-  gsap.set('#it-text .it-word',{opacity:0,y:28});
-  gsap.set('#it-line',{opacity:0,width:0});
+  gsap.set(['#ij-shield','#ij-list','#ij-docs','#ij-bar','#ij-money'],{opacity:0,scale:1,y:0,x:0});
+  gsap.set('#it-cars',{opacity:1});
   gsap.set('.carL',{x:-240,y:0,rotation:0,opacity:0});
   gsap.set('.carR',{x:240, y:0,rotation:0,opacity:0});
   gsap.set('#it-crash',{opacity:0,scale:.3});
+  $('ij-caption').textContent=''; gsap.set('#ij-caption',{opacity:0});
 
-  /* 1. background fades in */
-  await new Promise(res=>gsap.to('#intro-title',{opacity:1,duration:.6,ease:'power2.out',onComplete:res}));
-
-  /* 2. glow blooms */
+  await ijTween('#intro-title',{opacity:1,duration:.5,ease:'power2.out'});
   gsap.to('#it-glow',{opacity:1,scale:1,duration:1.8,ease:'power2.out'});
 
-  /* 2.5 two cars glide in from both sides and collide above the title */
+  /* BEAT 1 — accident */
+  ijCap('لو صار لك حادث… لا قدّر الله');
   await playCrash(a);
+  await delay(650);
 
-  /* 3. words rise in, right-to-left, with a soft chime */
+  /* BEAT 2 — reassurance */
+  gsap.to('#it-cars',{opacity:0,duration:.4});
+  ijCap('وتأمينك مع جي آي جي… ريّح بالك');
+  await ijIn('#ij-shield'); ijDraw('#ij-shield-chk'); if(a) sfxAppear(a);
+  await delay(1150);
+  await ijOut('#ij-shield');
+
+  /* BEAT 3 — easier */
+  ijCap('إجراءات المطالبة معك صارت أسهل');
+  await ijIn('#ij-list');
+  await delay(1100);
+  await ijOut('#ij-list');
+
+  /* BEAT 4 — upload documents + accident photos */
+  ijCap('ارفع مستنداتك وصور الحادث');
+  gsap.set('#ij-docs',{opacity:1,scale:1,y:0});
+  gsap.fromTo('#ij-doc',{y:30,opacity:0},{y:0,opacity:1,duration:.5,ease:'power2.out'});
+  gsap.fromTo('#ij-photo',{y:34,opacity:0},{y:0,opacity:1,duration:.5,delay:.12,ease:'power2.out'});
+  ijDraw('#ij-up');
+  await delay(760);
+  gsap.to('#ij-doc',{y:-50,opacity:0,duration:.7,ease:'power2.in'});
+  gsap.to('#ij-photo',{y:-50,opacity:0,duration:.7,delay:.1,ease:'power2.in'});
   if(a) sfxAppear(a);
-  await new Promise(res=>gsap.to('#it-text .it-word',
-    {opacity:1,y:0,duration:.7,stagger:.09,ease:'power4.out',onComplete:res}));
+  await delay(760);
+  gsap.set('#ij-docs',{opacity:0});
 
-  /* 4. accent line draws out */
-  await new Promise(res=>gsap.to('#it-line',
-    {opacity:1,width:320,duration:.55,ease:'power3.out',onComplete:res}));
-
-  /* 5. hold */
+  /* BEAT 5 — عبر موقعنا : the website address bar types itself */
+  ijCap('عبر موقعنا');
+  await ijBarType('www.gig.sa');
   await delay(600);
+  await ijOut('#ij-bar');
 
-  /* 6. graceful exit → reveals the address bar */
-  await new Promise(res=>{
-    const tl=gsap.timeline({onComplete:res});
-    tl.to('#it-text .it-word',{opacity:0,y:-20,duration:.5,stagger:.05,ease:'power2.in'},0)
-      .to('#it-line',{opacity:0,duration:.4,ease:'power2.in'},0)
-      .to('#it-glow',{opacity:0,scale:1.3,duration:.6,ease:'power2.in'},0)
-      .to('#intro-title',{opacity:0,duration:.5,ease:'power2.in'},'-=0.15');
-  });
+  /* BEAT 6 — fast compensation */
+  ijCap('ويوصلك تعويضك بأسرع وقت');
+  gsap.fromTo('#ij-money',{opacity:0,scale:.8,x:18},{opacity:1,scale:1,x:0,duration:.55,ease:'back.out(1.4)'});
+  gsap.fromTo('#ij-speed',{x:-16,opacity:.2},{x:0,opacity:1,duration:.4,repeat:1,yoyo:true});
+  if(a) sfxAppear(a);
+  await delay(1350);
+
+  /* exit → reveals the stage for the tablet demo */
+  gsap.to('#ij-caption',{opacity:0,y:-10,duration:.4,ease:'power2.in'});
+  gsap.to('#ij-money',{opacity:0,duration:.4,ease:'power2.in'});
+  gsap.to('#it-glow',{opacity:0,scale:1.3,duration:.6,ease:'power2.in'});
+  await ijTween('#intro-title',{opacity:0,duration:.5,ease:'power2.in'});
   gsap.set('#intro-title',{display:'none'});
 }
 
