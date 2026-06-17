@@ -187,9 +187,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   position:relative;z-index:2;
   display:flex;flex-direction:column;align-items:center;gap:30px;
 }
-#it-cars{ position:relative; width:400px; height:104px; margin:0 auto 2px; }
-#it-cars .car{ position:absolute; top:50%; left:50%; width:128px; height:64px; margin-top:-32px; margin-left:-64px; filter:drop-shadow(0 10px 18px rgba(25,5,140,.18)); }
-#it-crash{ position:absolute; top:50%; left:50%; width:96px; height:96px; margin-top:-48px; margin-left:-48px; opacity:0; pointer-events:none; }
+#it-cars{ position:relative; width:420px; height:120px; margin:0 auto 6px; }
+#it-cars .car{ position:absolute; top:50%; left:50%; width:150px; height:100px; margin-top:-50px; margin-left:-75px; }
+#it-crash{ position:absolute; top:50%; left:50%; width:96px; height:96px; margin-top:-52px; margin-left:-48px; opacity:0; pointer-events:none; }
 #it-text{
   font-family:'Almarai',sans-serif;font-weight:900;
   font-size:66px;line-height:1.3;color:#19058c;
@@ -293,24 +293,20 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
     <div id="it-glow"></div>
     <div id="it-stack">
       <div id="it-cars">
-        <svg class="car carL" viewBox="0 0 128 64">
-          <rect x="6" y="34" width="116" height="18" rx="8" fill="#19058c"/>
-          <path d="M30 34 L42 19 C44 17 46 16 49 16 L74 16 C78 16 81 17 84 20 L96 34 Z" fill="#19058c"/>
-          <path d="M45 31 L53 21 L62 21 L62 31 Z" fill="#dbe7ff"/>
-          <path d="M66 31 L66 21 L76 21 C79 21 81 22 83 25 L88 31 Z" fill="#dbe7ff"/>
-          <circle cx="118" cy="40" r="2.6" fill="#ffe08a"/>
-          <circle cx="36" cy="52" r="9" fill="#1f1f2b"/><circle cx="36" cy="52" r="3.6" fill="#7b7b90"/>
-          <circle cx="94" cy="52" r="9" fill="#1f1f2b"/><circle cx="94" cy="52" r="3.6" fill="#7b7b90"/>
+        <svg class="car carL" viewBox="0 0 156 104" fill="none" stroke="#17171b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M26 80 L26 58 L33 40 Q35 36 40 36 L86 36 L102 57 L132 59 Q139 60 139 66 L139 75 Q139 80 134 80 L118 80 A13 13 0 0 0 92 80 L70 80 A13 13 0 0 0 44 80 L26 80 Z"/>
+          <line x1="66" y1="37" x2="66" y2="57"/>
+          <line x1="34" y1="57" x2="101" y2="57"/>
+          <circle cx="105" cy="80" r="11"/><circle cx="57" cy="80" r="11"/>
+          <line x1="129" y1="66" x2="136" y2="66" stroke="#35c4aa" stroke-width="6"/>
         </svg>
-        <svg class="car carR" viewBox="0 0 128 64">
-          <g transform="translate(128,0) scale(-1,1)">
-            <rect x="6" y="34" width="116" height="18" rx="8" fill="#d28c64"/>
-            <path d="M30 34 L42 19 C44 17 46 16 49 16 L74 16 C78 16 81 17 84 20 L96 34 Z" fill="#d28c64"/>
-            <path d="M45 31 L53 21 L62 21 L62 31 Z" fill="#fbe9dc"/>
-            <path d="M66 31 L66 21 L76 21 C79 21 81 22 83 25 L88 31 Z" fill="#fbe9dc"/>
-            <circle cx="118" cy="40" r="2.6" fill="#fff2c2"/>
-            <circle cx="36" cy="52" r="9" fill="#1f1f2b"/><circle cx="36" cy="52" r="3.6" fill="#7b7b90"/>
-            <circle cx="94" cy="52" r="9" fill="#1f1f2b"/><circle cx="94" cy="52" r="3.6" fill="#7b7b90"/>
+        <svg class="car carR" viewBox="0 0 156 104" fill="none" stroke="#17171b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <g transform="translate(156,0) scale(-1,1)">
+            <path d="M26 80 L26 58 L33 40 Q35 36 40 36 L86 36 L102 57 L132 59 Q139 60 139 66 L139 75 Q139 80 134 80 L118 80 A13 13 0 0 0 92 80 L70 80 A13 13 0 0 0 44 80 L26 80 Z"/>
+            <line x1="66" y1="37" x2="66" y2="57"/>
+            <line x1="34" y1="57" x2="101" y2="57"/>
+            <circle cx="105" cy="80" r="11"/><circle cx="57" cy="80" r="11"/>
+            <line x1="129" y1="66" x2="136" y2="66" stroke="#35c4aa" stroke-width="6"/>
           </g>
         </svg>
         <svg id="it-crash" viewBox="0 0 100 100">
