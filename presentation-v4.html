@@ -223,6 +223,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 .ab-file svg{ width:36px; height:36px; }
 #ab-caption{ font-family:'Almarai',sans-serif; font-weight:800; font-size:40px; color:#19058c;
   direction:rtl; text-align:center; opacity:0; margin-top:10px; text-shadow:0 12px 34px rgba(25,5,140,.10); }
+#ab-money{ position:absolute; left:50%; top:50%; width:300px; height:205px; margin-left:-150px; margin-top:-112px;
+  opacity:0; z-index:3; will-change:transform,opacity; filter:drop-shadow(0 18px 30px rgba(25,5,140,.16)); }
 
 /* ── outro / end card ── */
 #outro{
@@ -426,6 +428,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
       </div><!-- end addrbar-pill-wrap -->
       <div id="ab-caption">ارفع مستنداتك وصور الحادث عبر موقعنا</div>
     </div>
+    <svg id="ab-money" viewBox="0 0 220 150" fill="none" stroke="#19058c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <g id="ab-note">
+        <rect x="36" y="50" width="148" height="82" rx="12"/>
+        <circle cx="110" cy="91" r="21"/>
+        <path d="M101 83 v16 M119 83 v16 M99 88 h22 M99 94 h22" stroke="#d28c64" stroke-width="3.5"/>
+      </g>
+      <circle id="ab-coin1" cx="62" cy="40" r="15" stroke="#d28c64"/>
+      <circle id="ab-coin2" cx="158" cy="36" r="13" stroke="#d28c64"/>
+      <circle id="ab-coin3" cx="110" cy="24" r="12" stroke="#d28c64"/>
+    </svg>
   </div>
   <div id="ab-flash"></div>
 
@@ -714,6 +726,7 @@ async function addressBarIntro(){
   gsap.set('#ab-flash',{opacity:0});
   gsap.set('#ab-caption',{opacity:0,y:8});
   gsap.set('.ab-file',{opacity:0});
+  gsap.set('#ab-money',{opacity:0});
 
   /* 1. glow builds slowly in background */
   gsap.to('#ab-glow',{opacity:1,scale:1,duration:2.2,ease:'power2.out'});
@@ -736,43 +749,71 @@ async function addressBarIntro(){
     await delay(i===0?200:45);
   }
 
-  /* 3.5 upload: documents & accident photos fly in around the bar and get absorbed */
-  const flyers=[['#ab-f1',-340,-150,-9],['#ab-f2',330,-180,8],['#ab-f3',-300,170,7],['#ab-f4',300,150,-8]];
-  flyers.forEach(([sel,fx,fy,rot],i)=>{
-    gsap.set(sel,{x:fx,y:fy,opacity:0,scale:1,rotation:rot});
-    gsap.to(sel,{opacity:1,duration:.28,delay:i*0.12});
-    gsap.to(sel,{x:0,y:0,scale:.22,opacity:0,duration:.72,delay:.42+i*0.15,ease:'power2.in',
-      onStart:()=>{ if(a) sfxKey(a); }});
-  });
-  await delay(1300);
+  /* 3.5 upload: a continuous stream of files rises up through the bar and
+     fades away above — loops while the bar is on screen */
+  const streams=[];
+  function streamFile(sel,x,delay){
+    const tl=gsap.timeline({repeat:-1,delay});
+    tl.set(sel,{x:x,y:135,opacity:0,scale:.92,rotation:0})
+      .to(sel,{opacity:1,duration:.4,ease:'power1.out'},0)
+      .to(sel,{y:-185,duration:1.95,ease:'sine.inOut'},0)
+      .to(sel,{opacity:0,duration:.6,ease:'power1.in'},1.3);
+    return tl;
+  }
+  streams.push(streamFile('#ab-f1',-150,0));
+  streams.push(streamFile('#ab-f2', 150,0.5));
+  streams.push(streamFile('#ab-f3', -58,1.0));
+  streams.push(streamFile('#ab-f4',  58,1.5));
 
-  /* 4. pause after typing completes, cursor stops */
+  /* 4. pause after typing, cursor stops */
   await delay(280);
   blinkTween.kill();
   gsap.set(curEl,{opacity:0});
 
-  /* 5. ring fades in and starts its slow 3-second trace */
+  /* 5. ring fades in and traces */
   gsap.to('#ab-ring',{opacity:1,duration:.28,ease:'power2.out'});
   await delay(100);
   if(a) sfxChime(a);
   ringPath.classList.add('running');
 
-  /* let the ring travel briefly, then exit (shortened) */
-  await delay(1100);
+  /* let the bar + the rising file stream run a while */
+  await delay(3200);
 
-  /* 7. cinematic exit — ring fades out simultaneously with the pill exit */
+  /* stop the stream and clear any files still on screen */
+  streams.forEach(t=>t.kill());
+  gsap.to('.ab-file',{opacity:0,duration:.4,ease:'power1.in'});
+
+  /* 6. the bar gathers itself in (collapses away) */
   if(a) sfxLaunch(a);
-  gsap.to('#ab-caption',{opacity:0,y:-10,duration:.45,ease:'power2.in'});
-  gsap.to('#ab-ring',{opacity:0,duration:.6,ease:'power2.in'});
+  gsap.to('#ab-ring',{opacity:0,duration:.4,ease:'power2.in'});
+  await new Promise(res=>gsap.to('#addrbar-center',{scale:.4,opacity:0,duration:.55,ease:'power2.in',onComplete:res}));
+  gsap.to('#ab-glow',{opacity:0,duration:.5,ease:'power2.in'});
+
+  /* 7. MONEY — compensation arrives fast (motion only, no text) */
+  gsap.set('#ab-money',{opacity:1});
+  gsap.set('#ab-note',{scale:.55,opacity:0,y:34,transformOrigin:'50% 60%'});
+  gsap.set(['#ab-coin1','#ab-coin2','#ab-coin3'],{opacity:0,y:46,scale:.5});
+  if(a) sfxAppear(a);
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
-    tl.to('#addrbar-center',{scale:1.1,opacity:0,duration:.6,ease:'power2.in'},0)
-      .to('#ab-glow',{scale:1.45,opacity:0,duration:.65,ease:'power2.in'},0)
-      .to('#ab-flash',{opacity:.8,duration:.16,ease:'power2.out'},.1)
+    tl.to('#ab-note',{scale:1,opacity:1,y:0,duration:.5,ease:'back.out(1.7)'})
+      .to('#ab-coin1',{opacity:1,y:0,scale:1,duration:.45,ease:'back.out(2.2)'},'-=0.26')
+      .to('#ab-coin2',{opacity:1,y:0,scale:1,duration:.45,ease:'back.out(2.2)'},'-=0.34')
+      .to('#ab-coin3',{opacity:1,y:0,scale:1,duration:.45,ease:'back.out(2.2)'},'-=0.34')
+      .to('#ab-note',{scale:1.06,duration:.28,yoyo:true,repeat:1,ease:'sine.inOut'});
+  });
+  await delay(1150);
+
+  /* 8. exit → flash through to the tablet demo */
+  gsap.to('#ab-money',{scale:1.12,opacity:0,duration:.5,ease:'power2.in',transformOrigin:'50% 50%'});
+  await new Promise(res=>{
+    const tl=gsap.timeline({onComplete:res});
+    tl.to('#ab-flash',{opacity:.8,duration:.16,ease:'power2.out'},.1)
       .to('#ab-flash',{opacity:0,duration:.55,ease:'power2.in'},'>');
   });
   ringPath.classList.remove('running');
   gsap.set('#addrbar',{display:'none'});
+  gsap.set('#ab-money',{opacity:0});
 }
 
 /* ── start the show (with optional recording) ── */
