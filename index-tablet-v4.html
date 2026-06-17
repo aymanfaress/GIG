@@ -2352,6 +2352,17 @@ function showInterstitial(key){
   });
 }
 
+/* full-screen divider with HARD CUTS: card shows → swap + start the scene behind
+   it → instantly remove the card so the scene plays in full from frame one */
+async function sectionBreak(key, fromId, toId, sceneKey, runFn){
+  await showInterstitial(key);
+  $(fromId).classList.remove('active'); $(toId).classList.add('active');
+  sig(sceneKey);
+  const p = runFn();                              /* scene init runs now, behind the card */
+  try{ parent.postMessage({gigRemove:key},'*'); }catch(e){}   /* hard cut → reveal scene */
+  await p;
+}
+
 /* ══ MASTER SEQUENCE — V2 (دقيقتان بالضبط) ══
    التغييرات عن النسخة الأصلية:
    • السرعة: 1.40× أسرع (sleep + GSAP timeScale)
@@ -2370,15 +2381,9 @@ async function run(){
   sig('otp'); await runScene2(false);
 
   /* ── accident report sources (نجم → باشر → أخرى) ── */
-  await showInterstitial('najm');
-  $('s2').classList.remove('active'); $('s4').classList.add('active');
-  sig('najm'); await runScene4();
-  await showInterstitial('basher');
-  $('s4').classList.remove('active'); $('s7').classList.add('active');
-  sig('basher'); await runScene7();
-  await showInterstitial('other');
-  $('s7').classList.remove('active'); $('s8').classList.add('active');
-  sig('other'); await runScene8();
+  await sectionBreak('najm','s2','s4','najm',runScene4);
+  await sectionBreak('basher','s4','s7','basher',runScene7);
+  await sectionBreak('other','s7','s8','other',runScene8);
 
   /* ── single estimate + review/submit ending (no duplicate pass) ── */
   await transitionTo('s8','s5');  sig('estimate'); await runScene5();
