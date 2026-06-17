@@ -1444,6 +1444,15 @@ function startTrail(){
 function stopTrail(){ clearInterval(trailTimer); }
 
 async function moveTo(x,y,dur=.52){
+  /* cold entrance: if the cursor is parked off-screen (scene start), bring it
+     in from the closest point to the action so the move stays short & relaxed */
+  const cl=parseFloat(cur.style.left||'-60'), ct=parseFloat(cur.style.top||'-60');
+  if(cl<=-40 || ct<=-40){
+    const W=window.innerWidth, H=window.innerHeight, d=150;
+    const ex=x + (x < W/2 ? -1 : 1)*d;
+    const ey=y + (y < H/2 ? -1 : 1)*(d*0.5);
+    gsap.set(cur,{ left:Math.max(10,Math.min(W-10,ex)), top:Math.max(10,Math.min(H-10,ey)) });
+  }
   return new Promise(res=>gsap.to(cur,{left:x,top:y,duration:dur,ease:'power2.inOut',onComplete:res}));
 }
 async function clickAt(x,y){
