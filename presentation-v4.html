@@ -82,6 +82,23 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   min-height:44px;
 }
 
+/* ── section interstitial (full-screen divider before najm / المرور / أخرى) ── */
+#interstitial{
+  position:absolute;inset:0;z-index:58;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:44px;
+  background:#fff url('images/bg-presentation.png') center/cover no-repeat;
+  padding-bottom:30px;
+}
+#ist-icon{
+  width:156px;height:156px;object-fit:contain;border-radius:32px;
+  box-shadow:0 26px 64px rgba(25,5,140,.16);
+}
+#ist-text{
+  font-family:'Almarai',sans-serif;font-weight:800;font-size:56px;
+  color:#19058c;text-align:center;direction:rtl;
+  text-shadow:0 14px 40px rgba(25,5,140,.10);
+}
+
 /* ── address-bar intro ── */
 #addrbar{
   position:absolute;inset:0;
@@ -283,6 +300,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
     </div>
   </div>
 
+  <!-- section interstitial divider -->
+  <div id="interstitial">
+    <img id="ist-icon" src="" alt="">
+    <div id="ist-text"></div>
+  </div>
+
   <!-- address-bar intro overlay -->
   <div id="addrbar">
     <div id="ab-glow"></div>
@@ -428,10 +451,38 @@ function showAction(txt){
   });
 }
 
+/* ── full-screen section interstitial shown before najm / المرور / أخرى ── */
+const IST = {
+  najm:   { icon:'images/GIG - Logos-01.png', text:'إذا باشرت نجم الحادث' },
+  basher: { icon:'images/GIG - Logos-02.png', text:'إذا باشر المرور الحادث' },
+  other:  { icon:'images/GIG - Logos-03.png', text:'لعملاء جي آي جي' }
+};
+async function showInterstitialCard(key){
+  const m=IST[key];
+  if(!m){ try{ frame.contentWindow.postMessage({gigResume:key},'*'); }catch(e){} return; }
+  $('ist-icon').src=m.icon; $('ist-text').textContent=m.text;
+  gsap.set('#interstitial',{display:'flex',opacity:0});
+  gsap.set('#ist-icon',{opacity:0,scale:.82,y:12});
+  gsap.set('#ist-text',{opacity:0,y:18});
+  /* cover everything */
+  await new Promise(r=>gsap.to('#interstitial',{opacity:1,duration:.45,ease:'power2.out',onComplete:r}));
+  /* fully covering — let the scene swap & build behind the card */
+  try{ frame.contentWindow.postMessage({gigResume:key},'*'); }catch(e){}
+  gsap.to('#ist-icon',{opacity:1,scale:1,y:0,duration:.6,ease:'back.out(1.5)'});
+  await new Promise(r=>gsap.to('#ist-text',{opacity:1,y:0,duration:.55,ease:'power3.out',delay:.12,onComplete:r}));
+  await delay(1000);
+  /* graceful exit → reveals the scene */
+  gsap.to('#ist-icon',{opacity:0,y:-12,duration:.4,ease:'power2.in'});
+  gsap.to('#ist-text',{opacity:0,y:-12,duration:.4,ease:'power2.in'});
+  await new Promise(r=>gsap.to('#interstitial',{opacity:0,duration:.5,delay:.12,ease:'power2.in',onComplete:r}));
+  gsap.set('#interstitial',{display:'none'});
+}
+
 window.addEventListener('message', e=>{
   if(!e.data) return;
   if(e.data.gigScene){ showHead(e.data.gigScene); if(e.data.gigScene!=='end') playVO(voForScene(e.data.gigScene)); }
   if(typeof e.data.gigAction==='string') showAction(e.data.gigAction);
+  if(e.data.gigInterstitial){ showInterstitialCard(e.data.gigInterstitial); }
 });
 
 /* ── premium tech sound design (Apple-inspired — pure sine, subtle, precise) ── */

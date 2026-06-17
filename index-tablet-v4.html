@@ -2342,6 +2342,16 @@ function sig(key){ try{ parent.postMessage({gigScene:key}, '*'); }catch(e){} }
 /* ── live action caption: updates the parent's subtitle per micro-step ── */
 function act(txt){ try{ parent.postMessage({gigAction:txt}, '*'); }catch(e){} }
 
+/* ── ask the parent to play a full-screen section divider; resolves once it
+   fully covers the screen (so we can swap + build the next scene behind it) ── */
+function showInterstitial(key){
+  return new Promise(res=>{
+    const h=e=>{ if(e.data && e.data.gigResume===key){ window.removeEventListener('message',h); res(); } };
+    window.addEventListener('message',h);
+    try{ parent.postMessage({gigInterstitial:key},'*'); }catch(e){ res(); }
+  });
+}
+
 /* ══ MASTER SEQUENCE — V2 (دقيقتان بالضبط) ══
    التغييرات عن النسخة الأصلية:
    • السرعة: 1.40× أسرع (sleep + GSAP timeScale)
@@ -2360,11 +2370,14 @@ async function run(){
   sig('otp'); await runScene2(false);
 
   /* ── accident report sources (نجم → باشر → أخرى) ── */
-  await transitionTo('s2','s4');
+  await showInterstitial('najm');
+  $('s2').classList.remove('active'); $('s4').classList.add('active');
   sig('najm'); await runScene4();
-  await transitionTo('s4','s7');
+  await showInterstitial('basher');
+  $('s4').classList.remove('active'); $('s7').classList.add('active');
   sig('basher'); await runScene7();
-  await transitionTo('s7','s8');
+  await showInterstitial('other');
+  $('s7').classList.remove('active'); $('s8').classList.add('active');
   sig('other'); await runScene8();
 
   /* ── single estimate + review/submit ending (no duplicate pass) ── */
