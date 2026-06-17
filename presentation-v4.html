@@ -724,7 +724,6 @@ async function addressBarIntro(){
   await new Promise(res=>gsap.to('#addrbar-center',{
     y:0,scale:1,opacity:1,duration:.85,ease:'back.out(1.4)',onComplete:res
   }));
-  gsap.to('#ab-caption',{opacity:1,y:0,duration:.5,ease:'power3.out'});
 
   await delay(160);
 
@@ -1057,7 +1056,7 @@ async function introJourney(){
   await delay(1150);
 
   /* → BEAT 3 — easier: shield travels LEFT out as the checklist arrives from the RIGHT (~3s) */
-  ijCap('إجراءات المطالبة معك صارت أسهل');
+  ijCap('إجراءات المطالبة معنا صارت أسهل');
   gsap.to('#ij-shield',{x:-440,opacity:0,duration:.75,ease:'power2.inOut'});
   await new Promise(res=>gsap.fromTo('#ij-list',{opacity:0,x:440,scale:.96},
     {opacity:1,x:0,scale:1,duration:.8,ease:'power3.out',onComplete:res}));
