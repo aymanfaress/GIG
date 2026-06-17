@@ -1842,33 +1842,27 @@ async function runScene4(){
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
   pingOn('s4-stp2');
 
-  /* ── 1) SOURCE = نجم ── */
-  act('اختيار مصدر البلاغ: نجم');
+  /* ── 1) SOURCE + TYPE picked together ── */
+  act('اختيار مصدر البلاغ ونوع الحادث');
   await scrollToEl(f,c,$('sec-source'),.6,.5);
-  accSpot('spot-src',true); await sleep(480);
+  accSpot('spot-src',true); await sleep(340);
   const rnajm=$('src-najm').getBoundingClientRect();
-  await moveTo(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2,.95);
+  await moveTo(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2,.9);
   sfx_confirm(); await clickAt(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2);
-  selCard('src-najm'); sfx_check(); await sleep(640);
-  accSpot('spot-src',false); await sleep(420);
+  selCard('src-najm'); sfx_check(); accSpot('spot-src',false); await sleep(240);
 
-  /* reveal the rest of the form */
-  gsap.to('#sec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(320);
-  gsap.to('#sec-owner',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(320);
-  gsap.to('#sec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(320);
-  gsap.to('#s4-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(220);
-  gsap.to('#s4-back',{y:0,opacity:1,duration:.4}); await sleep(560);
+  /* reveal the rest of the form (single fast stagger) */
+  gsap.to(['#sec-type','#sec-owner','#sec-info','#s4-btn','#s4-back'],{y:0,opacity:1,duration:.5,ease:'power2.out',stagger:.08});
+  await sleep(420);
   setP(28);
 
-  /* ── 2) TYPE = أضرار في المركبة ── */
-  act('اختيار نوع الحادث: أضرار في المركبة');
+  /* type right after, same motion */
   await scrollToEl(f,c,$('sec-type'),.7,.45);
-  accSpot('spot-type',true); await sleep(460);
+  accSpot('spot-type',true); await sleep(280);
   const rveh=$('type-veh').getBoundingClientRect();
-  await moveTo(rveh.left+rveh.width/2,rveh.top+rveh.height/2,.7);
+  await moveTo(rveh.left+rveh.width/2,rveh.top+rveh.height/2,.6);
   sfx_confirm(); await clickAt(rveh.left+rveh.width/2,rveh.top+rveh.height/2);
-  selCard('type-veh'); sfx_check(); await sleep(640);
-  accSpot('spot-type',false); setP(42); await sleep(520);
+  selCard('type-veh'); sfx_check(); accSpot('spot-type',false); setP(42); await sleep(360);
 
   /* ── 3) DETAILS — owner + driver ID + najm report + serial (grouped) ── */
   act('تعبئة تفاصيل الحادث');
@@ -2096,32 +2090,28 @@ async function runScene6(isFinal=false){
 
   setP(92);
 
-  /* build in */
-  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(440);
-  gsap.to('#rev-claim',{opacity:1,y:0,duration:.6,ease:'power3.out'}); await sleep(240);
-  gsap.to('#rev-personal',{opacity:1,y:0,duration:.55,ease:'power3.out'}); await sleep(170);
-  gsap.to('#rev-policy',{opacity:1,y:0,duration:.55,ease:'power3.out'}); await sleep(420);
+  /* build in (single fast stagger) */
+  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(320);
+  gsap.to(['#rev-claim','#rev-personal','#rev-policy'],{opacity:1,y:0,duration:.55,ease:'power3.out',stagger:.1}); await sleep(360);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
 
-  /* review the data — gentle highlights */
-  act('مراجعة البيانات الشخصية');
+  /* review the data — quick gentle highlights */
+  act('مراجعة البيانات');
   const rp=$('rev-personal').getBoundingClientRect();
-  await moveTo(rp.left+rp.width*.5,rp.top+rp.height*.5,1.0);
-  hl('rev-personal',true); await sleep(680); hl('rev-personal',false);
-  act('مراجعة بيانات الوثيقة');
+  await moveTo(rp.left+rp.width*.5,rp.top+rp.height*.5,.8);
+  hl('rev-personal',true); await sleep(340); hl('rev-personal',false);
   const rpo=$('rev-policy').getBoundingClientRect();
-  await moveTo(rpo.left+rpo.width*.5,rpo.top+rpo.height*.5,.55);
-  hl('rev-policy',true); await sleep(680); hl('rev-policy',false);
+  await moveTo(rpo.left+rpo.width*.5,rpo.top+rpo.height*.5,.5);
+  hl('rev-policy',true); await sleep(340); hl('rev-policy',false);
   setP(95);
 
-  /* glance over the claim card, scrolling to the bank section */
-  act('مراجعة تفاصيل المطالبة والبيانات البنكية');
+  /* glance over the claim card, scroll to the submit section */
   hl('rev-claim',true);
   const rc=$('rev-claim').getBoundingClientRect();
-  await moveTo(rc.left+rc.width*.5,rc.top+rc.height*.4,.7);
-  await sleep(500);
-  await s6scroll($('s6-submit'),.9,.62); await sleep(300);
+  await moveTo(rc.left+rc.width*.5,rc.top+rc.height*.4,.6);
+  await sleep(280);
+  await s6scroll($('s6-submit'),.8,.62); await sleep(220);
   hl('rev-claim',false);
   setP(98);
 
@@ -2144,7 +2134,7 @@ async function runScene6(isFinal=false){
   gsap.to('#s6-success',{opacity:1,duration:.4,ease:'power2.out'});
   gsap.to('.suc-card',{scale:1,duration:.55,ease:'back.out(1.6)'});
   sfx_success();
-  await sleep(1900);
+  await sleep(1400);
 
   /* cinematic close — only on the very last run */
   if(isFinal){
@@ -2185,32 +2175,25 @@ async function runScene7(){
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
   pingOn('s7-stp2');
 
-  /* 1) SOURCE = باشر / المرور */
-  act('اختيار مصدر البلاغ: باشر / المرور');
+  /* 1) SOURCE + TYPE picked together */
+  act('اختيار مصدر البلاغ ونوع الحادث');
   await scrollToEl(f,c,$('bsec-source'),.6,.5);
   accSpot('bspot-source',true); await sleep(160);
   let r=$('bsrc-basher').getBoundingClientRect();
-  await moveTo(r.left+r.width/2,r.top+r.height/2,.95);
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.9);
   sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
-  selCard('bsrc-basher'); sfx_check(); await sleep(320);
-  accSpot('bspot-source',false); await sleep(200);
+  selCard('bsrc-basher'); sfx_check(); accSpot('bspot-source',false); await sleep(160);
 
-  gsap.to('#bsec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
-  gsap.to('#bsec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
-  gsap.to('#bsec-ins',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
-  gsap.to('#bsec-docs',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(60);
-  gsap.to('#s7-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  gsap.to(['#bsec-type','#bsec-info','#bsec-ins','#bsec-docs','#s7-btn'],{y:0,opacity:1,duration:.5,ease:'power2.out',stagger:.07});
+  await sleep(360);
   setP(22);
 
-  /* 2) TYPE = أضرار في المركبة */
-  act('اختيار نوع الحادث: أضرار في المركبة');
   await scrollToEl(f,c,$('bsec-type'),.65,.45);
-  accSpot('bspot-type',true); await sleep(140);
+  accSpot('bspot-type',true); await sleep(160);
   r=$('btype-veh').getBoundingClientRect();
-  await moveTo(r.left+r.width/2,r.top+r.height/2,.8);
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.7);
   sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
-  selCard('btype-veh'); sfx_check(); await sleep(320);
-  accSpot('bspot-type',false); setP(34); await sleep(220);
+  selCard('btype-veh'); sfx_check(); accSpot('bspot-type',false); setP(34); await sleep(260);
 
   /* 3) details — report + serial + date fill together */
   act('تعبئة تفاصيل الحادث');
@@ -2291,31 +2274,25 @@ async function runScene8(){
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
   pingOn('s8-stp2');
 
-  /* 1) SOURCE = أخرى */
-  act('اختيار مصدر البلاغ: أخرى');
+  /* 1) SOURCE + TYPE picked together */
+  act('اختيار مصدر البلاغ ونوع الحادث');
   await scrollToEl(f,c,$('csec-source'),.6,.5);
   accSpot('cspot-source',true); await sleep(160);
   let r=$('csrc-other').getBoundingClientRect();
-  await moveTo(r.left+r.width/2,r.top+r.height/2,.95);
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.9);
   sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
-  selCard('csrc-other'); sfx_check(); await sleep(320);
-  accSpot('cspot-source',false); await sleep(200);
+  selCard('csrc-other'); sfx_check(); accSpot('cspot-source',false); await sleep(160);
 
-  gsap.to('#csec-type',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
-  gsap.to('#csec-info',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(120);
-  gsap.to('#csec-docs',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(60);
-  gsap.to('#s8-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  gsap.to(['#csec-type','#csec-info','#csec-docs','#s8-btn'],{y:0,opacity:1,duration:.5,ease:'power2.out',stagger:.07});
+  await sleep(360);
   setP(20);
 
-  /* 2) TYPE = أضرار في الزجاج */
-  act('اختيار نوع الحادث: أضرار في الزجاج');
   await scrollToEl(f,c,$('csec-type'),.65,.45);
-  accSpot('cspot-type',true); await sleep(140);
+  accSpot('cspot-type',true); await sleep(160);
   r=$('ctype-glass').getBoundingClientRect();
-  await moveTo(r.left+r.width/2,r.top+r.height/2,.8);
+  await moveTo(r.left+r.width/2,r.top+r.height/2,.7);
   sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
-  selCard('ctype-glass'); sfx_check(); await sleep(320);
-  accSpot('cspot-type',false); setP(32); await sleep(220);
+  selCard('ctype-glass'); sfx_check(); accSpot('cspot-type',false); setP(32); await sleep(260);
 
   /* 3) details — top group (report + serial + city + date) filled together, in view */
   act('تعبئة تفاصيل الحادث');
