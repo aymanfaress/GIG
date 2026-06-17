@@ -1008,10 +1008,12 @@ async function start(record, btn){
   /* 0) narrated opening journey (incl. the website address bar), then the
      tablet rises while the scene builds inside it */
   await introJourney();                    /* ends on the money-transfer scene */
-  /* the money scene fades out FIRST, then the tablet rises into a clean stage */
-  await new Promise(res=>gsap.to('#ab-money',{y:-60,scale:.9,opacity:0,duration:.55,ease:'power2.in',onComplete:res}));
-  gsap.set('#addrbar',{display:'none'}); gsap.set('#ab-money',{opacity:0,y:0});
+  /* quick, slightly-overlapping handoff (~1.5s): the money fades out while the
+     tablet begins to rise — the tablet (z-index 30) stays in front the whole time */
+  gsap.to('#ab-money',{y:-50,scale:.9,opacity:0,duration:.5,ease:'power2.in',
+    onComplete:()=>{ gsap.set('#addrbar',{display:'none'}); gsap.set('#ab-money',{opacity:0,y:0}); }});
   showHead('s1');
+  await delay(230);                        /* small overlap, then the tablet rises */
   const entering = tabletEnter();          /* start the rise (don't block) */
   await delay(450);                        /* a beat into the climb */
   try{ fw.run(); }catch(e){}               /* build the page while it rises */
