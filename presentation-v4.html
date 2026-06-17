@@ -223,7 +223,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 .ab-file svg{ width:36px; height:36px; }
 #ab-caption{ font-family:'Almarai',sans-serif; font-weight:800; font-size:40px; color:#19058c;
   direction:rtl; text-align:center; opacity:0; margin-top:10px; text-shadow:0 12px 34px rgba(25,5,140,.10); }
-#ab-money{ position:absolute; left:50%; top:50%; width:300px; height:205px; margin-left:-150px; margin-top:-112px;
+#ab-money{ position:absolute; left:50%; top:50%; width:272px; height:236px; margin-left:-136px; margin-top:-126px;
   opacity:0; z-index:3; will-change:transform,opacity; filter:drop-shadow(0 18px 30px rgba(25,5,140,.16)); }
 
 /* ── outro / end card ── */
@@ -428,15 +428,15 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
       </div><!-- end addrbar-pill-wrap -->
       <div id="ab-caption">ارفع مستنداتك وصور الحادث عبر موقعنا</div>
     </div>
-    <svg id="ab-money" viewBox="0 0 220 150" fill="none" stroke="#19058c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-      <g id="ab-note">
-        <rect x="36" y="50" width="148" height="82" rx="12"/>
-        <circle cx="110" cy="91" r="21"/>
-        <path d="M101 83 v16 M119 83 v16 M99 88 h22 M99 94 h22" stroke="#d28c64" stroke-width="3.5"/>
+    <svg id="ab-money" viewBox="0 0 200 174" fill="none" stroke="#19058c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <circle id="ab-coin1" cx="72" cy="30" r="15" stroke="#d28c64"/>
+      <circle id="ab-coin2" cx="100" cy="24" r="14" stroke="#d28c64"/>
+      <circle id="ab-coin3" cx="128" cy="30" r="15" stroke="#d28c64"/>
+      <g id="ab-wallet">
+        <rect x="28" y="76" width="144" height="84" rx="16"/>
+        <path d="M28 108 H146 a14 14 0 0 1 14 14 a14 14 0 0 1 -14 14 H28"/>
+        <circle cx="150" cy="122" r="5.5" stroke="#d28c64"/>
       </g>
-      <circle id="ab-coin1" cx="62" cy="40" r="15" stroke="#d28c64"/>
-      <circle id="ab-coin2" cx="158" cy="36" r="13" stroke="#d28c64"/>
-      <circle id="ab-coin3" cx="110" cy="24" r="12" stroke="#d28c64"/>
     </svg>
   </div>
   <div id="ab-flash"></div>
@@ -789,31 +789,24 @@ async function addressBarIntro(){
   await new Promise(res=>gsap.to('#addrbar-center',{scale:.4,opacity:0,duration:.55,ease:'power2.in',onComplete:res}));
   gsap.to('#ab-glow',{opacity:0,duration:.5,ease:'power2.in'});
 
-  /* 7. MONEY — compensation arrives fast (motion only, no text) */
-  gsap.set('#ab-money',{opacity:1});
-  gsap.set('#ab-note',{scale:.55,opacity:0,y:34,transformOrigin:'50% 60%'});
-  gsap.set(['#ab-coin1','#ab-coin2','#ab-coin3'],{opacity:0,y:46,scale:.5});
+  /* 7. MONEY TRANSFER — coins are deposited into the wallet (motion only, no text) */
+  gsap.set('#ab-money',{opacity:1,y:0,scale:1});
+  gsap.set('#ab-wallet',{scale:.82,opacity:0,y:18,transformOrigin:'50% 82%'});
+  gsap.set(['#ab-coin1','#ab-coin2','#ab-coin3'],{opacity:0,y:0,scale:.85});
   if(a) sfxAppear(a);
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
-    tl.to('#ab-note',{scale:1,opacity:1,y:0,duration:.5,ease:'back.out(1.7)'})
-      .to('#ab-coin1',{opacity:1,y:0,scale:1,duration:.45,ease:'back.out(2.2)'},'-=0.26')
-      .to('#ab-coin2',{opacity:1,y:0,scale:1,duration:.45,ease:'back.out(2.2)'},'-=0.34')
-      .to('#ab-coin3',{opacity:1,y:0,scale:1,duration:.45,ease:'back.out(2.2)'},'-=0.34')
-      .to('#ab-note',{scale:1.06,duration:.28,yoyo:true,repeat:1,ease:'sine.inOut'});
+    tl.to('#ab-wallet',{scale:1,opacity:1,y:0,duration:.5,ease:'back.out(1.6)'});
+    ['#ab-coin1','#ab-coin2','#ab-coin3'].forEach((sel)=>{
+      tl.to(sel,{opacity:1,scale:1,duration:.22,ease:'power2.out'})
+        .to(sel,{y:58,scale:.6,opacity:0,duration:.52,ease:'power2.in'})
+        .to('#ab-wallet',{scale:1.06,duration:.15,yoyo:true,repeat:1,ease:'sine.inOut',
+          onStart:()=>{ if(a) sfxKey(a); }},'-=0.22');
+    });
   });
-  await delay(1150);
-
-  /* 8. exit → flash through to the tablet demo */
-  gsap.to('#ab-money',{scale:1.12,opacity:0,duration:.5,ease:'power2.in',transformOrigin:'50% 50%'});
-  await new Promise(res=>{
-    const tl=gsap.timeline({onComplete:res});
-    tl.to('#ab-flash',{opacity:.8,duration:.16,ease:'power2.out'},.1)
-      .to('#ab-flash',{opacity:0,duration:.55,ease:'power2.in'},'>');
-  });
+  await delay(900);
   ringPath.classList.remove('running');
-  gsap.set('#addrbar',{display:'none'});
-  gsap.set('#ab-money',{opacity:0});
+  /* leave the money scene on screen — the tablet rise picks up from here (connected) */
 }
 
 /* ── start the show (with optional recording) ── */
@@ -1007,12 +1000,16 @@ async function start(record, btn){
 
   /* 0) narrated opening journey (incl. the website address bar), then the
      tablet rises while the scene builds inside it */
-  await introJourney();
+  await introJourney();                    /* ends on the money-transfer scene, still on screen */
   showHead('s1');
+  /* connected handoff: the tablet rises into view as the money scene lifts away
+     — overlapping motion so the intro flows straight into the demo (no cut) */
   const entering = tabletEnter();          /* start the rise (don't block) */
-  await delay(450);                        /* a beat into the climb */
+  gsap.to('#ab-money',{y:-120,opacity:0,duration:.9,ease:'power2.in'});
+  await delay(500);                        /* a beat into the climb */
   try{ fw.run(); }catch(e){}               /* build the page while it rises */
   await entering;                          /* tablet settles, page is ready */
+  gsap.set('#addrbar',{display:'none'}); gsap.set('#ab-money',{opacity:0,y:0});
   tabletShine();                           /* light sweep on the settled tablet */
 }
 
