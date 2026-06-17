@@ -1458,16 +1458,14 @@ async function clickAt(x,y){
 
 /* ══ TYPING ══ */
 async function typeIn(el,text,delay=68){
-  el.classList.add('focused'); el.value='';
-  let n=0;
-  for(const ch of text){
-    el.value+=ch; sfx_key(); n++;
-    if(n%3===0){ el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse'); }
-    await sleep(delay+Math.random()*28);
-  }
-  el.classList.remove('focused','pulse');
+  /* snap fill — the value appears at once with a soft highlight flash
+     (no character-by-character typing) to keep the video short */
+  el.classList.add('focused'); el.value=text; sfx_key();
+  el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
+  el.classList.remove('focused');
   el.classList.add('filled','fill-flash');
   setTimeout(()=>el.classList.remove('fill-flash'),700);
+  await sleep(170);
 }
 
 /* ══ ZOOM (generic — works for any screen) ══ */
@@ -1514,31 +1512,17 @@ async function transitionTo(fromId, toId){
   const fromEl   = $(fromId);
   const toEl     = $(toId);
 
-  /* make overlay visible */
-  gsap.set(trans,   { opacity:1 });
-  gsap.set(curtain, { x:'-100%' });
+  /* quick brand fade — cover, swap behind the cover, uncover.
+     (the opaque cover masks the next page while it builds — no flash) */
+  gsap.set(curtain, { x:'0%' });
   gsap.set(shine,   { opacity:0 });
-
-  /* curtain sweeps RIGHT across screen */
+  gsap.set(trans,   { opacity:0 });
   sfx_transition();
-  gsap.to(curtain, { x:'0%', duration:.55, ease:'power3.inOut' });
-  await sleep(280);
-
-  /* shine flash at peak */
-  gsap.to(shine, { opacity:1, duration:.2, ease:'power2.out',
-    onComplete: () => gsap.to(shine, { opacity:0, duration:.35 }) });
-
-  /* swap screens at midpoint */
+  await new Promise(res=>gsap.to(trans,{opacity:1,duration:.22,ease:'power2.inOut',onComplete:res}));
   fromEl.classList.remove('active');
   toEl.classList.add('active');
-  await sleep(300);
-
-  /* curtain continues off to the RIGHT (reveal) */
-  gsap.to(curtain, { x:'100%', duration:.55, ease:'power3.inOut' });
-  await sleep(580);
-
-  /* hide overlay */
-  gsap.set(trans, { opacity:0 });
+  await sleep(90);
+  await new Promise(res=>gsap.to(trans,{opacity:0,duration:.28,ease:'power2.inOut',onComplete:res}));
   gsap.set(curtain, { x:'-100%' });
 }
 
@@ -1582,21 +1566,15 @@ async function runScene1(){
   await sleep(160);
   setP(2);
 
-  /* page builds — header + footer + sidebar come in together */
-  gsap.to('.site-hdr',{y:0,opacity:1,duration:.55,ease:'power3.out',stagger:.06});
-  gsap.to($('s1-ftr'),{opacity:1,duration:.5,delay:.12});
-  gsap.to($('s1-sidebar'),{x:0,opacity:1,duration:.6,ease:'power3.out',delay:.18});
-  await sleep(580);
-  gsap.to($('s1-form'),{y:0,scale:1,opacity:1,duration:.55,ease:'power3.out'});
-  await sleep(480);
-  gsap.to($('s1-title'),{y:0,opacity:1,duration:.55,ease:'back.out(1.5)'});
-  await sleep(300);
-  gsap.to($('fg1'),{x:0,opacity:1,duration:.45,ease:'power2.out'});
-  await sleep(160);
-  gsap.to($('fg2'),{x:0,opacity:1,duration:.45,ease:'power2.out'});
-  await sleep(160);
-  gsap.to($('fg3'),{x:0,opacity:1,duration:.45,ease:'power2.out'});
-  await sleep(360);
+  /* page builds — header/sidebar/form together, fields quick stagger */
+  gsap.to('.site-hdr',{y:0,opacity:1,duration:.5,ease:'power3.out',stagger:.05});
+  gsap.to($('s1-ftr'),{opacity:1,duration:.45,delay:.1});
+  gsap.to($('s1-sidebar'),{x:0,opacity:1,duration:.5,ease:'power3.out',delay:.12});
+  gsap.to($('s1-form'),{y:0,scale:1,opacity:1,duration:.5,ease:'power3.out',delay:.15});
+  gsap.to($('s1-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.5)',delay:.22});
+  await sleep(420);
+  gsap.to(['#fg1','#fg2','#fg3'],{x:0,opacity:1,duration:.45,ease:'power2.out',stagger:.06});
+  await sleep(320);
   setP(18);
 
   /* ── grouped data entry — no zoom, all fields fill at the same time ── */
@@ -1737,17 +1715,13 @@ async function runScene3(){
 
   setP(2);
 
-  /* page builds */
-  gsap.to($('s3-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(900);
-  gsap.to($('s3-form'),{y:0,scale:1,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(680);
-  gsap.to($('s3-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.5)'});
-  await sleep(480);
-  gsap.to($('fg4'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(200);
-  gsap.to($('fg5'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(200);
-  gsap.to($('fg6'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(200);
-  gsap.to($('fg7'),{x:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(500);
+  /* page builds — quick single reveal */
+  gsap.to($('s3-sidebar'),{x:0,opacity:1,duration:.55,ease:'power3.out'});
+  gsap.to($('s3-form'),{y:0,scale:1,opacity:1,duration:.55,ease:'power3.out',delay:.08});
+  gsap.to($('s3-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.5)',delay:.12});
+  await sleep(420);
+  gsap.to(['#fg4','#fg5','#fg6','#fg7'],{x:0,opacity:1,duration:.45,ease:'power2.out',stagger:.06});
+  await sleep(360);
   setP(16);
 
   const f=$('s3-form'), c=$('s3-content');
@@ -1826,17 +1800,13 @@ async function runScene4(){
 
   setP(2);
 
-  /* build in (header/footer static) */
-  gsap.to($('s4-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(760);
-  gsap.to($('s4-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'});
-  await sleep(700);
-  gsap.to($('s4-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'});
-  await sleep(640);
-  gsap.to($('s4-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'});
+  /* build in — quick single reveal */
+  gsap.to($('s4-sidebar'),{x:0,opacity:1,duration:.55,ease:'power3.out'});
+  gsap.to($('s4-leftpanel'),{x:0,opacity:1,duration:.55,ease:'power3.out',delay:.08});
+  gsap.to($('s4-form'),{y:0,opacity:1,duration:.55,ease:'power3.out',delay:.14});
+  gsap.to($('s4-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.4)',delay:.2});
+  gsap.to('#sec-source',{y:0,opacity:1,duration:.5,ease:'power2.out',delay:.26});
   await sleep(560);
-  gsap.to('#sec-source',{y:0,opacity:1,duration:.55,ease:'power2.out'});
-  await sleep(640);
   setP(14);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
@@ -2165,11 +2135,11 @@ async function runScene7(){
   gsap.set(['#bsec-type','#bsec-info','#bsec-ins','#bsec-docs','#s7-btn'],{y:16,opacity:0});
 
   setP(2);
-  gsap.to($('s7-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(420);
-  gsap.to($('s7-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(340);
-  gsap.to($('s7-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(320);
-  gsap.to($('s7-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(260);
-  gsap.to('#bsec-source',{y:0,opacity:1,duration:.55,ease:'power2.out'}); await sleep(360);
+  gsap.to($('s7-sidebar'),{x:0,opacity:1,duration:.55,ease:'power3.out'});
+  gsap.to($('s7-leftpanel'),{x:0,opacity:1,duration:.55,ease:'power3.out',delay:.08});
+  gsap.to($('s7-form'),{y:0,opacity:1,duration:.55,ease:'power3.out',delay:.14});
+  gsap.to($('s7-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.4)',delay:.2});
+  gsap.to('#bsec-source',{y:0,opacity:1,duration:.5,ease:'power2.out',delay:.26}); await sleep(520);
   setP(12);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
@@ -2264,11 +2234,11 @@ async function runScene8(){
   gsap.set(['#csec-type','#csec-info','#csec-docs','#s8-btn'],{y:16,opacity:0});
 
   setP(2);
-  gsap.to($('s8-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(420);
-  gsap.to($('s8-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(340);
-  gsap.to($('s8-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(320);
-  gsap.to($('s8-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(260);
-  gsap.to('#csec-source',{y:0,opacity:1,duration:.55,ease:'power2.out'}); await sleep(360);
+  gsap.to($('s8-sidebar'),{x:0,opacity:1,duration:.55,ease:'power3.out'});
+  gsap.to($('s8-leftpanel'),{x:0,opacity:1,duration:.55,ease:'power3.out',delay:.08});
+  gsap.to($('s8-form'),{y:0,opacity:1,duration:.55,ease:'power3.out',delay:.14});
+  gsap.to($('s8-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.4)',delay:.2});
+  gsap.to('#csec-source',{y:0,opacity:1,duration:.5,ease:'power2.out',delay:.26}); await sleep(520);
   setP(12);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
