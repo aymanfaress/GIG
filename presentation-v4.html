@@ -395,9 +395,9 @@ function showHead(key){
   const h = HEAD[key]; if(!h) return;
   const tl = gsap.timeline();
   /* soft exit — drift up gently */
-  tl.to('#eyebrow',  {opacity:0, y:-10, duration:.55, ease:'power2.inOut'})
-    .to('#title',    {opacity:0, y:-8,  duration:.55, ease:'power2.inOut'}, '-=0.45')
-    .to('#subtitle', {opacity:0,        duration:.3,  ease:'power1.in'},   '-=0.35');
+  tl.to('#eyebrow',  {opacity:0, y:-8, duration:.32, ease:'power2.in'})
+    .to('#title',    {opacity:0, y:-8, duration:.32, ease:'power2.in'}, '-=0.26')
+    .to('#subtitle', {opacity:0,       duration:.22, ease:'power1.in'}, '-=0.26');
 
   /* end scene: just fade out, nothing new to animate in */
   if(!h.t && !h.eye){ curAction=null; return; }
@@ -408,9 +408,9 @@ function showHead(key){
       $('subtitle').textContent = '';
       curAction = null;
     })
-    /* silky entrance — each element glides in from below */
-    .fromTo('#eyebrow', {opacity:0,y:14},{opacity:(h.eye?1:0),y:0,duration:.65,ease:'power4.out'})
-    .fromTo('#title',   {opacity:0,y:18},{opacity:(h.t?1:0),  y:0,duration:.8, ease:'power4.out'},'-=0.45')
+    /* graceful entrance — glide in from below, lightly staggered */
+    .fromTo('#eyebrow', {opacity:0,y:12},{opacity:(h.eye?1:0),y:0,duration:.5, ease:'power3.out'})
+    .fromTo('#title',   {opacity:0,y:14},{opacity:(h.t?1:0),  y:0,duration:.55,ease:'power3.out'},'-=0.36')
     .set('#subtitle',{opacity:0,y:0});
 }
 
@@ -420,10 +420,10 @@ function showAction(txt){
   if(txt===curAction) return; curAction=txt;
   const el=$('subtitle');
   gsap.killTweensOf(el);
-  gsap.to(el,{opacity:0, duration:.18, ease:'power1.in',
+  gsap.to(el,{opacity:0, duration:.15, ease:'power1.in',
     onComplete:()=>{
       el.textContent=txt||'';
-      gsap.fromTo(el,{opacity:0, y:10},{opacity:(txt?1:0), y:0, duration:.55, ease:'power4.out'});
+      gsap.fromTo(el,{opacity:0, y:8},{opacity:(txt?1:0), y:0, duration:.42, ease:'power3.out'});
     }
   });
 }
