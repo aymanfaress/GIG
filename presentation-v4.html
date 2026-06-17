@@ -790,9 +790,9 @@ async function addressBarIntro(){
   streams.forEach(t=>t.kill());
   gsap.to('.ab-file',{opacity:0,duration:.4,ease:'power1.in'});
 
-  /* 6. the bar gathers itself in (collapses away) */
+  /* 6. the bar gathers itself in (collapses away) — the tracing stroke keeps
+     running the whole time and just shrinks/fades away with the bar */
   if(a) sfxLaunch(a);
-  gsap.to('#ab-ring',{opacity:0,duration:.4,ease:'power2.in'});
   await new Promise(res=>gsap.to('#addrbar-center',{scale:.4,opacity:0,duration:.55,ease:'power2.in',onComplete:res}));
   gsap.to('#ab-glow',{opacity:0,duration:.5,ease:'power2.in'});
 
@@ -1007,19 +1007,15 @@ async function start(record, btn){
 
   /* 0) narrated opening journey (incl. the website address bar), then the
      tablet rises while the scene builds inside it */
-  await introJourney();                    /* ends on the money-transfer scene, still on screen */
+  await introJourney();                    /* ends on the money-transfer scene */
+  /* the money scene fades out FIRST, then the tablet rises into a clean stage */
+  await new Promise(res=>gsap.to('#ab-money',{y:-60,scale:.9,opacity:0,duration:.55,ease:'power2.in',onComplete:res}));
+  gsap.set('#addrbar',{display:'none'}); gsap.set('#ab-money',{opacity:0,y:0});
   showHead('s1');
-  /* connected handoff: the tablet rises into view as the money scene lifts away
-     — overlapping motion so the intro flows straight into the demo (no cut) */
   const entering = tabletEnter();          /* start the rise (don't block) */
-  /* the tablet (z-index 30) rises OVER the money; the money stays put a moment
-     then slips up & fades BEHIND the tablet (small lift so it doesn't outrun the
-     tablet's rising top edge and peek above it) */
-  gsap.to('#ab-money',{y:-90,scale:.95,opacity:0,duration:.7,ease:'power2.in'});
-  await delay(500);                        /* a beat into the climb */
+  await delay(450);                        /* a beat into the climb */
   try{ fw.run(); }catch(e){}               /* build the page while it rises */
   await entering;                          /* tablet settles, page is ready */
-  gsap.set('#addrbar',{display:'none'}); gsap.set('#ab-money',{opacity:0,y:0});
   tabletShine();                           /* light sweep on the settled tablet */
 }
 
