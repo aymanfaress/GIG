@@ -1012,8 +1012,10 @@ async function start(record, btn){
   /* connected handoff: the tablet rises into view as the money scene lifts away
      — overlapping motion so the intro flows straight into the demo (no cut) */
   const entering = tabletEnter();          /* start the rise (don't block) */
-  /* the tablet (z-index 30) rises OVER the money, which slips up & away behind it */
-  gsap.to('#ab-money',{y:-230,opacity:0,duration:.8,ease:'power2.in'});
+  /* the tablet (z-index 30) rises OVER the money; the money stays put a moment
+     then slips up & fades BEHIND the tablet (small lift so it doesn't outrun the
+     tablet's rising top edge and peek above it) */
+  gsap.to('#ab-money',{y:-90,scale:.95,opacity:0,duration:.7,ease:'power2.in'});
   await delay(500);                        /* a beat into the climb */
   try{ fw.run(); }catch(e){}               /* build the page while it rises */
   await entering;                          /* tablet settles, page is ready */
@@ -1094,7 +1096,7 @@ async function introJourney(){
   await delay(520);
 
   /* → BEAT 2 — reassurance: the shield glides down over the crash (~2s) */
-  ijCap('وتأمينك مع جي آي جي… ريّح بالك');
+  ijCap('وتأمينك مع جي آي جي');
   gsap.to('#it-cars',{opacity:0,duration:.55,ease:'power2.inOut'});
   await new Promise(res=>gsap.fromTo('#ij-shield',{opacity:0,y:-150,scale:.92},
     {opacity:1,y:0,scale:1,duration:.8,ease:'power3.out',onComplete:res}));
