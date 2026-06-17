@@ -243,6 +243,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   position:relative;z-index:2;width:420px;height:auto;object-fit:contain;opacity:0;
   filter:drop-shadow(0 20px 50px rgba(25,5,140,.18));
 }
+#outro-slogan{
+  position:relative;z-index:2;margin-top:12px;
+  font-family:'Almarai',sans-serif;font-weight:700;font-size:40px;
+  color:#19058c;direction:rtl;opacity:0;letter-spacing:.5px;
+  text-shadow:0 12px 34px rgba(25,5,140,.10);
+}
 #outro-url{
   position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
   z-index:2;
@@ -445,6 +451,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   <div id="outro">
     <div id="outro-glow"></div>
     <img id="outro-logo" src="https://www.gig.sa/media/wydptuu1/gig_fairfax-company.png" alt="GIG">
+    <div id="outro-slogan">شريكك الذي يهتم</div>
     <div id="outro-url">www.gig.sa</div>
   </div>
 
@@ -1122,6 +1129,7 @@ async function showOutro(){
   gsap.set('#outro',{opacity:0,display:'flex'});
   gsap.set('#outro-glow',{opacity:0,scale:.72});
   gsap.set('#outro-logo',{opacity:0,scale:.84,y:16});
+  gsap.set('#outro-slogan',{opacity:0,y:20});
   gsap.set('#outro-url',{opacity:0});
 
   /* 1. light background fades in */
@@ -1135,6 +1143,11 @@ async function showOutro(){
   if(a) sfxChime(a);
   await new Promise(res=>gsap.to('#outro-logo',
     {opacity:1,scale:1,y:0,duration:.95,ease:'back.out(1.5)',onComplete:res}));
+
+  /* 3.5 slogan rises in gently below the logo */
+  await delay(180);
+  await new Promise(res=>gsap.to('#outro-slogan',
+    {opacity:1,y:0,duration:.75,ease:'power3.out',onComplete:res}));
 
   /* 4. url fades in at bottom */
   await new Promise(res=>gsap.to('#outro-url',
