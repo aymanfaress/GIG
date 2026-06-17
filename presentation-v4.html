@@ -464,17 +464,17 @@ async function showInterstitialCard(key){
   gsap.set('#interstitial',{display:'flex',opacity:0});
   gsap.set('#ist-icon',{opacity:0,scale:.82,y:12});
   gsap.set('#ist-text',{opacity:0,y:18});
-  /* cover everything */
-  await new Promise(r=>gsap.to('#interstitial',{opacity:1,duration:.45,ease:'power2.out',onComplete:r}));
+  /* cover everything — gentle */
+  await new Promise(r=>gsap.to('#interstitial',{opacity:1,duration:.55,ease:'power2.out',onComplete:r}));
   /* fully covering — let the scene swap & build behind the card */
   try{ frame.contentWindow.postMessage({gigResume:key},'*'); }catch(e){}
-  gsap.to('#ist-icon',{opacity:1,scale:1,y:0,duration:.6,ease:'back.out(1.5)'});
-  await new Promise(r=>gsap.to('#ist-text',{opacity:1,y:0,duration:.55,ease:'power3.out',delay:.12,onComplete:r}));
-  await delay(1000);
-  /* graceful exit → reveals the scene */
-  gsap.to('#ist-icon',{opacity:0,y:-12,duration:.4,ease:'power2.in'});
-  gsap.to('#ist-text',{opacity:0,y:-12,duration:.4,ease:'power2.in'});
-  await new Promise(r=>gsap.to('#interstitial',{opacity:0,duration:.5,delay:.12,ease:'power2.in',onComplete:r}));
+  gsap.to('#ist-icon',{opacity:1,scale:1,y:0,duration:.75,ease:'back.out(1.3)'});
+  await new Promise(r=>gsap.to('#ist-text',{opacity:1,y:0,duration:.65,ease:'power3.out',delay:.2,onComplete:r}));
+  await delay(1700);
+  /* graceful, unhurried exit → reveals the scene */
+  gsap.to('#ist-icon',{opacity:0,y:-12,duration:.5,ease:'power2.inOut'});
+  gsap.to('#ist-text',{opacity:0,y:-12,duration:.5,ease:'power2.inOut'});
+  await new Promise(r=>gsap.to('#interstitial',{opacity:0,duration:.62,delay:.18,ease:'power2.inOut',onComplete:r}));
   gsap.set('#interstitial',{display:'none'});
 }
 
