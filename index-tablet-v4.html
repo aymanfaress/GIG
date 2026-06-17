@@ -1678,22 +1678,17 @@ async function runScene2(isFinal=true){
   act('إدخال رمز التحقق المُرسَل للجوال');
   gsap.to($('otp-spot'),{opacity:1,duration:.28}); await sleep(220);
 
-  const b1r=$('b1').getBoundingClientRect();
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
-  await moveTo(b1r.left+b1r.width/2,b1r.top+b1r.height/2,1.0);
 
+  /* the four digits drop in together (no per-box cursor hops) */
   const boxes=['b1','b2','b3','b4'], code=['7','3','9','4'];
   for(let i=0;i<4;i++){
     const box=$(boxes[i]);
-    box.classList.add('active'); await sleep(160);
-    const br=box.getBoundingClientRect();
-    await clickAt(br.left+br.width/2,br.top+br.height/2);
-    await sleep(100);
+    box.classList.add('active');
     box.querySelector('.digit').textContent=code[i];
     sfx_otpdig(i);
     box.classList.remove('active'); box.classList.add('filled');
-    if(i<3){ const nbr=$(boxes[i+1]).getBoundingClientRect(); await moveTo(nbr.left+nbr.width/2,nbr.top+nbr.height/2,.3); }
-    await sleep(150);
+    await sleep(90);
   }
 
   gsap.to($('otp-spot'),{opacity:0,duration:.28}); await sleep(340);
@@ -1884,43 +1879,22 @@ async function runScene4(){
   sfx_click(); await clickAt(rno.left+rno.width/2,rno.top+rno.height/2);
   $('own-no').classList.add('sel'); sfx_check(); await sleep(520);
 
-  /* driver field slides in */
+  /* driver field slides in, then driver ID + najm report + serial fill together */
   $('fld-driver').style.display='block';
   gsap.fromTo($('fld-driver'),{opacity:0,y:-8},{opacity:1,y:0,duration:.45,ease:'power2.out'});
-  await sleep(560);
-  await scrollToEl(f,c,$('fld-driver'),.55,.5);
-  $('lbl-driver').classList.add('active');
-  const rdrv=$('inp-driver').getBoundingClientRect();
-  await moveTo(rdrv.left+rdrv.width*.55,rdrv.top+rdrv.height*.5,.6);
-  await clickAt(rdrv.left+rdrv.width*.55,rdrv.top+rdrv.height*.5);
-  await sleep(300);
-  await typeIn($('inp-driver'),'2094309909',150);
-  $('lbl-driver').classList.remove('active'); $('chk-driver').classList.add('show'); sfx_check(); await sleep(560);
-  accSpot('spot-owner',false); setP(58); await sleep(420);
-
-  /* najm report number */
-  await scrollToEl(f,c,$('fld-najm'),.7,.45);
-  accSpot('spot-najm',true);
-  $('lbl-najm').classList.add('active'); await sleep(360);
-  const rn=$('inp-najm').getBoundingClientRect();
-  await moveTo(rn.left+rn.width*.55,rn.top+rn.height*.5,.7);
-  await clickAt(rn.left+rn.width*.55,rn.top+rn.height*.5);
-  await sleep(300);
-  await typeIn($('inp-najm'),'RD1805262256',150);
-  $('lbl-najm').classList.remove('active'); $('chk-najm').classList.add('show'); sfx_check(); await sleep(560);
-  accSpot('spot-najm',false); setP(72); await sleep(420);
-
-  /* serial / customs number */
-  await scrollToEl(f,c,$('fld-serial'),.6,.45);
-  accSpot('spot-serial',true);
-  $('lbl-serial').classList.add('active'); await sleep(360);
-  const rs=$('inp-serial').getBoundingClientRect();
-  await moveTo(rs.left+rs.width*.55,rs.top+rs.height*.5,.7);
-  await clickAt(rs.left+rs.width*.55,rs.top+rs.height*.5);
-  await sleep(300);
-  await typeIn($('inp-serial'),'956423220',150);
-  $('lbl-serial').classList.remove('active'); $('chk-serial').classList.add('show'); sfx_check(); await sleep(560);
-  accSpot('spot-serial',false); setP(86); await sleep(420);
+  await sleep(420);
+  await scrollToEl(f,c,$('fld-najm'),.5,.42);
+  accSpot('spot-owner',false); accSpot('spot-najm',true); accSpot('spot-serial',true);
+  $('lbl-driver').classList.add('active'); $('lbl-najm').classList.add('active'); $('lbl-serial').classList.add('active');
+  await sleep(220);
+  await Promise.all([
+    typeIn($('inp-driver'),'2094309909',95),
+    typeIn($('inp-najm'),'RD1805262256',95),
+    typeIn($('inp-serial'),'956423220',95)
+  ]);
+  $('lbl-driver').classList.remove('active'); $('lbl-najm').classList.remove('active'); $('lbl-serial').classList.remove('active');
+  $('chk-driver').classList.add('show'); $('chk-najm').classList.add('show'); $('chk-serial').classList.add('show'); sfx_check();
+  accSpot('spot-najm',false); accSpot('spot-serial',false); setP(86); await sleep(420);
 
   /* step 2 line completes */
   pingOff('s4-stp2');
@@ -2031,64 +2005,46 @@ async function runScene5(){
   selCard('eval-est'); sfx_check(); await sleep(320);
   accSpot('spot-evaltype',false); setP(78); await sleep(220);
 
-  /* ── 2) EVALUATION NUMBER + تحقق ── */
+  /* ── 2) EVALUATION NUMBER + تحقق (fast fill, no cursor hop) ── */
   act('إدخال رقم التقييم والتحقق منه');
   await s5scroll($('sec-evalnum'),.65,.45);
   accSpot('spot-evalnum',true); $('lbl-evalnum').classList.add('active'); await sleep(120);
-  const ren=$('inp-evalnum').getBoundingClientRect();
-  await moveTo(ren.left+ren.width*.5,ren.top+ren.height*.5,.7);
-  await clickAt(ren.left+ren.width*.5,ren.top+ren.height*.5);
-  await sleep(150);
   await typeIn($('inp-evalnum'),'1004267894',64);
   $('lbl-evalnum').classList.remove('active');
-  /* press تحقق */
-  const rv=$('vrf-eval').getBoundingClientRect();
-  await moveTo(rv.left+rv.width/2,rv.top+rv.height/2,.55);
   sfx_confirm(); $('vrf-eval').classList.add('pressed');
-  await clickAt(rv.left+rv.width/2,rv.top+rv.height/2);
   setTimeout(()=>$('vrf-eval').classList.remove('pressed'),220);
-  await sleep(160); $('chk-evalnum').classList.add('show'); sfx_check(); await sleep(320);
-  accSpot('spot-evalnum',false); setP(80); await sleep(220);
+  await sleep(140); $('chk-evalnum').classList.add('show'); sfx_check();
+  accSpot('spot-evalnum',false); setP(80); await sleep(200);
 
   /* ── 3) ESTIMATE DOCUMENT (upload) ── */
   act('إرفاق مستند التقدير');
   await s5scroll($('sec-doc1'),.6,.5);
   accSpot('spot-doc1',true); await sleep(120);
-  const rd1=$('file-doc1').getBoundingClientRect();
-  await moveTo(rd1.left+rd1.width*.5,rd1.top+rd1.height*.5,.7);
-  sfx_click(); await clickAt(rd1.left+rd1.width*.5,rd1.top+rd1.height*.5);
-  await sleep(240); $('file-doc1').classList.add('attached'); sfx_check(); await sleep(360);
-  accSpot('spot-doc1',false); setP(82); await sleep(220);
+  sfx_click(); await sleep(180); $('file-doc1').classList.add('attached'); sfx_check();
+  accSpot('spot-doc1',false); setP(82); await sleep(200);
 
   /* ── 4) SETTLEMENT — type + iban + certificate (grouped) ── */
   act('بيانات التسوية والتعويض');
   await s5scroll($('sec-settle'),.6,.5);
   accSpot('spot-settle',true); await sleep(140);
   const rc=$('settle-comp').getBoundingClientRect();
-  await moveTo(rc.left+rc.width/2,rc.top+rc.height/2,.8);
+  await moveTo(rc.left+rc.width/2,rc.top+rc.height/2,.7);
   sfx_confirm(); await clickAt(rc.left+rc.width/2,rc.top+rc.height/2);
-  selCard('settle-comp'); sfx_check(); await sleep(320);
-  accSpot('spot-settle',false); setP(84); await sleep(220);
+  selCard('settle-comp'); sfx_check(); await sleep(260);
+  accSpot('spot-settle',false); setP(84); await sleep(200);
 
-  /* ── 5) IBAN ── */
+  /* ── 5) IBAN (fast fill) ── */
   await s5scroll($('sec-iban'),.65,.45);
   accSpot('spot-iban',true); $('lbl-iban').classList.add('active'); await sleep(120);
-  const ri=$('inp-iban').getBoundingClientRect();
-  await moveTo(ri.left+ri.width*.5,ri.top+ri.height*.5,.7);
-  await clickAt(ri.left+ri.width*.5,ri.top+ri.height*.5);
-  await sleep(150);
   await typeIn($('inp-iban'),'1875647962498888745555',46);
-  $('lbl-iban').classList.remove('active'); $('chk-iban').classList.add('show'); sfx_check(); await sleep(320);
-  accSpot('spot-iban',false); setP(86); await sleep(220);
+  $('lbl-iban').classList.remove('active'); $('chk-iban').classList.add('show'); sfx_check();
+  accSpot('spot-iban',false); setP(86); await sleep(200);
 
   /* ── 6) IBAN CERTIFICATE (upload) ── */
   await s5scroll($('sec-doc2'),.6,.5);
   accSpot('spot-doc2',true); await sleep(120);
-  const rd2=$('file-doc2').getBoundingClientRect();
-  await moveTo(rd2.left+rd2.width*.5,rd2.top+rd2.height*.5,.7);
-  sfx_click(); await clickAt(rd2.left+rd2.width*.5,rd2.top+rd2.height*.5);
-  await sleep(240); $('file-doc2').classList.add('attached'); sfx_check(); await sleep(360);
-  accSpot('spot-doc2',false); setP(88); await sleep(220);
+  sfx_click(); await sleep(180); $('file-doc2').classList.add('attached'); sfx_check();
+  accSpot('spot-doc2',false); setP(88); await sleep(200);
 
   /* step 3 line completes */
   pingOff('s5-stp3');
@@ -2256,35 +2212,20 @@ async function runScene7(){
   selCard('btype-veh'); sfx_check(); await sleep(320);
   accSpot('bspot-type',false); setP(34); await sleep(220);
 
-  /* 3) details — report + serial + date + insurer (grouped) */
+  /* 3) details — report + serial + date fill together */
   act('تعبئة تفاصيل الحادث');
-  await scrollToEl(f,c,$('bfld-report'),.6,.45);
-  accSpot('bspot-report',true); $('blbl-report').classList.add('active'); await sleep(120);
-  r=$('binp-report').getBoundingClientRect();
-  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.7);
-  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
-  await typeIn($('binp-report'),'6000000000',60);
-  $('blbl-report').classList.remove('active'); $('bchk-report').classList.add('show'); sfx_check(); await sleep(320);
-  accSpot('bspot-report',false); setP(46); await sleep(200);
-
-  /* 4) serial number */
-  await scrollToEl(f,c,$('bfld-serial'),.6,.42);
-  accSpot('bspot-serial',true); $('blbl-serial').classList.add('active'); await sleep(120);
-  r=$('binp-serial').getBoundingClientRect();
-  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
-  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
-  await typeIn($('binp-serial'),'187987410',62);
-  $('blbl-serial').classList.remove('active'); $('bchk-serial').classList.add('show'); sfx_check(); await sleep(280);
-  accSpot('bspot-serial',false); setP(55); await sleep(160);
-
-  /* 5) accident date */
-  accSpot('bspot-date',true); $('blbl-date').classList.add('active'); await sleep(120);
-  r=$('binp-date').getBoundingClientRect();
-  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.55);
-  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
-  await typeIn($('binp-date'),'14/05/2026',72);
-  $('blbl-date').classList.remove('active'); $('bchk-date').classList.add('show'); sfx_check(); await sleep(300);
-  accSpot('bspot-date',false); setP(63); await sleep(200);
+  await scrollToEl(f,c,$('bfld-serial'),.5,.42);
+  accSpot('bspot-report',true); accSpot('bspot-serial',true); accSpot('bspot-date',true);
+  $('blbl-report').classList.add('active'); $('blbl-serial').classList.add('active'); $('blbl-date').classList.add('active');
+  await sleep(200);
+  await Promise.all([
+    typeIn($('binp-report'),'6000000000',60),
+    typeIn($('binp-serial'),'187987410',62),
+    typeIn($('binp-date'),'14/05/2026',72)
+  ]);
+  $('blbl-report').classList.remove('active'); $('blbl-serial').classList.remove('active'); $('blbl-date').classList.remove('active');
+  $('bchk-report').classList.add('show'); $('bchk-serial').classList.add('show'); $('bchk-date').classList.add('show'); sfx_check();
+  accSpot('bspot-report',false); accSpot('bspot-serial',false); accSpot('bspot-date',false); setP(63); await sleep(340);
 
   /* 6) insured by GIG = لا */
   await scrollToEl(f,c,$('bsec-ins'),.6,.5);
@@ -2295,18 +2236,14 @@ async function runScene7(){
   $('bins-no').classList.add('sel'); sfx_check(); await sleep(300);
   accSpot('bspot-ins',false); setP(70); await sleep(200);
 
-  /* 7) required documents (3 uploads) */
+  /* 7) required documents — all attached together */
   act('إرفاق المستندات المطلوبة');
-  const docs=[['bfld-doc1','bspot-doc1','bfile-report',78],['bfld-doc2','bspot-doc2','bfile-license',85],['bfld-doc3','bspot-doc3','bfile-form',92]];
-  for(const [fld,spot,file,p] of docs){
-    await scrollToEl(f,c,$(fld),.55,.45);
-    accSpot(spot,true); await sleep(120);
-    r=$(file).getBoundingClientRect();
-    await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
-    sfx_click(); await clickAt(r.left+r.width*.5,r.top+r.height*.5);
-    await sleep(220); $(file).classList.add('attached'); sfx_check(); await sleep(300);
-    accSpot(spot,false); setP(p); await sleep(150);
-  }
+  await scrollToEl(f,c,$('bfld-doc1'),.5,.4);
+  accSpot('bspot-doc1',true); accSpot('bspot-doc2',true); accSpot('bspot-doc3',true);
+  await sleep(200); sfx_click();
+  $('bfile-report').classList.add('attached'); $('bfile-license').classList.add('attached'); $('bfile-form').classList.add('attached');
+  sfx_check();
+  accSpot('bspot-doc1',false); accSpot('bspot-doc2',false); accSpot('bspot-doc3',false); setP(92); await sleep(340);
 
   /* step 2 line completes */
   pingOff('s7-stp2');
@@ -2380,59 +2317,38 @@ async function runScene8(){
   selCard('ctype-glass'); sfx_check(); await sleep(320);
   accSpot('cspot-type',false); setP(32); await sleep(220);
 
-  /* 3) details — serial + city + date + description (grouped) */
+  /* 3) details — city pick, then serial + date + description fill together */
   act('تعبئة تفاصيل الحادث');
-  await scrollToEl(f,c,$('cfld-serial'),.6,.45);
-  accSpot('cspot-serial',true); $('clbl-serial').classList.add('active'); await sleep(120);
-  r=$('cinp-serial').getBoundingClientRect();
-  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.7);
-  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
-  await typeIn($('cinp-serial'),'256413870',62);
-  $('clbl-serial').classList.remove('active'); $('cchk-serial').classList.add('show'); sfx_check(); await sleep(300);
-  accSpot('cspot-serial',false); setP(42); await sleep(180);
-
-  /* 4) city dropdown = الرياض */
-  await scrollToEl(f,c,$('cfld-city'),.6,.42);
-  accSpot('cspot-city',true); await sleep(120);
+  await scrollToEl(f,c,$('cfld-city'),.6,.45);
+  accSpot('cspot-city',true); await sleep(140);
   r=$('csel-city').getBoundingClientRect();
   await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
   sfx_click(); await clickAt(r.left+r.width*.5,r.top+r.height*.5);
-  $('csel-city').classList.add('focused'); await sleep(260);
+  $('csel-city').classList.add('focused'); await sleep(200);
   $('csel-city-val').textContent='الرياض'; $('csel-city').classList.remove('focused'); $('csel-city').classList.add('filled');
-  sfx_check(); await sleep(280);
-  accSpot('cspot-city',false); setP(46); await sleep(160);
+  sfx_check(); accSpot('cspot-city',false); await sleep(220);
 
-  /* 5) accident date */
-  accSpot('cspot-date',true); $('clbl-date').classList.add('active'); await sleep(120);
-  r=$('cinp-date').getBoundingClientRect();
-  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.55);
-  await clickAt(r.left+r.width*.5,r.top+r.height*.5); await sleep(150);
-  await typeIn($('cinp-date'),'14/05/2026',72);
-  $('clbl-date').classList.remove('active'); $('cchk-date').classList.add('show'); sfx_check(); await sleep(280);
-  accSpot('cspot-date',false); setP(52); await sleep(180);
+  await scrollToEl(f,c,$('cfld-desc'),.45,.4);
+  accSpot('cspot-serial',true); accSpot('cspot-date',true); accSpot('cspot-desc',true);
+  $('clbl-serial').classList.add('active'); $('clbl-date').classList.add('active'); $('clbl-desc').classList.add('active');
+  await sleep(200);
+  await Promise.all([
+    typeIn($('cinp-serial'),'256413870',62),
+    typeIn($('cinp-date'),'14/05/2026',72),
+    typeIn($('cinp-desc'),'تعرّض زجاج المركبة الأمامي للكسر نتيجة الأمطار والسيول في موقع الحادث.',30)
+  ]);
+  $('clbl-serial').classList.remove('active'); $('clbl-date').classList.remove('active'); $('clbl-desc').classList.remove('active');
+  $('cchk-serial').classList.add('show'); $('cchk-date').classList.add('show'); sfx_check();
+  accSpot('cspot-serial',false); accSpot('cspot-date',false); accSpot('cspot-desc',false); setP(57); await sleep(360);
 
-  /* 6) accident description */
-  await scrollToEl(f,c,$('cfld-desc'),.6,.4);
-  accSpot('cspot-desc',true); $('clbl-desc').classList.add('active'); await sleep(120);
-  r=$('cinp-desc').getBoundingClientRect();
-  await moveTo(r.left+r.width*.5,r.top+r.height*.4,.7);
-  await clickAt(r.left+r.width*.5,r.top+r.height*.4); await sleep(150);
-  await typeIn($('cinp-desc'),'تعرّض زجاج المركبة الأمامي للكسر نتيجة الأمطار والسيول في موقع الحادث.',34);
-  $('clbl-desc').classList.remove('active'); sfx_check(); await sleep(300);
-  accSpot('cspot-desc',false); setP(57); await sleep(180);
-
-  /* 7) required documents (3 required uploads) */
+  /* 7) required documents — all attached together */
   act('إرفاق المستندات المطلوبة');
-  const docs=[['cfld-doc1','cspot-doc1','cfile-photos',60],['cfld-doc2','cspot-doc2','cfile-form',64],['cfld-doc3','cspot-doc3','cfile-license',68]];
-  for(const [fld,spot,file,p] of docs){
-    await scrollToEl(f,c,$(fld),.55,.45);
-    accSpot(spot,true); await sleep(120);
-    r=$(file).getBoundingClientRect();
-    await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
-    sfx_click(); await clickAt(r.left+r.width*.5,r.top+r.height*.5);
-    await sleep(220); $(file).classList.add('attached'); sfx_check(); await sleep(300);
-    accSpot(spot,false); setP(p); await sleep(150);
-  }
+  await scrollToEl(f,c,$('cfld-doc1'),.5,.4);
+  accSpot('cspot-doc1',true); accSpot('cspot-doc2',true); accSpot('cspot-doc3',true);
+  await sleep(200); sfx_click();
+  $('cfile-photos').classList.add('attached'); $('cfile-form').classList.add('attached'); $('cfile-license').classList.add('attached');
+  sfx_check();
+  accSpot('cspot-doc1',false); accSpot('cspot-doc2',false); accSpot('cspot-doc3',false); setP(68); await sleep(340);
 
   /* step 2 line completes */
   pingOff('s8-stp2');

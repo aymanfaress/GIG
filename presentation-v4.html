@@ -587,7 +587,7 @@ async function addressBarIntro(){
     y:0,scale:1,opacity:1,duration:.85,ease:'back.out(1.4)',onComplete:res
   }));
 
-  await delay(280);
+  await delay(160);
 
   /* 3. cursor blinks, then URL types character by character */
   const blinkTween=gsap.to(curEl,{opacity:0,duration:.45,repeat:-1,yoyo:true,ease:'power1.inOut'});
@@ -595,11 +595,11 @@ async function addressBarIntro(){
   for(let i=0;i<=url.length;i++){
     urlEl.textContent=url.slice(0,i);
     if(a && i>0) sfxKey(a);
-    await delay(i===0?320:78);
+    await delay(i===0?200:45);
   }
 
   /* 4. pause after typing completes, cursor stops */
-  await delay(480);
+  await delay(280);
   blinkTween.kill();
   gsap.set(curEl,{opacity:0});
 
@@ -609,8 +609,8 @@ async function addressBarIntro(){
   if(a) sfxChime(a);
   ringPath.classList.add('running');
 
-  /* let the ring travel for most of its 3s duration */
-  await delay(2600);
+  /* let the ring travel briefly, then exit (shortened) */
+  await delay(1100);
 
   /* 7. cinematic exit — ring fades out simultaneously with the pill exit */
   if(a) sfxLaunch(a);
@@ -818,7 +818,7 @@ async function showIntroTitle(){
     {opacity:1,width:320,duration:.55,ease:'power3.out',onComplete:res}));
 
   /* 5. hold */
-  await delay(1100);
+  await delay(600);
 
   /* 6. graceful exit → reveals the address bar */
   await new Promise(res=>{
@@ -845,7 +845,7 @@ async function showOutro(){
 
   /* 2. glow blooms behind logo */
   gsap.to('#outro-glow',{opacity:1,scale:1,duration:1.6,ease:'power2.out'});
-  await delay(600);   /* let the glow partially bloom before the logo appears */
+  await delay(400);   /* let the glow partially bloom before the logo appears */
 
   /* 3. logo reveal + chime */
   if(a) sfxChime(a);
@@ -857,7 +857,7 @@ async function showOutro(){
     {opacity:1,duration:.55,ease:'power3.out',onComplete:res}));
 
   /* 6. hold */
-  await delay(2200);
+  await delay(1100);
 }
 
 /* ── on-screen elapsed timer (preview only; never recorded) ── */
