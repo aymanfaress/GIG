@@ -187,14 +187,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   position:relative;z-index:2;
   display:flex;flex-direction:column;align-items:center;gap:30px;
 }
-#ij-stage{ position:relative; width:520px; height:170px; }
+#ij-stage{ position:relative; width:580px; height:240px; }
 #ij-stage .ij-ic, #ij-bar{ position:absolute; left:50%; top:50%; opacity:0; }
 #it-cars{ position:absolute; left:50%; top:50%; width:420px; height:120px; margin-left:-210px; margin-top:-60px; }
 #it-cars .car{ position:absolute; top:50%; left:50%; width:150px; height:100px; margin-top:-50px; margin-left:-75px; }
 #it-crash{ position:absolute; top:50%; left:50%; width:96px; height:96px; margin-top:-52px; margin-left:-48px; opacity:0; pointer-events:none; }
-#ij-shield{ width:120px; height:134px; margin-left:-60px; margin-top:-67px; }
-#ij-list{ width:152px; height:120px; margin-left:-76px; margin-top:-60px; }
-#ij-docs{ width:176px; height:150px; margin-left:-88px; margin-top:-75px; }
+#ij-shield{ width:168px; height:188px; margin-left:-84px; margin-top:-94px; }
+#ij-list{ width:212px; height:168px; margin-left:-106px; margin-top:-84px; }
+#ij-docs{ width:240px; height:205px; margin-left:-120px; margin-top:-102px; }
 #ij-money{ width:188px; height:128px; margin-left:-94px; margin-top:-64px; }
 #ij-bar{
   width:360px; margin-left:-180px; margin-top:-34px;
@@ -336,9 +336,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
 
         <svg id="ij-list" class="ij-ic" viewBox="0 0 116 92" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="10" y="12" width="96" height="68" rx="12"/>
-          <path d="M24 32 L33 40 L48 25" stroke="#35c4aa"/>
+          <path id="ij-list-c1" d="M24 32 L33 40 L48 25" stroke="#35c4aa"/>
           <line x1="60" y1="33" x2="92" y2="33"/>
-          <path d="M24 56 L33 64 L48 49" stroke="#35c4aa"/>
+          <path id="ij-list-c2" d="M24 56 L33 64 L48 49" stroke="#35c4aa"/>
           <line x1="60" y1="57" x2="92" y2="57"/>
         </svg>
 
@@ -1007,59 +1007,54 @@ async function introJourney(){
   gsap.set('#it-crash',{opacity:0,scale:.3});
   $('ij-caption').textContent=''; gsap.set('#ij-caption',{opacity:0});
 
-  await ijTween('#intro-title',{opacity:1,duration:.5,ease:'power2.out'});
-  gsap.to('#it-glow',{opacity:1,scale:1,duration:1.8,ease:'power2.out'});
+  await ijTween('#intro-title',{opacity:1,duration:.55,ease:'power2.out'});
+  gsap.to('#it-glow',{opacity:1,scale:1,duration:2.0,ease:'power2.out'});
 
-  /* BEAT 1 — accident */
+  /* BEAT 1 — accident (~3.6s) */
   ijCap('لو صار لك حادث… لا قدّر الله');
   await playCrash(a);
-  await delay(650);
+  await delay(2200);
 
-  /* BEAT 2 — reassurance */
-  gsap.to('#it-cars',{opacity:0,duration:.4});
+  /* BEAT 2 — reassurance (~4s) */
+  gsap.to('#it-cars',{opacity:0,duration:.45});
   ijCap('وتأمينك مع جي آي جي… ريّح بالك');
-  await ijIn('#ij-shield'); ijDraw('#ij-shield-chk'); if(a) sfxAppear(a);
-  await delay(1150);
+  await ijIn('#ij-shield');
+  ijDraw('#ij-shield-chk'); if(a) sfxAppear(a);
+  await delay(550);
+  gsap.to('#ij-shield',{scale:1.07,duration:.55,yoyo:true,repeat:1,ease:'sine.inOut'});
+  await delay(2600);
   await ijOut('#ij-shield');
 
-  /* BEAT 3 — easier */
+  /* BEAT 3 — easier (~3.9s) */
   ijCap('إجراءات المطالبة معك صارت أسهل');
+  gsap.set('#ij-list',{opacity:0});
   await ijIn('#ij-list');
-  await delay(1100);
+  ijDraw('#ij-list-c1'); await delay(420);
+  ijDraw('#ij-list-c2'); if(a) sfxAppear(a);
+  await delay(2600);
   await ijOut('#ij-list');
 
-  /* BEAT 4 — upload documents + accident photos */
+  /* BEAT 4 — upload documents + accident photos (~3.3s) */
   ijCap('ارفع مستنداتك وصور الحادث');
   gsap.set('#ij-docs',{opacity:1,scale:1,y:0});
-  gsap.fromTo('#ij-doc',{y:30,opacity:0},{y:0,opacity:1,duration:.5,ease:'power2.out'});
-  gsap.fromTo('#ij-photo',{y:34,opacity:0},{y:0,opacity:1,duration:.5,delay:.12,ease:'power2.out'});
+  gsap.fromTo('#ij-doc',{y:36,opacity:0},{y:0,opacity:1,duration:.55,ease:'power2.out'});
+  gsap.fromTo('#ij-photo',{y:40,opacity:0},{y:0,opacity:1,duration:.55,delay:.14,ease:'power2.out'});
+  await delay(1550);
   ijDraw('#ij-up');
-  await delay(760);
-  gsap.to('#ij-doc',{y:-50,opacity:0,duration:.7,ease:'power2.in'});
-  gsap.to('#ij-photo',{y:-50,opacity:0,duration:.7,delay:.1,ease:'power2.in'});
+  gsap.to('#ij-doc',{y:-60,opacity:0,duration:.85,ease:'power2.in'});
+  gsap.to('#ij-photo',{y:-60,opacity:0,duration:.85,delay:.12,ease:'power2.in'});
   if(a) sfxAppear(a);
-  await delay(760);
+  await delay(1750);
   gsap.set('#ij-docs',{opacity:0});
 
-  /* BEAT 5 — عبر موقعنا : the website address bar types itself */
-  ijCap('عبر موقعنا');
-  await ijBarType('www.gig.sa');
-  await delay(600);
-  await ijOut('#ij-bar');
-
-  /* BEAT 6 — fast compensation */
-  ijCap('ويوصلك تعويضك بأسرع وقت');
-  gsap.fromTo('#ij-money',{opacity:0,scale:.8,x:18},{opacity:1,scale:1,x:0,duration:.55,ease:'back.out(1.4)'});
-  gsap.fromTo('#ij-speed',{x:-16,opacity:.2},{x:0,opacity:1,duration:.4,repeat:1,yoyo:true});
-  if(a) sfxAppear(a);
-  await delay(1350);
-
-  /* exit → reveals the stage for the tablet demo */
+  /* fade the icon stage out, then play the ORIGINAL website address-bar animation */
   gsap.to('#ij-caption',{opacity:0,y:-10,duration:.4,ease:'power2.in'});
-  gsap.to('#ij-money',{opacity:0,duration:.4,ease:'power2.in'});
-  gsap.to('#it-glow',{opacity:0,scale:1.3,duration:.6,ease:'power2.in'});
+  gsap.to('#it-glow',{opacity:0,scale:1.25,duration:.6,ease:'power2.in'});
   await ijTween('#intro-title',{opacity:0,duration:.5,ease:'power2.in'});
   gsap.set('#intro-title',{display:'none'});
+
+  /* BEAT 5 — عبر موقعنا : the original address-bar overlay */
+  await addressBarIntro();
 }
 
 /* ── cinematic outro: brand logo end card ── */
