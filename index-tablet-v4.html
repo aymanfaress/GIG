@@ -1606,16 +1606,16 @@ async function runScene1(){
   lblOff(1); lblOff(2); lblOff(3);
   showChk(1); showChk(2); showChk(3); sfx_check();
   spotOff(1); spotOff(2); spotOff(3);
-  setP(72); $('line1').classList.add('done'); await sleep(260);
+  setP(72); $('line1').classList.add('done'); await sleep(140);
 
-  /* ── BUTTON — cursor already on it, just confirm ── */
+  /* ── BUTTON rises in WHILE the cursor settles down onto it (parallel, no pause) ── */
   act('تأكيد البيانات والمتابعة');
-  gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.6,ease:'back.out(1.9)', onComplete:sfx_btnpop });
-  shimBtn('s1-btn'); await sleep(420);
   const rb=$('s1-btn').getBoundingClientRect();
-  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
-  await moveTo(xb,yb,.28);
-  await sleep(220); sfx_confirm(); await clickAt(xb,yb);
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5-18;   /* final centre — button rises 18px as it appears */
+  gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.55,ease:'back.out(1.7)', onComplete:sfx_btnpop });
+  shimBtn('s1-btn');
+  await moveTo(xb,yb,.5);
+  await sleep(150); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s1-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s1-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s1-btn').style.background='#19058c'; shimBtn('s1-btn'); },200)
@@ -1763,16 +1763,16 @@ async function runScene3(){
   lblOff(4); lblOff(5); lblOff(6); lblOff(7);
   showChk(4); showChk(5); showChk(6); showChk(7); sfx_check();
   spotOff(4); spotOff(5); spotOff(6); spotOff(7);
-  setP(72); $('line1c').classList.add('done'); await sleep(260);
+  setP(72); $('line1c').classList.add('done'); await sleep(140);
 
-  /* ── BUTTON — cursor already on it, just confirm ── */
+  /* ── BUTTON rises in WHILE the cursor settles down onto it (parallel, no pause) ── */
   act('تأكيد البيانات والمتابعة');
-  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.6,ease:'back.out(1.9)', onComplete:sfx_btnpop });
-  shimBtn('s3-btn'); await sleep(420);
   const rb=$('s3-btn').getBoundingClientRect();
-  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
-  await moveTo(xb,yb,.28);
-  await sleep(220); sfx_confirm(); await clickAt(xb,yb);
+  const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5-18;   /* final centre — button rises 18px as it appears */
+  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.55,ease:'back.out(1.7)', onComplete:sfx_btnpop });
+  shimBtn('s3-btn');
+  await moveTo(xb,yb,.5);
+  await sleep(150); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s3-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s3-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s3-btn').style.background='#19058c'; shimBtn('s3-btn'); },200)
