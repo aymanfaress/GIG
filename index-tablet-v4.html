@@ -1385,7 +1385,7 @@ html, body {
                 <span class="acc-fld-lbl">المستندات الداعمة</span>
                 <div class="q-help"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
               </div>
-              <div class="file-up" id="cfile-extra"><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
+              <div class="file-up" id="cfile-extra"><div class="fu-file"><div class="fu-ic">PDF</div><span class="fu-name">مستندات داعمة.pdf</span></div><span class="fu-empty">ارفع المستند من هنا…</span><div class="fu-btns"><span class="fu-change">رفع الملف</span></div></div>
             </div>
           </div>
 
@@ -2317,36 +2317,35 @@ async function runScene8(){
   selCard('ctype-glass'); sfx_check(); await sleep(320);
   accSpot('cspot-type',false); setP(32); await sleep(220);
 
-  /* 3) details — city pick, then serial + date + description fill together */
+  /* 3) details — top group (report + serial + city + date) filled together, in view */
   act('تعبئة تفاصيل الحادث');
-  await scrollToEl(f,c,$('cfld-city'),.6,.45);
-  accSpot('cspot-city',true); await sleep(140);
-  r=$('csel-city').getBoundingClientRect();
-  await moveTo(r.left+r.width*.5,r.top+r.height*.5,.6);
-  sfx_click(); await clickAt(r.left+r.width*.5,r.top+r.height*.5);
-  $('csel-city').classList.add('focused'); await sleep(200);
-  $('csel-city-val').textContent='الرياض'; $('csel-city').classList.remove('focused'); $('csel-city').classList.add('filled');
-  sfx_check(); accSpot('cspot-city',false); await sleep(220);
-
-  await scrollToEl(f,c,$('cfld-desc'),.45,.4);
-  accSpot('cspot-serial',true); accSpot('cspot-date',true); accSpot('cspot-desc',true);
-  $('clbl-serial').classList.add('active'); $('clbl-date').classList.add('active'); $('clbl-desc').classList.add('active');
-  await sleep(200);
+  await scrollToEl(f,c,$('cfld-serial'),.5,.42);
+  accSpot('cspot-serial',true); accSpot('cspot-date',true); accSpot('cspot-city',true);
+  $('clbl-serial').classList.add('active'); $('clbl-date').classList.add('active');
+  $('csel-city').classList.add('focused');
+  await sleep(220);
   await Promise.all([
+    typeIn($('cinp-report'),'OT-2026-44812',58),
     typeIn($('cinp-serial'),'256413870',62),
-    typeIn($('cinp-date'),'14/05/2026',72),
-    typeIn($('cinp-desc'),'تعرّض زجاج المركبة الأمامي للكسر نتيجة الأمطار والسيول في موقع الحادث.',30)
+    typeIn($('cinp-date'),'14/05/2026',72)
   ]);
-  $('clbl-serial').classList.remove('active'); $('clbl-date').classList.remove('active'); $('clbl-desc').classList.remove('active');
+  $('csel-city-val').textContent='الرياض'; $('csel-city').classList.remove('focused'); $('csel-city').classList.add('filled');
+  $('clbl-serial').classList.remove('active'); $('clbl-date').classList.remove('active');
   $('cchk-serial').classList.add('show'); $('cchk-date').classList.add('show'); sfx_check();
-  accSpot('cspot-serial',false); accSpot('cspot-date',false); accSpot('cspot-desc',false); setP(57); await sleep(360);
+  accSpot('cspot-serial',false); accSpot('cspot-date',false); accSpot('cspot-city',false); setP(50); await sleep(300);
 
-  /* 7) required documents — all attached together */
+  /* description */
+  await scrollToEl(f,c,$('cfld-desc'),.6,.45);
+  accSpot('cspot-desc',true); $('clbl-desc').classList.add('active'); await sleep(160);
+  await typeIn($('cinp-desc'),'تعرّض زجاج المركبة الأمامي للكسر نتيجة الأمطار والسيول في موقع الحادث.',30);
+  $('clbl-desc').classList.remove('active'); sfx_check(); accSpot('cspot-desc',false); setP(57); await sleep(300);
+
+  /* 7) required documents — all four attached together */
   act('إرفاق المستندات المطلوبة');
-  await scrollToEl(f,c,$('cfld-doc1'),.5,.4);
+  await scrollToEl(f,c,$('cfld-doc2'),.5,.45);
   accSpot('cspot-doc1',true); accSpot('cspot-doc2',true); accSpot('cspot-doc3',true);
-  await sleep(200); sfx_click();
-  $('cfile-photos').classList.add('attached'); $('cfile-form').classList.add('attached'); $('cfile-license').classList.add('attached');
+  await sleep(220); sfx_click();
+  $('cfile-photos').classList.add('attached'); $('cfile-form').classList.add('attached'); $('cfile-license').classList.add('attached'); $('cfile-extra').classList.add('attached');
   sfx_check();
   accSpot('cspot-doc1',false); accSpot('cspot-doc2',false); accSpot('cspot-doc3',false); setP(68); await sleep(340);
 
