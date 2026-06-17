@@ -1586,32 +1586,36 @@ async function runScene1(){
   await sleep(320);
   setP(18);
 
-  /* ── grouped data entry — no zoom, all fields fill at the same time ── */
+  /* ── data entry — fields fill WHILE the cursor glides straight to the button ── */
   act('قم بتعبئة بياناتك');
   spotOn(1); spotOn(2); spotOn(3);
   lblOn(1); lblOn(2); lblOn(3);
   $('phcode').style.borderColor='#d28c64';
-  await sleep(260);
+  /* cursor enters by the fields and heads directly to the (laid-out) button */
+  const r1=$('inp1').getBoundingClientRect();
+  gsap.set(cur,{left:r1.left+r1.width*.5, top:r1.top-80, opacity:1}); startTrail();
+  const rbtn=$('s1-btn').getBoundingClientRect();
+  await sleep(200);
   await Promise.all([
     typeIn($('inp1'),'2341968192',95),
     typeIn($('inp2'),'537077897',95),
-    typeIn($('inp3'),'ahmed@example.com',85)
+    typeIn($('inp3'),'ahmed@example.com',85),
+    moveTo(rbtn.left+rbtn.width*.5, rbtn.top+rbtn.height*.5, .95)
   ]);
   $('phcode').style.borderColor='#c8d8ff';
   lblOff(1); lblOff(2); lblOff(3);
   showChk(1); showChk(2); showChk(3); sfx_check();
   spotOff(1); spotOff(2); spotOff(3);
-  setP(72); $('line1').classList.add('done'); await sleep(420);
+  setP(72); $('line1').classList.add('done'); await sleep(260);
 
-  /* ── BUTTON (no zoom) ── */
+  /* ── BUTTON — cursor already on it, just confirm ── */
   act('تأكيد البيانات والمتابعة');
-  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
-  gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(560);
+  gsap.to($('s1-btn'),{y:0,scale:1,opacity:1,duration:.6,ease:'back.out(1.9)', onComplete:sfx_btnpop });
   shimBtn('s1-btn'); await sleep(420);
   const rb=$('s1-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
-  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(360); sfx_confirm(); await clickAt(xb,yb);
+  await moveTo(xb,yb,.28);
+  await sleep(220); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s1-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s1-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s1-btn').style.background='#19058c'; shimBtn('s1-btn'); },200)
@@ -1665,7 +1669,11 @@ async function runScene2(isFinal=true){
   act('إدخال رمز التحقق المُرسَل للجوال');
   gsap.to($('otp-spot'),{opacity:1,duration:.28}); await sleep(220);
 
-  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
+  /* cursor enters by the code boxes and glides straight to the confirm button */
+  const rb1=$('b1').getBoundingClientRect();
+  gsap.set(cur,{left:rb1.left+rb1.width*.5, top:rb1.top-70, opacity:1}); startTrail();
+  const rbtn=$('s2-btn').getBoundingClientRect();
+  moveTo(rbtn.left+rbtn.width*.5, rbtn.top+rbtn.height*.5, 1.0);
 
   /* the four digits drop in together (no per-box cursor hops) */
   const boxes=['b1','b2','b3','b4'], code=['7','3','9','4'];
@@ -1682,11 +1690,11 @@ async function runScene2(isFinal=true){
 
   /* ── BUTTON ACTIVATES ── */
   act('تأكيد رمز التحقق');
-  sfx_unlock(); $('s2-btn').classList.add('ready'); shimBtn('s2-btn'); await sleep(480);
+  sfx_unlock(); $('s2-btn').classList.add('ready'); shimBtn('s2-btn'); await sleep(420);
   const rb=$('s2-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
-  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  await moveTo(xb,yb,.28);
+  await sleep(220); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s2-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s2-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s2-btn').style.background='#19058c'; shimBtn('s2-btn'); },200)
@@ -1735,33 +1743,36 @@ async function runScene3(){
 
   const f=$('s3-form'), c=$('s3-content');
 
-  /* ── grouped data entry — no zoom, all fields fill at the same time ── */
+  /* ── data entry — fields fill WHILE the cursor glides straight to the button ── */
   act('قم بتعبئة بياناتك');
   spotOn(4); spotOn(5); spotOn(6); spotOn(7);
   lblOn(4); lblOn(5); lblOn(6); lblOn(7);
   $('phcode3').style.borderColor='#d28c64';
-  await sleep(260);
+  const r4=$('inp4').getBoundingClientRect();
+  gsap.set(cur,{left:r4.left+r4.width*.5, top:r4.top-80, opacity:1}); startTrail();
+  const rbtn=$('s3-btn').getBoundingClientRect();
+  await sleep(200);
   await Promise.all([
     typeIn($('inp4'),'7001689913',95),
     typeIn($('inp5'),'2341968192',95),
     typeIn($('inp6'),'537077897',95),
-    typeIn($('inp7'),'ahmed@example.com',85)
+    typeIn($('inp7'),'ahmed@example.com',85),
+    moveTo(rbtn.left+rbtn.width*.5, rbtn.top+rbtn.height*.5, .95)
   ]);
   $('phcode3').style.borderColor='#c8d8ff';
   lblOff(4); lblOff(5); lblOff(6); lblOff(7);
   showChk(4); showChk(5); showChk(6); showChk(7); sfx_check();
   spotOff(4); spotOff(5); spotOff(6); spotOff(7);
-  setP(72); $('line1c').classList.add('done'); await sleep(420);
+  setP(72); $('line1c').classList.add('done'); await sleep(260);
 
-  /* ── BUTTON (no zoom) ── */
+  /* ── BUTTON — cursor already on it, just confirm ── */
   act('تأكيد البيانات والمتابعة');
-  gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
-  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.9)', onComplete:sfx_btnpop }); await sleep(560);
+  gsap.to($('s3-btn'),{y:0,scale:1,opacity:1,duration:.6,ease:'back.out(1.9)', onComplete:sfx_btnpop });
   shimBtn('s3-btn'); await sleep(420);
   const rb=$('s3-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
-  await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(360); sfx_confirm(); await clickAt(xb,yb);
+  await moveTo(xb,yb,.28);
+  await sleep(220); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s3-btn'),{scale:.95,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s3-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s3-btn').style.background='#19058c'; shimBtn('s3-btn'); },200)
