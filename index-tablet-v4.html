@@ -1600,7 +1600,7 @@ async function runScene1(){
     typeIn($('inp1'),'2341968192',95),
     typeIn($('inp2'),'537077897',95),
     typeIn($('inp3'),'ahmed@example.com',85),
-    moveTo(rbtn.left+rbtn.width*.5, rbtn.top+rbtn.height*.5, .95)
+    moveTo(rbtn.left+rbtn.width*.5, rbtn.top-45, .95)   /* hover just ABOVE the button */
   ]);
   $('phcode').style.borderColor='#c8d8ff';
   lblOff(1); lblOff(2); lblOff(3);
@@ -1757,7 +1757,7 @@ async function runScene3(){
     typeIn($('inp5'),'2341968192',95),
     typeIn($('inp6'),'537077897',95),
     typeIn($('inp7'),'ahmed@example.com',85),
-    moveTo(rbtn.left+rbtn.width*.5, rbtn.top+rbtn.height*.5, .95)
+    moveTo(rbtn.left+rbtn.width*.5, rbtn.top-45, .95)   /* hover just ABOVE the button */
   ]);
   $('phcode3').style.borderColor='#c8d8ff';
   lblOff(4); lblOff(5); lblOff(6); lblOff(7);
