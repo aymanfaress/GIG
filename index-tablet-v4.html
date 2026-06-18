@@ -2125,13 +2125,8 @@ async function runScene6(isFinal=false){
   sfx_success();
   await sleep(1150);
 
-  /* cinematic close — only on the very last run */
-  if(isFinal){
-    const end = document.createElement('div');
-    end.style.cssText = "position:fixed;inset:0;background:url('images/transition.png') center/cover no-repeat, linear-gradient(135deg,#19058c 0%,#2a1aaa 40%,#d28c64 100%);transform:translateX(-100%);z-index:9000;pointer-events:none;";
-    document.body.appendChild(end);
-    gsap.to(end, { x:'0%', duration:.85, ease:'power3.inOut' });
-  } else {
+  /* no closing curtain — go straight to the outro */
+  if(!isFinal){
     await sleep(400);
     $('s6-success').classList.remove('show');
     gsap.set('#s6-success',{opacity:0});

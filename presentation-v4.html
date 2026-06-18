@@ -1134,11 +1134,11 @@ async function showOutro(){
   gsap.set('#outro-url',{opacity:0});
 
   /* 1. light background fades in */
-  await new Promise(res=>gsap.to('#outro',{opacity:1,duration:.7,ease:'power2.out',onComplete:res}));
+  await new Promise(res=>gsap.to('#outro',{opacity:1,duration:.45,ease:'power2.out',onComplete:res}));
 
   /* 2. glow blooms behind logo */
   gsap.to('#outro-glow',{opacity:1,scale:1,duration:1.6,ease:'power2.out'});
-  await delay(400);   /* let the glow partially bloom before the logo appears */
+  await delay(120);   /* logo appears almost right away */
 
   /* 3. logo reveal + chime */
   if(a) sfxChime(a);
@@ -1154,8 +1154,8 @@ async function showOutro(){
   await new Promise(res=>gsap.to('#outro-url',
     {opacity:1,duration:.55,ease:'power3.out',onComplete:res}));
 
-  /* 6. hold */
-  await delay(1100);
+  /* 6. hold (longer end card) */
+  await delay(2600);
 }
 
 /* ── on-screen elapsed timer (preview only; never recorded) ── */
@@ -1178,7 +1178,7 @@ window.addEventListener('message', async e=>{
     outroDone=true;
     stopVidTimer();       /* freeze the timer on the final duration */
     stopMusic();          /* fade music out as the outro begins */
-    await delay(700);
+    await delay(150);     /* outro comes in right after the claim is submitted */
     await showOutro();
     window.__outroEnd = performance.now();
     if(mediaRec && mediaRec.state!=='inactive') mediaRec.stop();
