@@ -40,9 +40,8 @@ html, body {
 /* sliding curtain element */
 #trans-curtain {
   position:absolute; inset:0;
-  /* transition.png on top, gradient as graceful fallback if image missing */
-  background:url('images/transition.png') center/cover no-repeat,
-             linear-gradient(135deg, #19058c 0%, #2a1aaa 40%, #d28c64 100%);
+  /* soft light veil — a gentle dip between scenes instead of a bright flash */
+  background:#f5f4fb;
   transform:translateX(-100%);
 }
 /* shine layer */
@@ -1521,17 +1520,17 @@ async function transitionTo(fromId, toId){
   const fromEl   = $(fromId);
   const toEl     = $(toId);
 
-  /* quick brand fade — cover, swap behind the cover, uncover.
-     (the opaque cover masks the next page while it builds — no flash) */
+  /* soft cross-dissolve through a light veil — same total time as before (no
+     hard dwell), gentle sine curve so it reads as a smooth dip, not a flash.
+     The opaque veil still masks the next page while it builds. */
   gsap.set(curtain, { x:'0%' });
   gsap.set(shine,   { opacity:0 });
   gsap.set(trans,   { opacity:0 });
   sfx_transition();
-  await new Promise(res=>gsap.to(trans,{opacity:1,duration:.22,ease:'power2.inOut',onComplete:res}));
+  await new Promise(res=>gsap.to(trans,{opacity:1,duration:.29,ease:'sine.inOut',onComplete:res}));
   fromEl.classList.remove('active');
   toEl.classList.add('active');
-  await sleep(90);
-  await new Promise(res=>gsap.to(trans,{opacity:0,duration:.28,ease:'power2.inOut',onComplete:res}));
+  await new Promise(res=>gsap.to(trans,{opacity:0,duration:.30,ease:'sine.inOut',onComplete:res}));
   gsap.set(curtain, { x:'-100%' });
 }
 
@@ -1959,25 +1958,25 @@ async function runScene5(){
   setP(72);
 
   /* build in */
-  gsap.to($('s5-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(420);
-  gsap.to($('s5-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(340);
-  gsap.to($('s5-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(300);
-  gsap.to($('s5-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(240);
-  gsap.to('#veh-card',{y:0,opacity:1,duration:.55,ease:'power3.out'}); await sleep(260);
-  gsap.to('#sec-evaltype',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
-  gsap.to('#sec-evalnum',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
-  gsap.to('#sec-doc1',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
-  gsap.to('#sec-settle',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
-  gsap.to('#sec-iban',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
-  gsap.to('#sec-doc2',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(110);
-  gsap.to('#s5-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(280);
+  gsap.to($('s5-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(300);
+  gsap.to($('s5-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(240);
+  gsap.to($('s5-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(220);
+  gsap.to($('s5-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(180);
+  gsap.to('#veh-card',{y:0,opacity:1,duration:.55,ease:'power3.out'}); await sleep(180);
+  gsap.to('#sec-evaltype',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(70);
+  gsap.to('#sec-evalnum',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(70);
+  gsap.to('#sec-doc1',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(70);
+  gsap.to('#sec-settle',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(70);
+  gsap.to('#sec-iban',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(70);
+  gsap.to('#sec-doc2',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(70);
+  gsap.to('#s5-btn',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(180);
   setP(74);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
   pingOn('s5-stp3');
 
   /* glance at the vehicle card */
-  await s5scroll($('veh-card'),.6,.45); await sleep(420);
+  await s5scroll($('veh-card'),.6,.45); await sleep(240);
 
   /* ── 1) EVALUATION TYPE = تقدير ── */
   act('اختيار نوع التقييم: تقدير');
@@ -2047,7 +2046,7 @@ async function runScene5(){
     onComplete:()=>setTimeout(()=>{ $('s5-btn').style.background='#19058c'; shimBtn('s5-btn'); },200)
   });
 
-  setP(90); await sleep(450);
+  setP(90); await sleep(300);
   sfx_success(); await successFlash($('s5-flash'));
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
@@ -2081,8 +2080,8 @@ async function runScene6(isFinal=false){
   setP(92);
 
   /* build in (single fast stagger) */
-  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(320);
-  gsap.to(['#rev-claim','#rev-personal','#rev-policy'],{opacity:1,y:0,duration:.55,ease:'power3.out',stagger:.1}); await sleep(360);
+  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(220);
+  gsap.to(['#rev-claim','#rev-personal','#rev-policy'],{opacity:1,y:0,duration:.55,ease:'power3.out',stagger:.1}); await sleep(240);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
 
@@ -2090,33 +2089,33 @@ async function runScene6(isFinal=false){
   act('مراجعة البيانات');
   const rp=$('rev-personal').getBoundingClientRect();
   await moveTo(rp.left+rp.width*.5,rp.top+rp.height*.5,.8);
-  hl('rev-personal',true); await sleep(340); hl('rev-personal',false);
+  hl('rev-personal',true); await sleep(220); hl('rev-personal',false);
   const rpo=$('rev-policy').getBoundingClientRect();
   await moveTo(rpo.left+rpo.width*.5,rpo.top+rpo.height*.5,.5);
-  hl('rev-policy',true); await sleep(340); hl('rev-policy',false);
+  hl('rev-policy',true); await sleep(220); hl('rev-policy',false);
   setP(95);
 
   /* glance over the claim card, scroll to the submit section */
   hl('rev-claim',true);
   const rc=$('rev-claim').getBoundingClientRect();
   await moveTo(rc.left+rc.width*.5,rc.top+rc.height*.4,.6);
-  await sleep(280);
-  await s6scroll($('s6-submit'),.8,.62); await sleep(220);
+  await sleep(180);
+  await s6scroll($('s6-submit'),.8,.62); await sleep(140);
   hl('rev-claim',false);
   setP(98);
 
   /* ── SUBMIT ── */
   act('تقديم المطالبة');
-  sfx_btnpop(); shimBtn('s6-submit'); await sleep(360);
+  sfx_btnpop(); shimBtn('s6-submit'); await sleep(240);
   const rb=$('s6-submit').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(280); sfx_confirm(); await clickAt(xb,yb);
+  await sleep(180); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s6-submit'),{scale:.97,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s6-submit').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s6-submit').style.background='#19058c'; },200)
   });
-  setP(100); await sleep(420);
+  setP(100); await sleep(280);
 
   /* ── SUCCESS MESSAGE ── */
   stopTrail(); gsap.to(cur,{opacity:0,duration:.35});
@@ -2124,7 +2123,7 @@ async function runScene6(isFinal=false){
   gsap.to('#s6-success',{opacity:1,duration:.4,ease:'power2.out'});
   gsap.to('.suc-card',{scale:1,duration:.55,ease:'back.out(1.6)'});
   sfx_success();
-  await sleep(1400);
+  await sleep(1150);
 
   /* cinematic close — only on the very last run */
   if(isFinal){
