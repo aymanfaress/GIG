@@ -967,13 +967,15 @@ async function start(record, btn){
     try{ if(!document.fullscreenElement) await document.documentElement.requestFullscreen(); }catch(e){}
     try{
       const display = await navigator.mediaDevices.getDisplayMedia({
-        video:{ frameRate:60, width:1920, height:1080 }, audio:false });
+        video:{ frameRate:60, width:{ideal:1920,max:2560}, height:{ideal:1080,max:1440} }, audio:false });
       const ctx = fw.getACtx(); fw.getMaster();
       if(!recTap){ recTap = ctx.createMediaStreamDestination(); fw._softBus.connect(recTap); }
       const stream = new MediaStream([...display.getVideoTracks(), ...recTap.stream.getAudioTracks()]);
       const mime = pickRecMime();
-      mediaRec = new MediaRecorder(stream, mime ? {mimeType:mime, videoBitsPerSecond:16000000}
-                                                : {videoBitsPerSecond:16000000});
+      const recOpts = mime ? {mimeType:mime} : {};
+      recOpts.videoBitsPerSecond = 32000000;   /* 32 Mbps — crisp 1080p / 1440p */
+      recOpts.audioBitsPerSecond = 256000;     /* clear narration + music */
+      mediaRec = new MediaRecorder(stream, recOpts);
       recChunks=[];
       mediaRec.ondataavailable=ev=>{ if(ev.data.size) recChunks.push(ev.data); };
       mediaRec.onstop=()=>{
