@@ -1032,10 +1032,11 @@ async function start(record, btn){
 /* ── two cars glide in and collide above the title (smooth, then settle) ── */
 function playCrash(a){
   return new Promise(res=>{
+    gsap.set('.car',{transformOrigin:'50% 50%',force3D:true});
     gsap.set('.carL',{x:-240,y:0,rotation:0,opacity:1});
     gsap.set('.carR',{x:240, y:0,rotation:0,opacity:1});
     gsap.set('#it-crash',{opacity:0,scale:.3,rotation:-25});
-    const tl=gsap.timeline({onComplete:res});
+    const tl=gsap.timeline({onComplete:res,defaults:{force3D:true}});
     /* drive in toward each other (accelerating) */
     tl.to('.carL',{x:-54,duration:.75,ease:'power2.in'},0)
       .to('.carR',{x:54, duration:.75,ease:'power2.in'},0)
