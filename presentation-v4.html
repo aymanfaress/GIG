@@ -1046,9 +1046,9 @@ function playCrash(a){
       .to('.carL',{x:-70,rotation:-7,duration:.12,ease:'power3.out'},'<')
       .to('.carR',{x:70, rotation:7, duration:.12,ease:'power3.out'},'<')
       .to('#it-crash',{opacity:0,scale:1.55,duration:.5,ease:'power1.out'})
-      /* settle back together with a soft elastic bounce */
-      .to('.carL',{x:-56,rotation:0,duration:.5,ease:'back.out(1.3)'},'-=0.34')
-      .to('.carR',{x:56, rotation:0,duration:.5,ease:'back.out(1.3)'},'<')
+      /* settle back together — smooth, no overshoot so the cars never bob up */
+      .to('.carL',{x:-56,y:0,rotation:0,duration:.5,ease:'power2.out'},'-=0.34')
+      .to('.carR',{x:56, y:0,rotation:0,duration:.5,ease:'power2.out'},'<')
       .to({},{duration:.15});
   });
 }
