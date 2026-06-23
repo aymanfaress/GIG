@@ -213,6 +213,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
   font-family:'Almarai',sans-serif; font-weight:800; font-size:46px;
   color:#19058c; text-align:center; direction:rtl; line-height:1.45;
   opacity:0; max-width:1180px; margin-top:18px;
+  /* fixed height so showing/changing the text never reflows (and never shoves the cars up) */
+  height:134px; display:flex; align-items:center; justify-content:center;
   text-shadow:0 14px 40px rgba(25,5,140,.10);
 }
 /* ── files uploaded around the address bar ── */
