@@ -702,7 +702,7 @@ function pickRecMime(){
   return '';
 }
 
-async function runCountdown(secs){
+async function runCountdown(secs, forRecording){
   const el = $('countdown'), num = $('cd-num');
   el.style.display = 'flex';
   for(let n=secs; n>=1; n--){
@@ -710,11 +710,17 @@ async function runCountdown(secs){
     gsap.fromTo(num,{scale:.6,opacity:0},{scale:1,opacity:1,duration:.35,ease:'power3.out'});
     await delay(1000);
   }
-  /* clear and hide, then wait two frames so the empty overlay is actually
-     painted before recording starts — keeps the numbers out of the video */
+  /* clear and hide, then wait for the empty overlay to actually be painted
+     before recording starts — keeps the numbers out of the video */
   num.textContent='';
   el.style.display = 'none';
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  /* the capture path (tab capture → hidden <video> → crop canvas →
+     captureStream → encoder) has its own pipeline latency, so the cleared
+     frame takes longer than a couple of rAFs to actually reach the
+     recording — wait it out here so the very first recorded frame is the
+     first real scene, not a trailing "1" */
+  if(forRecording) await new Promise(r=>setTimeout(r,500));
 }
 
 async function addressBarIntro(){
@@ -1070,7 +1076,7 @@ async function start(record, btn){
   }
 
   /* lead-in buffer so you can get a recorder rolling before the show begins */
-  await runCountdown(START_DELAY);
+  await runCountdown(START_DELAY, record);
 
   /* start the recording cleanly (countdown excluded), then the music.
      A 1s timeslice flushes chunks incrementally instead of buffering the
