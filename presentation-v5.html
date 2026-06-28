@@ -993,8 +993,13 @@ async function start(record, btn){
     await new Promise(r=>setTimeout(r,150));   /* let the fullscreen resize + scaleStage() settle */
     scaleStage();
     try{
+      /* ask for exactly the resolution/rate we'll actually encode — requesting
+         more (e.g. 4K/60) than the 1080p30 output just burns CPU decoding and
+         re-scaling frames we throw away, which is what was causing the
+         encoder to fall behind and the page to lock up mid-recording */
+      const REC_FPS = 30;
       const display = await navigator.mediaDevices.getDisplayMedia({
-        video:{ frameRate:60, width:{ideal:2560,max:3840}, height:{ideal:1440,max:2160} }, audio:false,
+        video:{ frameRate:{ideal:REC_FPS,max:REC_FPS}, width:{ideal:1920,max:1920}, height:{ideal:1080,max:1080} }, audio:false,
         /* bias the picker to capture only this tab's content — no browser
            chrome, no other tabs/windows (Chrome/Edge; ignored elsewhere) */
         preferCurrentTab:true, selfBrowserSurface:'include',
@@ -1002,9 +1007,11 @@ async function start(record, btn){
 
       /* the captured tab frame is letterboxed around the 1920×1080 stage
          whenever the window isn't exactly 16:9 — play the capture into a
-         hidden <video>, then continuously crop+scale just the stage's
-         region into a 1920×1080 canvas so the recorded output is always
-         exactly 1920×1080 with no black bars on any edge */
+         hidden <video>, then crop+scale just the stage's region into a
+         1920×1080 canvas so the recorded output is always exactly
+         1920×1080 with no black bars on any edge. The draw loop is
+         throttled to REC_FPS (instead of redrawing on every source frame)
+         so it can't outrun the encoder and stall the tab. */
       const capVideo = document.createElement('video');
       capVideo.muted = true; capVideo.playsInline = true;
       capVideo.style.cssText = 'position:fixed;left:-99999px;top:0;width:1px;height:1px;';
@@ -1015,29 +1022,36 @@ async function start(record, btn){
 
       const cropCanvas = document.createElement('canvas');
       cropCanvas.width = 1920; cropCanvas.height = 1080;
-      const cropCtx = cropCanvas.getContext('2d');
+      const cropCtx = cropCanvas.getContext('2d', {alpha:false, desynchronized:true});
       const pxRatio = capVideo.videoWidth / window.innerWidth;
       const sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
       const tx = (window.innerWidth-1920*sc)/2, ty = (window.innerHeight-1080*sc)/2;
       const sx = tx*pxRatio, sy = ty*pxRatio, sw = 1920*sc*pxRatio, sh = 1080*sc*pxRatio;
       let cropping = true;
+      const frameInterval = 1000/REC_FPS;
+      let lastDraw = 0;
       (function drawCropFrame(){
         if(!cropping) return;
-        cropCtx.drawImage(capVideo, sx, sy, sw, sh, 0, 0, 1920, 1080);
+        const now = performance.now();
+        if(now - lastDraw >= frameInterval - 1){
+          lastDraw = now;
+          try{ cropCtx.drawImage(capVideo, sx, sy, sw, sh, 0, 0, 1920, 1080); }catch(e){}
+        }
         (capVideo.requestVideoFrameCallback ? capVideo.requestVideoFrameCallback.bind(capVideo) : requestAnimationFrame)(drawCropFrame);
       })();
-      const canvasTrack = cropCanvas.captureStream(60).getVideoTracks()[0];
+      const canvasTrack = cropCanvas.captureStream(REC_FPS).getVideoTracks()[0];
 
       const ctx = fw.getACtx(); fw.getMaster();
       if(!recTap){ recTap = ctx.createMediaStreamDestination(); fw._softBus.connect(recTap); }
       const stream = new MediaStream([canvasTrack, ...recTap.stream.getAudioTracks()]);
       const mime = pickRecMime();
       const recOpts = mime ? {mimeType:mime} : {};
-      recOpts.videoBitsPerSecond = 50000000;   /* 50 Mbps — very crisp 1440p / 4K */
-      recOpts.audioBitsPerSecond = 320000;     /* highest-clarity narration + music */
+      recOpts.videoBitsPerSecond = 16000000;   /* 16 Mbps — crisp 1080p30 without overloading the encoder */
+      recOpts.audioBitsPerSecond = 256000;     /* clear narration + music */
       mediaRec = new MediaRecorder(stream, recOpts);
       recChunks=[];
       mediaRec.ondataavailable=ev=>{ if(ev.data.size) recChunks.push(ev.data); };
+      mediaRec.onerror=ev=>{ console.warn('recorder error', ev.error); };
       mediaRec.onstop=()=>{
         const isMp4 = (mediaRec.mimeType||mime||'').indexOf('mp4')>=0;
         const blob=new Blob(recChunks,{type: isMp4 ? 'video/mp4':'video/webm'});
@@ -1058,8 +1072,10 @@ async function start(record, btn){
   /* lead-in buffer so you can get a recorder rolling before the show begins */
   await runCountdown(START_DELAY);
 
-  /* start the recording cleanly (countdown excluded), then the music */
-  if(record && mediaRec){ try{ mediaRec.start(); }catch(e){} }
+  /* start the recording cleanly (countdown excluded), then the music.
+     A 1s timeslice flushes chunks incrementally instead of buffering the
+     whole recording in memory until stop() — lighter on the tab. */
+  if(record && mediaRec){ try{ mediaRec.start(1000); }catch(e){} }
 
   /* kick off background music + continuous narration from 0:00 (fade in) */
   startMusic();
