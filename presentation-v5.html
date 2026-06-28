@@ -962,6 +962,14 @@ async function playVO(file){
 }
 
 async function start(record, btn){
+  /* mobile browsers (iOS Safari in particular) don't implement
+     getDisplayMedia for web pages at all — fail fast with a clear
+     message instead of letting the cryptic "is not a function" error
+     surface mid-flow */
+  if(record && (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia)){
+    alert('تسجيل الفيديو من المتصفح غير متاح على الجوال (خاصة Safari/iOS لا يدعم تسجيل الشاشة من الموقع). من فضلك استخدم متصفح Chrome أو Edge على جهاز كمبيوتر لتسجيل الفيديو.');
+    return;
+  }
   $('playBtn').classList.add('hide'); $('recBtn').classList.add('hide');
 
   /* reset intro/outro + music + voice-over state (allows replay) */
@@ -1042,7 +1050,7 @@ async function start(record, btn){
       const stream = new MediaStream([canvasTrack, ...recTap.stream.getAudioTracks()]);
       const mime = pickRecMime();
       const recOpts = mime ? {mimeType:mime} : {};
-      recOpts.videoBitsPerSecond = 16000000;   /* 16 Mbps — crisp 1080p30 without overloading the encoder */
+      recOpts.videoBitsPerSecond = 24000000;   /* 24 Mbps — avoids the dull/washed-out look low bitrate gives the soft gradient backgrounds, still light enough not to overload the encoder */
       recOpts.audioBitsPerSecond = 256000;     /* clear narration + music */
       mediaRec = new MediaRecorder(stream, recOpts);
       recChunks=[];
