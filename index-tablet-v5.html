@@ -1486,7 +1486,7 @@ async function runScene2(isFinal=true){
   gsap.to($('s2-form'),{y:0,scale:1,opacity:1,duration:.75,ease:'power3.out'});
   await sleep(380);
   gsap.to($('otp-title'),{y:0,opacity:1,duration:.65,ease:'back.out(1.4)'}); await sleep(280);
-  gsap.to($('otp-sub'),{y:0,opacity:1,duration:.55,ease:'power2.out'}); await sleep(500);   /* extra hold — voice-over room */
+  gsap.to($('otp-sub'),{y:0,opacity:1,duration:.55,ease:'power2.out'}); await sleep(700);   /* extra hold — voice-over room */
   gsap.to($('otp-wrap'),{y:0,opacity:1,duration:.55,ease:'back.out(1.5)'}); await sleep(420);
   gsap.to($('otp-timer'),{opacity:1,duration:.4});
   const timerIv=startCountdown(56); await sleep(220);
@@ -1516,11 +1516,11 @@ async function runScene2(isFinal=true){
     await sleep(90);
   }
 
-  gsap.to($('otp-spot'),{opacity:0,duration:.28}); await sleep(340);
+  gsap.to($('otp-spot'),{opacity:0,duration:.28}); await sleep(2500);   /* hold on the filled code — voice-over room */
 
   /* ── BUTTON ACTIVATES ── */
   act('تأكيد رمز التحقق');
-  sfx_unlock(); $('s2-btn').classList.add('ready'); shimBtn('s2-btn'); await sleep(420);
+  sfx_unlock(); $('s2-btn').classList.add('ready'); shimBtn('s2-btn'); await sleep(1500);
   const rb=$('s2-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb,yb,.28);
@@ -1533,6 +1533,7 @@ async function runScene2(isFinal=true){
   clearInterval(timerIv);
   setP(100); await sleep(500);
   sfx_success(); await successFlash($('s2-flash'));
+  await sleep(2490);   /* dwell on the confirmed state before the cut */
 
   stopTrail();
   if(isFinal){
