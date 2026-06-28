@@ -859,14 +859,30 @@ function stopMusic(){
 const PROGRAM_VO     = 'VO/VO5.mp3';
 const VO_PROGRAM_VOL = 0.82;
 let progVoSrc=null, progVoGain=null;
+let progVoBuffer=null, progVoLoadPromise=null;
+/* fetch+decode the VO ahead of time (during the lead-in countdown) so
+   playProgramVO() can start it instantly at 0:00 with zero network/decode lag */
+function preloadProgramVO(){
+  if(progVoLoadPromise) return progVoLoadPromise;
+  progVoLoadPromise=(async()=>{
+    try{
+      const fw=frame.contentWindow;
+      const ctx=fw.getACtx();
+      const res=await fetch(PROGRAM_VO);
+      if(!res.ok){ console.warn('VO not found:', PROGRAM_VO); return; }
+      progVoBuffer=await ctx.decodeAudioData(await res.arrayBuffer());
+    }catch(e){ console.warn('VO preload error:', e); }
+  })();
+  return progVoLoadPromise;
+}
 async function playProgramVO(){
   try{
     const fw=frame.contentWindow;
     const ctx=fw.getACtx(); fw.getMaster();
     const bus=fw._softBus||ctx.destination;
-    const res=await fetch(PROGRAM_VO);
-    if(!res.ok){ console.warn('VO not found:', PROGRAM_VO); return; }
-    const buf=await ctx.decodeAudioData(await res.arrayBuffer());
+    if(!progVoBuffer) await preloadProgramVO();
+    if(!progVoBuffer) return;
+    const buf=progVoBuffer;
     progVoSrc=ctx.createBufferSource(); progVoSrc.buffer=buf;
     progVoGain=ctx.createGain();
     /* clean-up chain: high-pass drops low breath/rumble; a fast peak limiter
@@ -963,6 +979,10 @@ async function start(record, btn){
 
   /* resume the iframe's audio engine on this user gesture */
   try{ const c = fw.getACtx(); if(c.state==='suspended') await c.resume(); }catch(e){}
+
+  /* start fetching/decoding the VO now so it's instantly ready when we
+     need to start it at 0:00 — overlaps with the lead-in countdown below */
+  preloadProgramVO();
 
   /* arm recording (screen picker appears now) — the recorder is prepared but
      not started yet, so the lead-in countdown below is NOT captured */
