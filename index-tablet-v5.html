@@ -1243,7 +1243,7 @@ html, body {
 
 <script>
 const $ = id => document.getElementById(id);
-const SPEED = (typeof window!=='undefined' && window.__SPEED__) ? window.__SPEED__ : 2.50;
+let SPEED = (typeof window!=='undefined' && window.__SPEED__) ? window.__SPEED__ : 2.50;
 const sleep = ms => new Promise(r => setTimeout(r, ms / SPEED));
 const scene = $('scene');
 const cur   = $('cursor');
@@ -1972,6 +1972,12 @@ async function runScene6(isFinal=false){
    SCENE 7 — ACCIDENT DETAILS (باشر / المرور)
 ══════════════════════════════════════════ */
 async function runScene7(){
+  /* this scene runs at ~6s at the base pace — compress it to ~2s on screen
+     by temporarily tripling the speed (sleeps + gsap tween durations), then
+     restore the base pace for the scenes that follow */
+  const SPEED_BASE=SPEED;
+  SPEED=SPEED_BASE*3; gsap.globalTimeline.timeScale(SPEED);
+
   const f=$('s7-form'), c=$('s7-content');
   s4y=0;
 
@@ -2065,6 +2071,8 @@ async function runScene7(){
   setP(98); await sleep(450);
   sfx_success(); await successFlash($('s7-flash'));
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
+
+  SPEED=SPEED_BASE; gsap.globalTimeline.timeScale(SPEED);   /* restore base pace */
 }
 
 /* ── tell a parent presentation page which scene is on screen ── */
