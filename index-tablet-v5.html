@@ -1296,10 +1296,9 @@ async function clickAt(x,y){
 
 /* ══ TYPING ══ */
 async function typeIn(el,text,delay=68){
-  /* snap fill — the value appears at once with a soft highlight flash
-     (no character-by-character typing) to keep the video short */
+  /* snap fill — the value appears at once with a soft, single, one-way
+     tint highlight (no character-by-character typing, no flash/strobe) */
   el.classList.add('focused'); el.value=text; sfx_key();
-  el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
   el.classList.remove('focused');
   el.classList.add('filled','fill-flash');
   setTimeout(()=>el.classList.remove('fill-flash'),700);
@@ -1410,9 +1409,9 @@ async function runScene1(){
   gsap.to($('s1-sidebar'),{x:0,opacity:1,duration:.5,ease:'power3.out',delay:.12});
   gsap.to($('s1-form'),{y:0,scale:1,opacity:1,duration:.5,ease:'power3.out',delay:.15});
   gsap.to($('s1-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.5)',delay:.22});
-  await sleep(10290);   /* extra hold — stretches the whole slide to ~6s for the voice-over line */
+  await sleep(800);   /* brief hold so the title is readable before fields fly in */
   gsap.to(['#fg1','#fg2','#fg3'],{x:0,opacity:1,duration:.45,ease:'power2.out',stagger:.06});
-  await sleep(320);
+  await sleep(380);
   setP(18);
 
   /* ── data entry — fields fill WHILE the cursor glides straight to the button ── */
@@ -1424,7 +1423,7 @@ async function runScene1(){
   const r1=$('inp1').getBoundingClientRect();
   gsap.set(cur,{left:r1.left+r1.width*.5, top:r1.top-80, opacity:1}); startTrail();
   const rbtn=$('s1-btn').getBoundingClientRect();
-  await sleep(200);
+  await sleep(250);
   await Promise.all([
     typeIn($('inp1'),'1234567890',95),
     typeIn($('inp2'),'500000000',95),
@@ -1435,7 +1434,8 @@ async function runScene1(){
   lblOff(1); lblOff(2); lblOff(3);
   showChk(1); showChk(2); showChk(3); sfx_check();
   spotOff(1); spotOff(2); spotOff(3);
-  setP(72); $('line1').classList.add('done'); await sleep(140);
+  setP(72); $('line1').classList.add('done');
+  await sleep(6140);   /* hold on the fully-filled, checked form — voice-over room without a blank screen */
 
   /* ── BUTTON rises in WHILE the cursor settles down onto it (parallel, no pause) ── */
   act('تأكيد البيانات والمتابعة');
@@ -1450,8 +1450,9 @@ async function runScene1(){
     onComplete:()=>setTimeout(()=>{ $('s1-btn').style.background='#19058c'; shimBtn('s1-btn'); },200)
   });
 
-  setP(82); await sleep(620);
+  setP(82); await sleep(2620);
   sfx_success(); await successFlash($('s1-flash'));
+  await sleep(1380);   /* dwell on the confirmed state before the cut */
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
 
@@ -1565,9 +1566,9 @@ async function runScene3(){
   gsap.to($('s3-sidebar'),{x:0,opacity:1,duration:.55,ease:'power3.out'});
   gsap.to($('s3-form'),{y:0,scale:1,opacity:1,duration:.55,ease:'power3.out',delay:.08});
   gsap.to($('s3-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.5)',delay:.12});
-  await sleep(10530);   /* extra hold — stretches the whole slide to ~6s for the voice-over line */
+  await sleep(800);   /* brief hold so the title is readable before fields fly in */
   gsap.to(['#fg4','#fg5','#fg6','#fg7'],{x:0,opacity:1,duration:.45,ease:'power2.out',stagger:.06});
-  await sleep(360);
+  await sleep(420);
   setP(16);
 
   const f=$('s3-form'), c=$('s3-content');
@@ -1580,7 +1581,7 @@ async function runScene3(){
   const r4=$('inp4').getBoundingClientRect();
   gsap.set(cur,{left:r4.left+r4.width*.5, top:r4.top-80, opacity:1}); startTrail();
   const rbtn=$('s3-btn').getBoundingClientRect();
-  await sleep(200);
+  await sleep(250);
   await Promise.all([
     typeIn($('inp4'),'7001234567',95),
     typeIn($('inp5'),'1234567890',95),
@@ -1592,7 +1593,8 @@ async function runScene3(){
   lblOff(4); lblOff(5); lblOff(6); lblOff(7);
   showChk(4); showChk(5); showChk(6); showChk(7); sfx_check();
   spotOff(4); spotOff(5); spotOff(6); spotOff(7);
-  setP(72); $('line1c').classList.add('done'); await sleep(140);
+  setP(72); $('line1c').classList.add('done');
+  await sleep(6290);   /* hold on the fully-filled, checked form — voice-over room without a blank screen */
 
   /* ── BUTTON rises in WHILE the cursor settles down onto it (parallel, no pause) ── */
   act('تأكيد البيانات والمتابعة');
@@ -1607,8 +1609,9 @@ async function runScene3(){
     onComplete:()=>setTimeout(()=>{ $('s3-btn').style.background='#19058c'; shimBtn('s3-btn'); },200)
   });
 
-  setP(82); await sleep(620);
+  setP(82); await sleep(2680);
   sfx_success(); await successFlash($('s3-flash'));
+  await sleep(1410);   /* dwell on the confirmed state before the cut */
   stopTrail(); gsap.to(cur,{opacity:0,duration:.4});
 }
 
