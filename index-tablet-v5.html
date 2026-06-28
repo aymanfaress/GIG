@@ -1410,7 +1410,7 @@ async function runScene1(){
   gsap.to($('s1-sidebar'),{x:0,opacity:1,duration:.5,ease:'power3.out',delay:.12});
   gsap.to($('s1-form'),{y:0,scale:1,opacity:1,duration:.5,ease:'power3.out',delay:.15});
   gsap.to($('s1-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.5)',delay:.22});
-  await sleep(700);   /* extra hold — gives the voice-over line room to land */
+  await sleep(10290);   /* extra hold — stretches the whole slide to ~6s for the voice-over line */
   gsap.to(['#fg1','#fg2','#fg3'],{x:0,opacity:1,duration:.45,ease:'power2.out',stagger:.06});
   await sleep(320);
   setP(18);
@@ -1565,7 +1565,7 @@ async function runScene3(){
   gsap.to($('s3-sidebar'),{x:0,opacity:1,duration:.55,ease:'power3.out'});
   gsap.to($('s3-form'),{y:0,scale:1,opacity:1,duration:.55,ease:'power3.out',delay:.08});
   gsap.to($('s3-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.5)',delay:.12});
-  await sleep(700);   /* extra hold — gives the voice-over line room to land */
+  await sleep(10530);   /* extra hold — stretches the whole slide to ~6s for the voice-over line */
   gsap.to(['#fg4','#fg5','#fg6','#fg7'],{x:0,opacity:1,duration:.45,ease:'power2.out',stagger:.06});
   await sleep(360);
   setP(16);
