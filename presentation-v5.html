@@ -992,7 +992,11 @@ async function start(record, btn){
     try{ if(!document.fullscreenElement) await document.documentElement.requestFullscreen(); }catch(e){}
     try{
       const display = await navigator.mediaDevices.getDisplayMedia({
-        video:{ frameRate:60, width:{ideal:2560,max:3840}, height:{ideal:1440,max:2160} }, audio:false });
+        video:{ frameRate:60, width:{ideal:2560,max:3840}, height:{ideal:1440,max:2160} }, audio:false,
+        /* bias the picker to capture only this tab's content — no browser
+           chrome, no other tabs/windows (Chrome/Edge; ignored elsewhere) */
+        preferCurrentTab:true, selfBrowserSurface:'include',
+        surfaceSwitching:'exclude', monitorTypeSurfaces:'exclude' });
       const ctx = fw.getACtx(); fw.getMaster();
       if(!recTap){ recTap = ctx.createMediaStreamDestination(); fw._softBus.connect(recTap); }
       const stream = new MediaStream([...display.getVideoTracks(), ...recTap.stream.getAudioTracks()]);
