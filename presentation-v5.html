@@ -990,6 +990,8 @@ async function start(record, btn){
     /* go fullscreen so the 16:9 stage fills the screen — removes the dark
        top/bottom margins that otherwise show up as black bars in the video */
     try{ if(!document.fullscreenElement) await document.documentElement.requestFullscreen(); }catch(e){}
+    await new Promise(r=>setTimeout(r,150));   /* let the fullscreen resize + scaleStage() settle */
+    scaleStage();
     try{
       const display = await navigator.mediaDevices.getDisplayMedia({
         video:{ frameRate:60, width:{ideal:2560,max:3840}, height:{ideal:1440,max:2160} }, audio:false,
@@ -997,9 +999,38 @@ async function start(record, btn){
            chrome, no other tabs/windows (Chrome/Edge; ignored elsewhere) */
         preferCurrentTab:true, selfBrowserSurface:'include',
         surfaceSwitching:'exclude', monitorTypeSurfaces:'exclude' });
+
+      /* the captured tab frame is letterboxed around the 1920×1080 stage
+         whenever the window isn't exactly 16:9 — play the capture into a
+         hidden <video>, then continuously crop+scale just the stage's
+         region into a 1920×1080 canvas so the recorded output is always
+         exactly 1920×1080 with no black bars on any edge */
+      const capVideo = document.createElement('video');
+      capVideo.muted = true; capVideo.playsInline = true;
+      capVideo.style.cssText = 'position:fixed;left:-99999px;top:0;width:1px;height:1px;';
+      capVideo.srcObject = display;
+      document.body.appendChild(capVideo);
+      await capVideo.play();
+      await new Promise(r=>{ if(capVideo.videoWidth) r(); else capVideo.onloadedmetadata=()=>r(); });
+
+      const cropCanvas = document.createElement('canvas');
+      cropCanvas.width = 1920; cropCanvas.height = 1080;
+      const cropCtx = cropCanvas.getContext('2d');
+      const pxRatio = capVideo.videoWidth / window.innerWidth;
+      const sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+      const tx = (window.innerWidth-1920*sc)/2, ty = (window.innerHeight-1080*sc)/2;
+      const sx = tx*pxRatio, sy = ty*pxRatio, sw = 1920*sc*pxRatio, sh = 1080*sc*pxRatio;
+      let cropping = true;
+      (function drawCropFrame(){
+        if(!cropping) return;
+        cropCtx.drawImage(capVideo, sx, sy, sw, sh, 0, 0, 1920, 1080);
+        (capVideo.requestVideoFrameCallback ? capVideo.requestVideoFrameCallback.bind(capVideo) : requestAnimationFrame)(drawCropFrame);
+      })();
+      const canvasTrack = cropCanvas.captureStream(60).getVideoTracks()[0];
+
       const ctx = fw.getACtx(); fw.getMaster();
       if(!recTap){ recTap = ctx.createMediaStreamDestination(); fw._softBus.connect(recTap); }
-      const stream = new MediaStream([...display.getVideoTracks(), ...recTap.stream.getAudioTracks()]);
+      const stream = new MediaStream([canvasTrack, ...recTap.stream.getAudioTracks()]);
       const mime = pickRecMime();
       const recOpts = mime ? {mimeType:mime} : {};
       recOpts.videoBitsPerSecond = 50000000;   /* 50 Mbps — very crisp 1440p / 4K */
@@ -1013,7 +1044,9 @@ async function start(record, btn){
         const a=document.createElement('a');
         a.href=URL.createObjectURL(blob);
         a.download='gig-presentation.'+(isMp4?'mp4':'webm'); a.click();
+        cropping = false;
         display.getTracks().forEach(t=>t.stop());
+        capVideo.pause(); capVideo.remove();
         try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
       };
     }catch(err){
