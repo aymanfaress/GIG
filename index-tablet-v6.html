@@ -1820,7 +1820,7 @@ async function runScene5(){
   await moveTo(re.left+re.width/2,re.top+re.height/2,.85);
   sfx_confirm(); await clickAt(re.left+re.width/2,re.top+re.height/2);
   selCard('eval-est'); sfx_check(); await sleep(200);
-  accSpot('spot-evaltype',false); setP(78); await sleep(220);
+  accSpot('spot-evaltype',false); setP(78); await sleep(120);
 
   /* ── 2) EVALUATION NUMBER + تحقق (fast fill, no cursor hop) ── */
   act('إدخال رقم التقييم والتحقق منه');
@@ -1847,7 +1847,7 @@ async function runScene5(){
   const rc=$('settle-comp').getBoundingClientRect();
   await moveTo(rc.left+rc.width/2,rc.top+rc.height/2,.7);
   sfx_confirm(); await clickAt(rc.left+rc.width/2,rc.top+rc.height/2);
-  selCard('settle-comp'); sfx_check(); await sleep(260);
+  selCard('settle-comp'); sfx_check(); await sleep(160);
   accSpot('spot-settle',false); setP(84); await sleep(200);
 
   /* ── 5) IBAN (fast fill) ── */
@@ -1865,16 +1865,16 @@ async function runScene5(){
 
   /* step 3 line completes */
   pingOff('s5-stp3');
-  $('s5-line3').classList.add('done'); await sleep(320);
+  $('s5-line3').classList.add('done'); await sleep(200);
 
   /* ── BUTTON ── */
   act('حفظ البيانات البنكية والمتابعة');
   await s5scroll($('s5-btn'),.6,.5);
-  sfx_btnpop(); shimBtn('s5-btn'); await sleep(360);
+  sfx_btnpop(); shimBtn('s5-btn'); await sleep(240);
   const rb=$('s5-btn').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(260); sfx_confirm(); await clickAt(xb,yb);
+  await sleep(200); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s5-btn'),{scale:.97,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s5-btn').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s5-btn').style.background='#19058c'; shimBtn('s5-btn'); },200)
