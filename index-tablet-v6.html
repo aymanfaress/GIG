@@ -1482,10 +1482,10 @@ async function runScene2(isFinal=true){
   /* page builds */
   setP(85);
   sfx_city(); gsap.to($('city'),{opacity:1,duration:1.2});
-  await sleep(300);
+  await sleep(200);
   gsap.to($('s2-form'),{y:0,scale:1,opacity:1,duration:.75,ease:'power3.out'});
-  await sleep(380);
-  gsap.to($('otp-title'),{y:0,opacity:1,duration:.65,ease:'back.out(1.4)'}); await sleep(280);
+  await sleep(280);
+  gsap.to($('otp-title'),{y:0,opacity:1,duration:.65,ease:'back.out(1.4)'}); await sleep(230);
   gsap.to($('otp-sub'),{y:0,opacity:1,duration:.55,ease:'power2.out'}); await sleep(700);   /* extra hold — voice-over room */
   gsap.to($('otp-wrap'),{y:0,opacity:1,duration:.55,ease:'back.out(1.5)'}); await sleep(420);
   gsap.to($('otp-timer'),{opacity:1,duration:.4});
@@ -1810,7 +1810,7 @@ async function runScene5(){
   pingOn('s5-stp3');
 
   /* glance at the vehicle card */
-  await s5scroll($('veh-card'),.6,.45); await sleep(240);
+  await s5scroll($('veh-card'),.6,.45); await sleep(120);
 
   /* ── 1) EVALUATION TYPE = تقدير ── */
   act('اختيار نوع التقييم: تقدير');
@@ -1819,7 +1819,7 @@ async function runScene5(){
   const re=$('eval-est').getBoundingClientRect();
   await moveTo(re.left+re.width/2,re.top+re.height/2,.85);
   sfx_confirm(); await clickAt(re.left+re.width/2,re.top+re.height/2);
-  selCard('eval-est'); sfx_check(); await sleep(320);
+  selCard('eval-est'); sfx_check(); await sleep(200);
   accSpot('spot-evaltype',false); setP(78); await sleep(220);
 
   /* ── 2) EVALUATION NUMBER + تحقق (fast fill, no cursor hop) ── */
@@ -1914,8 +1914,8 @@ async function runScene6(isFinal=false){
   setP(92);
 
   /* build in (single fast stagger) */
-  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(220);
-  gsap.to(['#rev-claim','#rev-personal','#rev-policy'],{opacity:1,y:0,duration:.55,ease:'power3.out',stagger:.1}); await sleep(240);
+  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(140);
+  gsap.to(['#rev-claim','#rev-personal','#rev-policy'],{opacity:1,y:0,duration:.55,ease:'power3.out',stagger:.1}); await sleep(160);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
 
@@ -1940,7 +1940,7 @@ async function runScene6(isFinal=false){
 
   /* ── SUBMIT ── */
   act('تقديم المطالبة');
-  sfx_btnpop(); shimBtn('s6-submit'); await sleep(240);
+  sfx_btnpop(); shimBtn('s6-submit'); await sleep(160);
   const rb=$('s6-submit').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
