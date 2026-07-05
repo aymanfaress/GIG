@@ -426,7 +426,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
         <span id="ab-cursor"></span>
         </div><!-- end addrbar-pill -->
       </div><!-- end addrbar-pill-wrap -->
-      <div id="ab-caption">ارفع مستنداتك وصور الحادث عبر موقعنا</div>
+      <div id="ab-caption">تقدم المعلومات المطلوبة عبر موقعنا وبنعالج طلبك بأسرع وقت</div>
     </div>
     <svg id="ab-money" viewBox="0 0 200 174" fill="none" stroke="#19058c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
       <circle id="ab-coin1" cx="72" cy="30" r="15" stroke="#d28c64"/>
@@ -477,14 +477,14 @@ const stage = $('stage'), frame = $('frame');
 
 /* ── headline copy per scene (easy to edit) ── */
 const HEAD = {
-  s1:       { eye:'في مطالبات الأفراد',   t:'أدخِل رقم هوية المالك وعَبّي البيانات المطلوبة' },
-  s3:       { eye:'في مطالبات البنوك والشركات', t:'أدخِل رقم الهوية اللي بدايتها 700 وعَبّي البيانات المطلوبة' },
-  otp:      { eye:'في مطالبات الشركات',   t:'تقديم المطالبات عن طريق المالك فقط' },
-  najm:     { eye:'تفاصيل الحادث',        t:'المطالبة عبر تقرير نجم' },
-  basher:   { eye:'تفاصيل الحادث',        t:'المطالبة عبر باشر / المرور' },
-  estimate: { eye:'تقدير الأضرار',        t:'التقدير والبيانات البنكية' },
-  review:   { eye:'الخطوة الأخيرة',       t:'مراجعة وتقديم المطالبة' },
-  end:      { eye:'',                      t:'' }
+  s1:       { eye:'في مطالبات الأفراد',         t:'أدخِل رقم هوية مالك المركبة وعَبّي البيانات المطلوبة' },
+  s3:       { eye:'في مطالبات البنوك والشركات', t:'أدخِل رقم الهوية اللي بدايتها ٧٠٠ وعَبّي البيانات المطلوبة' },
+  otp:      { eye:'في مطالبات الشركات',         t:'تقديم المطالبات عن طريق مالك المركبة فقط، يوصلك الرمز على جوالك' },
+  najm:     { eye:'تفاصيل الحادث',              t:'بحال تمت المباشرة من نجم.. اختر نوع الحادث وعَبّي بيانات التقرير والمركبة' },
+  basher:   { eye:'تفاصيل الحادث',              t:'وبحال تمت المباشرة من المرور.. أدخِل بيانات الحادث، حدد مكان وتاريخ الحادث ووصف بسيط لِلّي صار' },
+  estimate: { eye:'تقدير الأضرار',              t:'الحين ضيف رقم التقدير من مركز الأضرار، وأدخِل الآيبان البنكي لمالك المركبة' },
+  review:   { eye:'الخطوة الأخيرة',             t:'راجع بياناتك.. واضغط تقديم المطالبة' },
+  end:      { eye:'',                            t:'' }
 };
 
 /* ── scale stage to viewport (contain) ── */
@@ -553,8 +553,8 @@ function showAction(txt){
 
 /* ── full-screen section interstitial shown before najm / المرور / أخرى ── */
 const IST = {
-  najm:   { icon:'images/GIG - Logos-01.png', text:'إذا باشرت نجم الحادث' },
-  basher: { icon:'images/GIG - Logos-02.png', text:'إذا باشر المرور الحادث' }
+  najm:   { icon:'images/GIG - Logos-01.png', text:'بحال تمت المباشرة من نجم' },
+  basher: { icon:'images/GIG - Logos-02.png', text:'بحال تمت المباشرة من المرور' }
 };
 async function showInterstitialCard(key){
   const m=IST[key];
@@ -1172,12 +1172,12 @@ async function introJourney(){
   gsap.to('#it-glow',{opacity:1,scale:1,duration:2.0,ease:'power2.out'});
 
   /* BEAT 1 — accident */
-  ijCap('لو صار لك حادث… لا قدّر الله');
+  ijCap('صار لك حادث لا قدّر الله..');
   await playCrash(a);
   await delay(300);
 
   /* → BEAT 2 — reassurance: the shield glides down over the crash */
-  ijCap('وتأمينك مع جي آي جي');
+  ijCap('مع جي آي جي؟ ريّح بالك..');
   gsap.to('#it-cars',{opacity:0,duration:.55,ease:'power2.inOut'});
   await new Promise(res=>gsap.fromTo('#ij-shield',{opacity:0,y:-150,scale:.92},
     {opacity:1,y:0,scale:1,duration:.70,ease:'power3.out',onComplete:res}));
@@ -1185,7 +1185,7 @@ async function introJourney(){
   await delay(750);
 
   /* → BEAT 3 — easier: shield travels LEFT out as the checklist arrives from the RIGHT (~3s) */
-  ijCap('إجراءات المطالبة معنا صارت أسهل');
+  ijCap('إجراءات المطالبة معنا صارت أسهل!');
   gsap.to('#ij-shield',{x:-440,opacity:0,duration:.75,ease:'power2.inOut'});
   await new Promise(res=>gsap.fromTo('#ij-list',{opacity:0,x:440,scale:.96},
     {opacity:1,x:0,scale:1,duration:.8,ease:'power3.out',onComplete:res}));
