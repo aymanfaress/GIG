@@ -1113,17 +1113,18 @@ function playCrash(a){
     const tl=gsap.timeline({onComplete:res,defaults:{force3D:true}});
     /* fade in while already moving — never a static pop-in */
     tl.to(['.carL','.carR'],{opacity:1,duration:.3,ease:'power1.out'},0)
-      .to('.carL',{x:-54,duration:.50,ease:'power2.in'},0)
-      .to('.carR',{x:54, duration:.50,ease:'power2.in'},0)
+      .to('.carL',{x:-54,duration:.65,ease:'power2.in'},0)
+      .to('.carR',{x:54, duration:.65,ease:'power2.in'},0)
       /* impact — spark burst + recoil + slight tilt */
       .add(()=>{ if(a) sfxAppear(a); })
       .to('#it-crash',{opacity:1,scale:1,rotation:0,duration:.16,ease:'power2.out'})
       .to('.carL',{x:-70,rotation:-7,duration:.12,ease:'power3.out'},'<')
       .to('.carR',{x:70, rotation:7, duration:.12,ease:'power3.out'},'<')
-      .to('#it-crash',{opacity:0,scale:1.55,duration:.3,ease:'power1.out'})
+      .to('#it-crash',{opacity:0,scale:1.55,duration:.42,ease:'power1.out'})
       /* settle back together — smooth, no overshoot so the cars never bob up */
-      .to('.carL',{x:-56,y:0,rotation:0,duration:.3,ease:'power2.out'},'-=0.22')
-      .to('.carR',{x:56, y:0,rotation:0,duration:.3,ease:'power2.out'},'<');
+      .to('.carL',{x:-56,y:0,rotation:0,duration:.44,ease:'power2.out'},'-=0.30')
+      .to('.carR',{x:56, y:0,rotation:0,duration:.44,ease:'power2.out'},'<')
+      .to({},{duration:.12});
   });
 }
 
@@ -1173,14 +1174,15 @@ async function introJourney(){
   /* BEAT 1 — accident */
   ijCap('لو صار لك حادث… لا قدّر الله');
   await playCrash(a);
+  await delay(300);
 
   /* → BEAT 2 — reassurance: the shield glides down over the crash */
   ijCap('وتأمينك مع جي آي جي');
   gsap.to('#it-cars',{opacity:0,duration:.55,ease:'power2.inOut'});
   await new Promise(res=>gsap.fromTo('#ij-shield',{opacity:0,y:-150,scale:.92},
-    {opacity:1,y:0,scale:1,duration:.55,ease:'power3.out',onComplete:res}));
+    {opacity:1,y:0,scale:1,duration:.70,ease:'power3.out',onComplete:res}));
   ijDraw('#ij-shield-chk'); if(a) sfxAppear(a);
-  await delay(150);
+  await delay(750);
 
   /* → BEAT 3 — easier: shield travels LEFT out as the checklist arrives from the RIGHT (~3s) */
   ijCap('إجراءات المطالبة معنا صارت أسهل');
