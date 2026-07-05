@@ -1409,9 +1409,9 @@ async function runScene1(){
   gsap.to($('s1-sidebar'),{x:0,opacity:1,duration:.5,ease:'power3.out',delay:.12});
   gsap.to($('s1-form'),{y:0,scale:1,opacity:1,duration:.5,ease:'power3.out',delay:.15});
   gsap.to($('s1-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.5)',delay:.22});
-  await sleep(440);   /* brief hold so the title is readable before fields fly in */
+  await sleep(200);   /* brief hold so the title is readable before fields fly in */
   gsap.to(['#fg1','#fg2','#fg3'],{x:0,opacity:1,duration:.45,ease:'power2.out',stagger:.06});
-  await sleep(240);
+  await sleep(100);
   setP(18);
 
   /* ── data entry — fields fill WHILE the cursor glides straight to the button ── */
@@ -1423,7 +1423,7 @@ async function runScene1(){
   const r1=$('inp1').getBoundingClientRect();
   gsap.set(cur,{left:r1.left+r1.width*.5, top:r1.top-80, opacity:1}); startTrail();
   const rbtn=$('s1-btn').getBoundingClientRect();
-  await sleep(250);
+  await sleep(130);
   await Promise.all([
     typeIn($('inp1'),'1234567890',95),
     typeIn($('inp2'),'500000000',95),
@@ -1690,11 +1690,11 @@ async function runScene4(){
   /* ── 3) DETAILS — owner + driver ID + najm report + serial (grouped) ── */
   act('تعبئة تفاصيل الحادث');
   await scrollToEl(f,c,$('sec-owner'),.7,.4);
-  accSpot('spot-owner',true); await sleep(140);
+  accSpot('spot-owner',true); await sleep(80);
   const rno=$('own-no').getBoundingClientRect();
   await moveTo(rno.left+rno.width/2,rno.top+rno.height/2,.7);
   sfx_click(); await clickAt(rno.left+rno.width/2,rno.top+rno.height/2);
-  $('own-no').classList.add('sel'); sfx_check(); await sleep(180);
+  $('own-no').classList.add('sel'); sfx_check(); await sleep(100);
 
   /* driver field slides in, then driver ID + najm report + serial fill together */
   $('fld-driver').style.display='block';
@@ -1715,7 +1715,7 @@ async function runScene4(){
 
   /* step 2 line completes */
   pingOff('s4-stp2');
-  $('s4-line2').classList.add('done'); await sleep(200);
+  $('s4-line2').classList.add('done'); await sleep(120);
 
   /* ── BUTTON ── */
   act('حفظ تفاصيل الحادث والمتابعة');
@@ -1914,8 +1914,8 @@ async function runScene6(isFinal=false){
   setP(92);
 
   /* build in (single fast stagger) */
-  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(140);
-  gsap.to(['#rev-claim','#rev-personal','#rev-policy'],{opacity:1,y:0,duration:.55,ease:'power3.out',stagger:.1}); await sleep(160);
+  gsap.to('#s6-banner',{opacity:1,y:0,duration:.7,ease:'power3.out'}); await sleep(60);
+  gsap.to(['#rev-claim','#rev-personal','#rev-policy'],{opacity:1,y:0,duration:.55,ease:'power3.out',stagger:.1}); await sleep(60);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
 
@@ -1933,18 +1933,18 @@ async function runScene6(isFinal=false){
   hl('rev-claim',true);
   const rc=$('rev-claim').getBoundingClientRect();
   await moveTo(rc.left+rc.width*.5,rc.top+rc.height*.4,.6);
-  await sleep(120);
-  await s6scroll($('s6-submit'),.8,.62); await sleep(140);
+  await sleep(60);
+  await s6scroll($('s6-submit'),.8,.62); await sleep(60);
   hl('rev-claim',false);
   setP(98);
 
   /* ── SUBMIT ── */
   act('تقديم المطالبة');
-  sfx_btnpop(); shimBtn('s6-submit'); await sleep(160);
+  sfx_btnpop(); shimBtn('s6-submit'); await sleep(80);
   const rb=$('s6-submit').getBoundingClientRect();
   const xb=rb.left+rb.width*.5, yb=rb.top+rb.height*.5;
   await moveTo(xb+70,yb,.4); await moveTo(xb,yb,.3);
-  await sleep(180); sfx_confirm(); await clickAt(xb,yb);
+  await sleep(100); sfx_confirm(); await clickAt(xb,yb);
   gsap.to($('s6-submit'),{scale:.97,duration:.08,yoyo:true,repeat:1,
     onStart:()=>$('s6-submit').style.background='#2a1aaa',
     onComplete:()=>setTimeout(()=>{ $('s6-submit').style.background='#19058c'; },200)
@@ -1987,7 +1987,7 @@ async function runScene7(){
   gsap.to($('s7-leftpanel'),{x:0,opacity:1,duration:.55,ease:'power3.out',delay:.08});
   gsap.to($('s7-form'),{y:0,opacity:1,duration:.55,ease:'power3.out',delay:.14});
   gsap.to($('s7-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.4)',delay:.2});
-  gsap.to('#bsec-source',{y:0,opacity:1,duration:.5,ease:'power2.out',delay:.26}); await sleep(300);
+  gsap.to('#bsec-source',{y:0,opacity:1,duration:.5,ease:'power2.out',delay:.26}); await sleep(160);
   setP(12);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
@@ -2026,7 +2026,7 @@ async function runScene7(){
   ]);
   $('blbl-report').classList.remove('active'); $('blbl-serial').classList.remove('active'); $('blbl-date').classList.remove('active');
   $('bchk-report').classList.add('show'); $('bchk-serial').classList.add('show'); $('bchk-date').classList.add('show'); sfx_check();
-  accSpot('bspot-report',false); accSpot('bspot-serial',false); accSpot('bspot-date',false); setP(63); await sleep(340);
+  accSpot('bspot-report',false); accSpot('bspot-serial',false); accSpot('bspot-date',false); setP(63); await sleep(220);
 
   /* 6) insured by GIG = لا */
   await scrollToEl(f,c,$('bsec-ins'),.6,.5);
