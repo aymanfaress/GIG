@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>GIG — Presentation V6</title>
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+@property --ab-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-family:'Almarai',sans-serif;}
+
+/* ── 1920×1080 stage, scaled to fit ── */
+#stage{
+  width:1920px;height:1080px;position:fixed;top:0;left:0;
+  transform-origin:top left;overflow:hidden;
+}
+#bg{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+
+/* ── 3D tablet ── */
+#tablet-wrap{
+  position:absolute;left:150px;top:95px;z-index:30;
+  width:1045px;height:825px;
+  perspective:1800px;perspective-origin:50% 50%;
+}
+#tablet{
+  width:100%;height:100%;position:relative;
+  transform-style:preserve-3d;
+  border-radius:34px;
+  background:linear-gradient(155deg,#15151c 0%,#26262f 48%,#15151c 100%);
+  box-shadow:
+    0 60px 120px -30px rgba(10,8,40,.55),
+    0 30px 60px -20px rgba(10,8,40,.4),
+    inset 0 0 0 2px rgba(255,255,255,.05);
+  padding:26px;
+}
+/* subtle camera bump / front speaker */
+#tablet::before{
+  content:'';position:absolute;top:50%;right:11px;transform:translateY(-50%);
+  width:7px;height:7px;border-radius:50%;
+  background:radial-gradient(circle,#3a3a45,#15151c);
+}
+#screen{
+  width:100%;height:100%;border-radius:14px;overflow:hidden;
+  background:#fff;position:relative;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.35);
+}
+#screen iframe{
+  width:100%;height:100%;border:0;display:block;background:#fff;
+}
+/* soft screen glare */
+#glare{
+  position:absolute;inset:0;pointer-events:none;border-radius:14px;
+  background:linear-gradient(115deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 28%);
+  opacity:.6;
+}
+
+/* ── right-side headlines ── */
+#head{
+  position:absolute;right:75px;top:0;height:1080px;width:560px;
+  display:flex;flex-direction:column;justify-content:center;
+  align-items:flex-end;padding-top:290px;padding-bottom:0;
+}
+#eyebrow{
+  font-family:'Almarai',sans-serif;font-weight:700;font-size:21px;
+  color:#d28c64;letter-spacing:.5px;margin-bottom:14px;opacity:0;
+  width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
+}
+#title{
+  font-family:'Almarai',sans-serif;font-weight:900;font-size:40px;
+  line-height:1.35;color:#19058c;opacity:0;
+  width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
+}
+#subtitle{
+  font-family:'Almarai',sans-serif;font-weight:300;font-size:24px;
+  line-height:1.6;color:rgba(25,5,140,.58);margin-top:20px;opacity:0;
+  width:100%;direction:rtl;text-align:right;unicode-bidi:isolate;
+  min-height:44px;
+}
+
+/* ── section interstitial (full-screen divider before najm / المرور / أخرى) ── */
+#interstitial{
+  position:absolute;inset:0;z-index:58;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:44px;
+  background:#fff url('images/bg-presentation.png') center/cover no-repeat;
+  padding-bottom:30px;
+}
+#ist-icon{
+  width:156px;height:156px;object-fit:contain;border-radius:32px;
+  box-shadow:0 26px 64px rgba(25,5,140,.16);
+}
+#ist-text{
+  font-family:'Almarai',sans-serif;font-weight:800;font-size:56px;
+  color:#19058c;text-align:center;direction:rtl;
+  text-shadow:0 14px 40px rgba(25,5,140,.10);
+}
+
+/* ── address-bar intro ── */
+#addrbar{
+  position:absolute;inset:0;
+  z-index:20;pointer-events:none;opacity:0;
+}
+#ab-glow{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:1000px;height:560px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(210,140,100,.22) 0%,rgba(25,5,140,.12) 38%,rgba(25,5,140,0) 70%);
+  filter:blur(36px);opacity:0;pointer-events:none;z-index:1;
+}
+#addrbar-center{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  z-index:2;
+}
+#addrbar-pill{
+  position:relative;z-index:1;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.9);
+  -webkit-backdrop-filter:blur(22px) saturate(140%);
+  backdrop-filter:blur(22px) saturate(140%);
+  border-radius:60px;
+  padding:24px 46px;width:780px;height:88px;
+  box-shadow:
+    0 44px 110px rgba(10,8,40,.26),
+    0 10px 34px rgba(10,8,40,.14),
+    inset 0 1.5px 0 rgba(255,255,255,.75);
+  border:1.5px solid rgba(255,255,255,.7);
+}
+#ab-lock{
+  position:absolute;left:40px;
+  display:flex;align-items:center;opacity:.75;
+}
+#ab-url{
+  font-family:'Almarai',sans-serif;font-weight:400;font-size:30px;
+  color:#19058c;letter-spacing:.5px;direction:ltr;white-space:nowrap;
+  text-align:center;
+}
+#ab-cursor{
+  width:2.5px;height:32px;background:#19058c;
+  border-radius:2px;flex-shrink:0;display:inline-block;
+}
+#addrbar-pill-wrap{
+  position:relative;
+}
+#ab-ring{
+  position:absolute;
+  left:-6px;top:-6px;
+  width:792px;height:100px;
+  opacity:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:visible;
+  filter:drop-shadow(0 0 10px rgba(25,5,140,.75));
+}
+@keyframes pill-trace{
+  from{ stroke-dashoffset:0; }
+  to  { stroke-dashoffset:-1662; }
+}
+#ab-ring-path.running{
+  animation:pill-trace 3s linear infinite;
+}
+#ab-flash{
+  position:absolute;inset:0;background:#fff;opacity:0;
+  z-index:30;pointer-events:none;
+}
+
+/* ── intro title card (very first scene) ── */
+#intro-title{
+  position:absolute;inset:0;z-index:60;
+  display:flex;align-items:center;justify-content:center;
+  background:#fff url('images/bg-presentation.png') center/cover no-repeat;
+  opacity:0;pointer-events:none;
+}
+#it-glow{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:1100px;height:620px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(210,140,100,.20) 0%,rgba(25,5,140,.11) 40%,rgba(25,5,140,0) 72%);
+  filter:blur(44px);opacity:0;
+}
+#it-stack{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:30px;
+}
+#ij-stage{ position:relative; width:580px; height:240px; }
+#ij-stage .ij-ic, #ij-bar{ position:absolute; left:50%; top:50%; opacity:0; }
+#ij-stage .ij-ic, #it-cars, #it-cars .car, #ij-caption, #ij-bar, .ab-file, #addrbar-center{
+  will-change:transform,opacity; backface-visibility:hidden;
+}
+#ij-stage .ij-ic{ filter:drop-shadow(0 16px 28px rgba(25,5,140,.14)); }
+#it-cars{ position:absolute; left:50%; top:50%; width:420px; height:120px; margin-left:-210px; margin-top:-60px; }
+#it-cars .car{ position:absolute; top:50%; left:50%; width:150px; height:100px; margin-top:-50px; margin-left:-75px; }
+#it-crash{ position:absolute; top:50%; left:50%; width:96px; height:96px; margin-top:-52px; margin-left:-48px; opacity:0; pointer-events:none; }
+#ij-shield{ width:168px; height:188px; margin-left:-84px; margin-top:-94px; }
+#ij-list{ width:212px; height:168px; margin-left:-106px; margin-top:-84px; }
+#ij-docs{ width:240px; height:205px; margin-left:-120px; margin-top:-102px; }
+#ij-money{ width:188px; height:128px; margin-left:-94px; margin-top:-64px; }
+#ij-bar{
+  width:360px; margin-left:-180px; margin-top:-34px;
+  display:flex; align-items:center; justify-content:center; gap:13px;
+  background:#fff; border:1.5px solid rgba(25,5,140,.16); border-radius:44px;
+  padding:17px 30px; box-shadow:0 18px 54px rgba(25,5,140,.16);
+}
+#ij-bar .ij-lock{ width:22px; height:22px; flex:none; }
+#ij-url{ font-family:'Almarai',sans-serif; font-weight:700; font-size:30px; color:#19058c; direction:ltr; white-space:nowrap; letter-spacing:.5px; }
+#ij-caret{ width:2.5px; height:30px; background:#19058c; border-radius:2px; flex:none; }
+#ij-caption{
+  font-family:'Almarai',sans-serif; font-weight:800; font-size:46px;
+  color:#19058c; text-align:center; direction:rtl; line-height:1.45;
+  opacity:0; max-width:1180px; margin-top:6px;
+  /* fixed height so showing/changing the text never reflows (and never shoves the cars up);
+     text anchored to the top so it stays close to the icons, reserve grows downward only */
+  height:134px; display:flex; align-items:flex-start; justify-content:center;
+  text-shadow:0 14px 40px rgba(25,5,140,.10);
+}
+/* ── files uploaded around the address bar ── */
+#ab-uploads{ position:absolute; left:50%; top:50%; width:0; height:0; z-index:4; pointer-events:none; }
+.ab-file{ position:absolute; left:-34px; top:-42px; width:68px; height:84px; border-radius:12px;
+  background:#fff; box-shadow:0 16px 38px rgba(25,5,140,.18); border:1.6px solid rgba(25,5,140,.10);
+  display:flex; align-items:center; justify-content:center; opacity:0; }
+.ab-file svg{ width:36px; height:36px; }
+#ab-caption{ font-family:'Almarai',sans-serif; font-weight:800; font-size:40px; color:#19058c;
+  direction:rtl; text-align:center; opacity:0; margin-top:10px; text-shadow:0 12px 34px rgba(25,5,140,.10); }
+#ab-money{ position:absolute; left:50%; top:50%; width:272px; height:236px; margin-left:-136px; margin-top:-126px;
+  opacity:0; z-index:3; will-change:transform,opacity; filter:drop-shadow(0 18px 30px rgba(25,5,140,.16)); }
+
+/* ── outro / end card ── */
+#outro{
+  position:absolute;inset:0;z-index:50;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  background:#fff url('images/bg-outro.png') center/cover no-repeat;
+  opacity:0;pointer-events:none;
+}
+#outro-glow{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:1000px;height:560px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(210,140,100,.22) 0%,rgba(25,5,140,.12) 38%,rgba(25,5,140,0) 70%);
+  filter:blur(36px);opacity:0;pointer-events:none;z-index:1;
+}
+#outro-logo{
+  position:relative;z-index:2;width:420px;height:auto;object-fit:contain;opacity:0;
+  filter:drop-shadow(0 20px 50px rgba(25,5,140,.18));
+}
+#outro-slogan{
+  position:relative;z-index:2;margin-top:32px;
+  font-family:'Almarai',sans-serif;font-weight:700;font-size:40px;
+  color:#19058c;direction:rtl;opacity:0;letter-spacing:.5px;
+  text-shadow:0 12px 34px rgba(25,5,140,.10);
+}
+#outro-url{
+  position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
+  z-index:2;
+  font-family:'Almarai',sans-serif;font-weight:700;font-size:28px;
+  color:#19058c;letter-spacing:3px;direction:ltr;opacity:0;white-space:nowrap;
+}
+
+/* ── tablet light sweep ── */
+#tablet-shine{
+  position:absolute;inset:0;border-radius:14px;
+  pointer-events:none;z-index:7;
+}
+#shine-beam{
+  position:absolute;top:-15%;left:0;
+  width:44%;height:130%;
+  background:linear-gradient(
+    108deg,
+    transparent 0%,
+    rgba(255,255,255,0)   18%,
+    rgba(255,255,255,.10) 40%,
+    rgba(255,255,255,.22) 50%,
+    rgba(255,255,255,.10) 60%,
+    rgba(255,255,255,0)   82%,
+    transparent 100%
+  );
+  transform:skewX(-8deg);
+  opacity:0;pointer-events:none;
+}
+
+/* ── controls ── */
+.pbtn{
+  position:fixed;z-index:99999;border:none;border-radius:10px;cursor:pointer;
+  font:700 15px Almarai,sans-serif;color:#fff;padding:12px 20px;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+}
+#playBtn{top:14px;left:14px;background:#19058c;}
+#recBtn {top:14px;left:150px;background:#c0392b;}
+.pbtn.hide{display:none;}
+
+
+/* ── start countdown overlay ── */
+#countdown{
+  position:fixed;inset:0;z-index:99998;
+  display:none;align-items:center;justify-content:center;
+  background:#0a0a14;
+}
+#cd-num{
+  font-family:'Almarai',sans-serif;font-weight:900;
+  font-size:300px;line-height:1;color:#fff;
+  text-shadow:0 30px 90px rgba(25,5,140,.45);
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <img id="bg" src="images/bg-presentation.png" alt="">
+
+  <!-- intro title card (very first scene) -->
+  <div id="intro-title">
+    <div id="it-glow"></div>
+    <div id="it-stack">
+      <div id="ij-stage">
+        <div id="it-cars">
+          <svg class="car carL" viewBox="0 0 156 104" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M26 80 L26 58 L33 40 Q35 36 40 36 L86 36 L102 57 L132 59 Q139 60 139 66 L139 75 Q139 80 134 80 L118 80 A13 13 0 0 0 92 80 L70 80 A13 13 0 0 0 44 80 L26 80 Z"/>
+            <line x1="66" y1="37" x2="66" y2="57"/>
+            <line x1="34" y1="57" x2="101" y2="57"/>
+            <circle cx="105" cy="80" r="11"/><circle cx="57" cy="80" r="11"/>
+            <line x1="129" y1="66" x2="136" y2="66" stroke="#d28c64" stroke-width="6"/>
+          </svg>
+          <svg class="car carR" viewBox="0 0 156 104" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+            <g transform="translate(156,0) scale(-1,1)">
+              <path d="M26 80 L26 58 L33 40 Q35 36 40 36 L86 36 L102 57 L132 59 Q139 60 139 66 L139 75 Q139 80 134 80 L118 80 A13 13 0 0 0 92 80 L70 80 A13 13 0 0 0 44 80 L26 80 Z"/>
+              <line x1="66" y1="37" x2="66" y2="57"/>
+              <line x1="34" y1="57" x2="101" y2="57"/>
+              <circle cx="105" cy="80" r="11"/><circle cx="57" cy="80" r="11"/>
+              <line x1="129" y1="66" x2="136" y2="66" stroke="#d28c64" stroke-width="6"/>
+            </g>
+          </svg>
+          <svg id="it-crash" viewBox="0 0 100 100">
+            <g stroke="#d28c64" stroke-width="5" stroke-linecap="round">
+              <line x1="50" y1="50" x2="50" y2="12"/><line x1="50" y1="50" x2="74" y2="20"/>
+              <line x1="50" y1="50" x2="88" y2="50"/><line x1="50" y1="50" x2="74" y2="80"/>
+              <line x1="50" y1="50" x2="50" y2="88"/><line x1="50" y1="50" x2="26" y2="80"/>
+              <line x1="50" y1="50" x2="12" y2="50"/><line x1="50" y1="50" x2="26" y2="20"/>
+            </g>
+            <circle cx="50" cy="50" r="8" fill="#19058c"/>
+          </svg>
+        </div>
+
+        <svg id="ij-shield" class="ij-ic" viewBox="0 0 100 112" fill="none" stroke="#19058c" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M50 8 L86 22 V54 C86 80 69 97 50 104 C31 97 14 80 14 54 V22 Z"/>
+          <path id="ij-shield-chk" d="M33 56 L45 68 L69 42" stroke="#d28c64" stroke-width="7"/>
+        </svg>
+
+        <svg id="ij-list" class="ij-ic" viewBox="0 0 116 92" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="10" y="12" width="96" height="68" rx="12"/>
+          <path id="ij-list-c1" d="M24 32 L33 40 L48 25" stroke="#d28c64"/>
+          <line x1="60" y1="33" x2="92" y2="33"/>
+          <path id="ij-list-c2" d="M24 56 L33 64 L48 49" stroke="#d28c64"/>
+          <line x1="60" y1="57" x2="92" y2="57"/>
+        </svg>
+
+        <svg id="ij-docs" class="ij-ic" viewBox="0 0 150 130" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <path id="ij-up" d="M75 58 V26 M62 39 L75 26 L88 39" stroke="#d28c64" stroke-width="6"/>
+          <g id="ij-doc">
+            <rect x="26" y="72" width="40" height="50" rx="5"/>
+            <line x1="34" y1="86" x2="58" y2="86"/><line x1="34" y1="98" x2="58" y2="98"/><line x1="34" y1="110" x2="50" y2="110"/>
+          </g>
+          <g id="ij-photo">
+            <rect x="84" y="78" width="46" height="40" rx="5"/>
+            <circle cx="96" cy="90" r="4"/>
+            <path d="M86 114 L102 99 L111 108 L120 100 L128 108"/>
+          </g>
+        </svg>
+
+        <div id="ij-bar">
+          <svg class="ij-lock" viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11 V8 a4 4 0 0 1 8 0 v3"/></svg>
+          <span id="ij-url"></span><span id="ij-caret"></span>
+        </div>
+
+        <svg id="ij-money" class="ij-ic" viewBox="0 0 150 104" fill="none" stroke="#19058c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+          <g id="ij-speed" stroke="#d28c64"><line x1="6" y1="34" x2="42" y2="34"/><line x1="0" y1="52" x2="36" y2="52"/><line x1="8" y1="70" x2="42" y2="70"/></g>
+          <circle cx="100" cy="52" r="32"/>
+          <path d="M88 52 L97 61 L114 42" stroke="#d28c64" stroke-width="6"/>
+        </svg>
+      </div>
+      <div id="ij-caption"></div>
+    </div>
+  </div>
+
+  <!-- section interstitial divider -->
+  <div id="interstitial">
+    <img id="ist-icon" src="" alt="">
+    <div id="ist-text"></div>
+  </div>
+
+  <!-- address-bar intro overlay -->
+  <div id="addrbar">
+    <div id="ab-glow"></div>
+    <div id="addrbar-center">
+      <div id="ab-uploads">
+        <div class="ab-file" id="ab-f1"><svg viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+        <div class="ab-file" id="ab-f2"><svg viewBox="0 0 24 24" fill="none" stroke="#d28c64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M5 17l5-5 4 4 2-2 3 3"/></svg></div>
+        <div class="ab-file" id="ab-f3"><svg viewBox="0 0 24 24" fill="none" stroke="#19058c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+        <div class="ab-file" id="ab-f4"><svg viewBox="0 0 24 24" fill="none" stroke="#d28c64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M5 17l5-5 4 4 2-2 3 3"/></svg></div>
+      </div>
+      <div id="addrbar-pill-wrap">
+        <svg id="ab-ring" viewBox="0 0 792 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ring-grad" x1="0" y1="0" x2="792" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%"   stop-color="#19058c"/>
+              <stop offset="50%"  stop-color="#d28c64"/>
+              <stop offset="100%" stop-color="#19058c"/>
+            </linearGradient>
+          </defs>
+          <rect id="ab-ring-path" x="6" y="6" width="780" height="88" rx="44"
+                fill="none" stroke="url(#ring-grad)" stroke-width="4"
+                stroke-dasharray="260 1402" stroke-dashoffset="0"
+                stroke-linecap="round"/>
+        </svg>
+        <div id="addrbar-pill">
+        <span id="ab-lock">
+          <svg width="20" height="22" viewBox="0 0 18 20" fill="none">
+            <rect x="1.5" y="8.5" width="15" height="11" rx="2.5" stroke="#19058c" stroke-width="1.6" fill="none"/>
+            <path d="M4.5 8.5V6A4.5 4.5 0 0 1 13.5 6v2.5" stroke="#19058c" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            <circle cx="9" cy="14" r="1.8" fill="#19058c"/>
+          </svg>
+        </span>
+        <span id="ab-url"></span>
+        <span id="ab-cursor"></span>
+        </div><!-- end addrbar-pill -->
+      </div><!-- end addrbar-pill-wrap -->
+      <div id="ab-caption">ارفع مستنداتك وصور الحادث عبر موقعنا</div>
+    </div>
+    <svg id="ab-money" viewBox="0 0 200 174" fill="none" stroke="#19058c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <circle id="ab-coin1" cx="72" cy="30" r="15" stroke="#d28c64"/>
+      <circle id="ab-coin2" cx="100" cy="24" r="14" stroke="#d28c64"/>
+      <circle id="ab-coin3" cx="128" cy="30" r="15" stroke="#d28c64"/>
+      <g id="ab-wallet">
+        <rect x="28" y="76" width="144" height="84" rx="16"/>
+        <path d="M28 108 H146 a14 14 0 0 1 14 14 a14 14 0 0 1 -14 14 H28"/>
+        <circle cx="150" cy="122" r="5.5" stroke="#d28c64"/>
+      </g>
+    </svg>
+  </div>
+  <div id="ab-flash"></div>
+
+  <!-- outro / end card overlay -->
+  <div id="outro">
+    <div id="outro-glow"></div>
+    <img id="outro-logo" src="images/GIG - Logo.png" alt="GIG">
+    <div id="outro-slogan">شريكك الذي يهتم</div>
+    <div id="outro-url">www.gig.sa</div>
+  </div>
+
+  <div id="tablet-wrap">
+    <div id="tablet">
+      <div id="screen">
+        <iframe id="frame" src="index-tablet-v6.html?embed" title="GIG"></iframe>
+        <div id="glare"></div>
+        <div id="tablet-shine"><div id="shine-beam"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="head">
+    <div id="eyebrow"></div>
+    <div id="title"></div>
+    <div id="subtitle"></div>
+  </div>
+</div>
+
+<button id="playBtn" class="pbtn">▶ تشغيل العرض</button>
+<button id="recBtn"  class="pbtn">● تسجيل وحفظ</button>
+
+<div id="countdown"><span id="cd-num">5</span></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const stage = $('stage'), frame = $('frame');
+
+/* ── headline copy per scene (easy to edit) ── */
+const HEAD = {
+  s1:       { eye:'في مطالبات الأفراد',   t:'أدخِل رقم هوية المالك وعَبّي البيانات المطلوبة' },
+  s3:       { eye:'في مطالبات البنوك والشركات', t:'أدخِل رقم الهوية اللي بدايتها 700 وعَبّي البيانات المطلوبة' },
+  otp:      { eye:'في مطالبات الشركات',   t:'تقديم المطالبات عن طريق المالك فقط' },
+  najm:     { eye:'تفاصيل الحادث',        t:'المطالبة عبر تقرير نجم' },
+  basher:   { eye:'تفاصيل الحادث',        t:'المطالبة عبر باشر / المرور' },
+  estimate: { eye:'تقدير الأضرار',        t:'التقدير والبيانات البنكية' },
+  review:   { eye:'الخطوة الأخيرة',       t:'مراجعة وتقديم المطالبة' },
+  end:      { eye:'',                      t:'' }
+};
+
+/* ── scale stage to viewport (contain) ── */
+function scaleStage(){
+  const sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+  const tx = (window.innerWidth-1920*sc)/2, ty=(window.innerHeight-1080*sc)/2;
+  stage.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`;
+}
+scaleStage(); window.addEventListener('resize',scaleStage);
+
+/* ── tablet resting pose + hidden start ── */
+function setTabletStart(){
+  gsap.set('#tablet',{y:920, rotationY:0, rotationX:0, x:0, z:0, scale:1, opacity:0, transformOrigin:'50% 50%'});
+  gsap.set(['#eyebrow','#title','#subtitle'],{opacity:0});
+}
+setTabletStart();
+
+function tabletEnter(){
+  return new Promise(res=>{
+    const tl = gsap.timeline({onComplete:res});
+    tl.to('#tablet',{y:0, opacity:1, duration:1.1, ease:'power3.out'})
+      .to('#tablet',{y:-5, duration:0.35, ease:'sine.inOut'},'-=0.05')
+      .to('#tablet',{y:0,  duration:0.25, ease:'sine.inOut'});
+  });
+}
+
+/* ── headline switching ── */
+let curKey=null;
+function showHead(key){
+  if(key===curKey) return; curKey=key;
+  const h = HEAD[key]; if(!h) return;
+  const tl = gsap.timeline();
+  /* soft exit — drift up gently */
+  tl.to('#eyebrow',  {opacity:0, y:-8, duration:.32, ease:'power2.in'})
+    .to('#title',    {opacity:0, y:-8, duration:.32, ease:'power2.in'}, '-=0.26')
+    .to('#subtitle', {opacity:0,       duration:.22, ease:'power1.in'}, '-=0.26');
+
+  /* end scene: just fade out, nothing new to animate in */
+  if(!h.t && !h.eye){ curAction=null; return; }
+
+  tl.add(()=>{
+      $('eyebrow').textContent  = h.eye;
+      $('title').textContent    = h.t;
+      $('subtitle').textContent = '';
+      curAction = null;
+    })
+    /* graceful entrance — glide in from below, lightly staggered */
+    .fromTo('#eyebrow', {opacity:0,y:12},{opacity:(h.eye?1:0),y:0,duration:.5, ease:'power3.out'})
+    .fromTo('#title',   {opacity:0,y:14},{opacity:(h.t?1:0),  y:0,duration:.55,ease:'power3.out'},'-=0.36')
+    .set('#subtitle',{opacity:0,y:0});
+}
+
+/* ── live action caption: updates ONLY subtitle — glides in, never shifts layout ── */
+let curAction=null;
+function showAction(txt){
+  if(txt===curAction) return; curAction=txt;
+  const el=$('subtitle');
+  gsap.killTweensOf(el);
+  gsap.to(el,{opacity:0, duration:.15, ease:'power1.in',
+    onComplete:()=>{
+      el.textContent=txt||'';
+      gsap.fromTo(el,{opacity:0, y:8},{opacity:(txt?1:0), y:0, duration:.42, ease:'power3.out'});
+    }
+  });
+}
+
+/* ── full-screen section interstitial shown before najm / المرور / أخرى ── */
+const IST = {
+  najm:   { icon:'images/GIG - Logos-01.png', text:'إذا باشرت نجم الحادث' },
+  basher: { icon:'images/GIG - Logos-02.png', text:'إذا باشر المرور الحادث' }
+};
+async function showInterstitialCard(key){
+  const m=IST[key];
+  if(!m){ try{ frame.contentWindow.postMessage({gigResume:key},'*'); }catch(e){} return; }
+  $('ist-icon').src=m.icon; $('ist-text').textContent=m.text;
+  /* HARD CUT in — the card appears instantly over the finished scene (no fade) */
+  gsap.set('#interstitial',{display:'flex',opacity:1});
+  gsap.set('#ist-icon',{opacity:0,scale:.82,y:12});
+  gsap.set('#ist-text',{opacity:0,y:18});
+  gsap.to('#ist-icon',{opacity:1,scale:1,y:0,duration:.7,ease:'back.out(1.3)'});
+  gsap.to('#ist-text',{opacity:1,y:0,duration:.6,ease:'power3.out',delay:.18});
+  await delay(1900);
+  /* card shown — tell the scene to swap & start building behind the card;
+     the iframe then asks us to remove the card (instant cut to the scene) */
+  try{ frame.contentWindow.postMessage({gigResume:key},'*'); }catch(e){}
+}
+
+window.addEventListener('message', e=>{
+  if(!e.data) return;
+  if(e.data.gigScene){ showHead(e.data.gigScene); if(e.data.gigScene!=='end') playVO(voForScene(e.data.gigScene)); }
+  if(typeof e.data.gigAction==='string') showAction(e.data.gigAction);
+  if(e.data.gigInterstitial){ showInterstitialCard(e.data.gigInterstitial); }
+  if(e.data.gigRemove){ gsap.set('#interstitial',{display:'none'}); }   /* HARD CUT out */
+});
+
+/* ── premium tech sound design (Apple-inspired — pure sine, subtle, precise) ── */
+function getAudio(){
+  try{
+    const fw=frame.contentWindow;
+    const ctx=fw.getACtx(); fw.getMaster();
+    const dest=fw._softBus || ctx.destination;
+    return {ctx,dest};
+  }catch(e){ return null; }
+}
+
+/* soft sine sweep — clean modal "appear" feel */
+function sfxAppear(a){
+  const {ctx,dest}=a, t=ctx.currentTime;
+  const o=ctx.createOscillator(); o.type='sine';
+  o.frequency.setValueAtTime(1800,t);
+  o.frequency.exponentialRampToValueAtTime(3200,t+.28);
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(.0001,t);
+  g.gain.exponentialRampToValueAtTime(.045,t+.05);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.28);
+  o.connect(g); g.connect(dest);
+  o.start(t); o.stop(t+.3);
+}
+
+/* ultra-clean keyboard tock — MacBook-style */
+function sfxKey(a){
+  const {ctx,dest}=a, t=ctx.currentTime;
+  /* mechanical body (low transient) */
+  const lo=ctx.createOscillator(); lo.type='sine';
+  lo.frequency.setValueAtTime(340,t);
+  lo.frequency.exponentialRampToValueAtTime(180,t+.022);
+  const lg=ctx.createGain();
+  lg.gain.setValueAtTime(.0001,t); lg.gain.exponentialRampToValueAtTime(.038,t+.003);
+  lg.gain.exponentialRampToValueAtTime(.0001,t+.022);
+  lo.connect(lg); lg.connect(dest); lo.start(t); lo.stop(t+.025);
+  /* click transient (high sine) */
+  const hi=ctx.createOscillator(); hi.type='sine';
+  hi.frequency.setValueAtTime(3800,t);
+  hi.frequency.exponentialRampToValueAtTime(2600,t+.018);
+  const hg=ctx.createGain();
+  hg.gain.setValueAtTime(.0001,t); hg.gain.exponentialRampToValueAtTime(.022,t+.002);
+  hg.gain.exponentialRampToValueAtTime(.0001,t+.018);
+  hi.connect(hg); hg.connect(dest); hi.start(t); hi.stop(t+.02);
+}
+
+/* two-tone ascending chime — Apple notification quality */
+function sfxChime(a){
+  const {ctx,dest}=a, t=ctx.currentTime;
+  [[1047,.0],[1319,.09],[1568,.18]].forEach(([f,dt])=>{
+    const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f;
+    const g=ctx.createGain(); const st=t+dt;
+    g.gain.setValueAtTime(.0001,st);
+    g.gain.exponentialRampToValueAtTime(.055,st+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,st+.55);
+    o.connect(g); g.connect(dest); o.start(st); o.stop(st+.6);
+  });
+}
+
+/* launch — clean ascending sweep + gentle arpeggio (iOS/macOS quality) */
+function sfxLaunch(a){
+  const {ctx,dest}=a, t=ctx.currentTime;
+  /* clean pitch sweep */
+  const sw=ctx.createOscillator(); sw.type='sine';
+  sw.frequency.setValueAtTime(520,t);
+  sw.frequency.exponentialRampToValueAtTime(2080,t+.38);
+  const sg=ctx.createGain();
+  sg.gain.setValueAtTime(.0001,t);
+  sg.gain.exponentialRampToValueAtTime(.055,t+.04);
+  sg.gain.exponentialRampToValueAtTime(.0001,t+.38);
+  sw.connect(sg); sg.connect(dest); sw.start(t); sw.stop(t+.4);
+  /* staggered arpeggio — C major (clean, universal, uplifting) */
+  [[523.25,.06],[659.25,.13],[783.99,.20],[1046.5,.28]].forEach(([f,dt])=>{
+    const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f;
+    const g=ctx.createGain(); const st=t+dt;
+    g.gain.setValueAtTime(.0001,st);
+    g.gain.exponentialRampToValueAtTime(.05,st+.015);
+    g.gain.exponentialRampToValueAtTime(.0001,st+.75);
+    o.connect(g); g.connect(dest); o.start(st); o.stop(st+.8);
+  });
+}
+
+/* ── tablet light sweep ── fires once after tablet finishes entering */
+function tabletShine(){
+  gsap.set('#shine-beam',{xPercent:-120,opacity:1});
+  gsap.to('#shine-beam',{
+    xPercent:230, duration:1.05, ease:'power1.inOut',
+    onComplete:()=>gsap.set('#shine-beam',{opacity:0})
+  });
+}
+
+/* ── address bar intro ── */
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+/* ── lead-in countdown: seconds of buffer before the show starts, so an
+   external screen recorder can be rolling before frame one ── */
+const START_DELAY = 5;
+
+/* pick the best supported recording format — prefer MP4 (H.264/AAC),
+   fall back to WebM only if the browser can't record MP4 */
+function pickRecMime(){
+  const prefs = [
+    'video/mp4;codecs=avc1.640028,mp4a.40.2',
+    'video/mp4;codecs=avc1,mp4a.40.2',
+    'video/mp4;codecs=h264,aac',
+    'video/mp4',
+    'video/webm;codecs=vp9,opus',
+    'video/webm'
+  ];
+  for(const m of prefs){ try{ if(MediaRecorder.isTypeSupported(m)) return m; }catch(e){} }
+  return '';
+}
+
+async function runCountdown(secs, forRecording){
+  const el = $('countdown'), num = $('cd-num');
+  el.style.display = 'flex';
+  for(let n=secs; n>=1; n--){
+    num.textContent = n;
+    gsap.fromTo(num,{scale:.6,opacity:0},{scale:1,opacity:1,duration:.35,ease:'power3.out'});
+    await delay(1000);
+  }
+  /* clear and hide, then wait for the empty overlay to actually be painted
+     before recording starts — keeps the numbers out of the video */
+  num.textContent='';
+  el.style.display = 'none';
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  /* the capture path (tab capture → hidden <video> → crop canvas →
+     captureStream → encoder) has its own pipeline latency, so the cleared
+     frame takes longer than a couple of rAFs to actually reach the
+     recording — wait it out here so the very first recorded frame is the
+     first real scene, not a trailing "1" */
+  if(forRecording) await new Promise(r=>setTimeout(r,500));
+}
+
+async function addressBarIntro(){
+  const urlEl=$('ab-url'), curEl=$('ab-cursor');
+  const a=getAudio();
+
+  /* reset everything */
+  urlEl.textContent='';
+  gsap.set('#addrbar',{display:'block',opacity:1});
+  gsap.set('#addrbar-center',{y:50,scale:.88,opacity:0});
+  gsap.set('#ab-glow',{opacity:0,scale:.6});
+  gsap.set('#ab-ring',{opacity:0});
+  const ringPath=$('ab-ring-path');
+  ringPath.classList.remove('running');
+  ringPath.style.strokeDashoffset='0';
+  gsap.set(curEl,{opacity:1});
+  gsap.set('#ab-flash',{opacity:0});
+  gsap.set('#ab-caption',{opacity:0,y:8});
+  gsap.set('.ab-file',{opacity:0});
+  gsap.set('#ab-money',{opacity:0});
+
+  /* 1. glow builds slowly in background */
+  gsap.to('#ab-glow',{opacity:1,scale:1,duration:2.2,ease:'power2.out'});
+
+  /* 2. pill glides in from below */
+  await delay(150);
+  if(a) sfxAppear(a);
+  await new Promise(res=>gsap.to('#addrbar-center',{
+    y:0,scale:1,opacity:1,duration:.85,ease:'back.out(1.4)',onComplete:res
+  }));
+
+  await delay(160);
+
+  /* 3. cursor blinks, then URL types character by character */
+  const blinkTween=gsap.to(curEl,{opacity:0,duration:.45,repeat:-1,yoyo:true,ease:'power1.inOut'});
+  const url='www.gig.sa';
+  for(let i=0;i<=url.length;i++){
+    urlEl.textContent=url.slice(0,i);
+    if(a && i>0) sfxKey(a);
+    await delay(i===0?200:45);
+  }
+
+  /* 3.5 upload: a continuous stream of files rises up through the bar and
+     fades away above — loops while the bar is on screen */
+  const streams=[];
+  function streamFile(sel,x,delay){
+    const tl=gsap.timeline({repeat:-1,delay});
+    tl.set(sel,{x:x,y:135,opacity:0,scale:.92,rotation:0})
+      .to(sel,{opacity:1,duration:.4,ease:'power1.out'},0)
+      .to(sel,{y:-185,duration:1.95,ease:'sine.inOut'},0)
+      .to(sel,{opacity:0,duration:.6,ease:'power1.in'},1.3);
+    return tl;
+  }
+  streams.push(streamFile('#ab-f1',-150,0));
+  streams.push(streamFile('#ab-f2', 150,0.5));
+  streams.push(streamFile('#ab-f3', -58,1.0));
+  streams.push(streamFile('#ab-f4',  58,1.5));
+
+  /* 4. pause after typing, cursor stops */
+  await delay(280);
+  blinkTween.kill();
+  gsap.set(curEl,{opacity:0});
+
+  /* 5. ring fades in and traces */
+  gsap.to('#ab-ring',{opacity:1,duration:.28,ease:'power2.out'});
+  await delay(100);
+  if(a) sfxChime(a);
+  ringPath.classList.add('running');
+
+  /* let the bar + the rising file stream run a while */
+  await delay(3200);
+
+  /* stop the stream and clear any files still on screen */
+  streams.forEach(t=>t.kill());
+  gsap.to('.ab-file',{opacity:0,duration:.4,ease:'power1.in'});
+
+  /* 6. the bar gathers itself in (collapses away) — the tracing stroke keeps
+     running the whole time and just shrinks/fades away with the bar */
+  if(a) sfxLaunch(a);
+  await new Promise(res=>gsap.to('#addrbar-center',{scale:.4,opacity:0,duration:.55,ease:'power2.in',onComplete:res}));
+  gsap.to('#ab-glow',{opacity:0,duration:.5,ease:'power2.in'});
+
+  /* 7. MONEY TRANSFER — coins are deposited into the wallet (motion only, no text) */
+  gsap.set('#ab-money',{opacity:1,y:0,scale:1});
+  gsap.set('#ab-wallet',{scale:.82,opacity:0,y:18,transformOrigin:'50% 82%'});
+  gsap.set(['#ab-coin1','#ab-coin2','#ab-coin3'],{opacity:0,y:0,scale:.85});
+  if(a) sfxAppear(a);
+  await new Promise(res=>{
+    const tl=gsap.timeline({onComplete:res});
+    tl.to('#ab-wallet',{scale:1,opacity:1,y:0,duration:.5,ease:'back.out(1.6)'});
+    ['#ab-coin1','#ab-coin2','#ab-coin3'].forEach((sel)=>{
+      tl.to(sel,{opacity:1,scale:1,duration:.22,ease:'power2.out'})
+        .to(sel,{y:58,scale:.6,opacity:0,duration:.52,ease:'power2.in'})
+        .to('#ab-wallet',{scale:1.06,duration:.15,yoyo:true,repeat:1,ease:'sine.inOut',
+          onStart:()=>{ if(a) sfxKey(a); }},'-=0.22');
+    });
+  });
+  await delay(900);
+  ringPath.classList.remove('running');
+  /* leave the money scene on screen — the tablet rise picks up from here (connected) */
+}
+
+/* ── start the show (with optional recording) ── */
+let mediaRec=null, recChunks=[], recTap=null;
+
+/* ── background music — routed through the iframe's soft bus so it is
+   both audible AND captured by the recorder; fades in/out gracefully ── */
+const MUSIC_FILE = 'Interview%2001.mp3';   /* URL-encoded (space → %20) */
+const MUSIC_VOL  = 0.10;                    /* soft bed under the continuous narration */
+let musicSrc=null, musicGain=null;
+async function startMusic(){
+  try{
+    const fw  = frame.contentWindow;
+    const ctx = fw.getACtx(); fw.getMaster();           /* ensure soft bus exists */
+    const bus = fw._softBus || ctx.destination;
+    const res = await fetch(MUSIC_FILE);
+    if(!res.ok){ console.warn('music not found:', MUSIC_FILE); return; }
+    const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+    musicSrc = ctx.createBufferSource();
+    musicSrc.buffer = buf; musicSrc.loop = true;        /* loop if shorter than 2 min */
+    musicGain = ctx.createGain();
+    const t = ctx.currentTime;
+    musicGain.gain.setValueAtTime(0.0001, t);
+    musicGain.gain.exponentialRampToValueAtTime(MUSIC_VOL, t+2.2);   /* fade in */
+    musicSrc.connect(musicGain); musicGain.connect(bus);
+    musicSrc.start(t);
+  }catch(e){ console.warn('music error:', e); }
+}
+function stopMusic(){
+  if(!musicGain) return;
+  const ctx=musicGain.context, t=ctx.currentTime;
+  musicGain.gain.cancelScheduledValues(t);
+  musicGain.gain.setValueAtTime(musicGain.gain.value, t);
+  musicGain.gain.linearRampToValueAtTime(0.0001, t+3.0);            /* fade out */
+  try{ musicSrc.stop(t+3.2); }catch(e){}
+  musicSrc=null; musicGain=null;
+}
+
+/* ── continuous program voice-over (single file for the whole video) ──
+   routed through the iframe's soft bus so the recorder captures it; sits
+   clearly on top of the soft music bed for a strong VO/music balance ── */
+const PROGRAM_VO     = 'VO/VO6.mp3';
+const VO_PROGRAM_VOL = 0.82;
+let progVoSrc=null, progVoGain=null;
+let progVoBuffer=null, progVoLoadPromise=null;
+/* fetch+decode the VO ahead of time (during the lead-in countdown) so
+   playProgramVO() can start it instantly at 0:00 with zero network/decode lag */
+function preloadProgramVO(){
+  if(progVoLoadPromise) return progVoLoadPromise;
+  progVoLoadPromise=(async()=>{
+    try{
+      const fw=frame.contentWindow;
+      const ctx=fw.getACtx();
+      const res=await fetch(PROGRAM_VO);
+      if(!res.ok){ console.warn('VO not found:', PROGRAM_VO); return; }
+      progVoBuffer=await ctx.decodeAudioData(await res.arrayBuffer());
+    }catch(e){ console.warn('VO preload error:', e); }
+  })();
+  return progVoLoadPromise;
+}
+async function playProgramVO(){
+  try{
+    const fw=frame.contentWindow;
+    const ctx=fw.getACtx(); fw.getMaster();
+    const bus=fw._softBus||ctx.destination;
+    if(!progVoBuffer) await preloadProgramVO();
+    if(!progVoBuffer) return;
+    const buf=progVoBuffer;
+    progVoSrc=ctx.createBufferSource(); progVoSrc.buffer=buf;
+    progVoGain=ctx.createGain();
+    /* clean-up chain: high-pass drops low breath/rumble; a fast peak limiter
+       stops loud syllables/breaths from clipping into a harsh "gasp" artifact */
+    const hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=90; hp.Q.value=0.7;
+    const lim=ctx.createDynamicsCompressor();
+    lim.threshold.value=-3; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=0.002; lim.release.value=0.18;
+    const t=ctx.currentTime;
+    progVoGain.gain.setValueAtTime(0.0001,t);
+    progVoGain.gain.exponentialRampToValueAtTime(VO_PROGRAM_VOL,t+0.4);  /* gentle fade-in */
+    progVoSrc.connect(hp); hp.connect(progVoGain); progVoGain.connect(lim); lim.connect(bus);
+    progVoSrc.start(t);
+  }catch(e){ console.warn('VO error:', e); }
+}
+function stopProgramVO(){
+  if(!progVoGain) return;
+  const ctx=progVoGain.context, t=ctx.currentTime;
+  progVoGain.gain.cancelScheduledValues(t);
+  progVoGain.gain.setValueAtTime(progVoGain.gain.value,t);
+  progVoGain.gain.linearRampToValueAtTime(0.0001,t+0.6);
+  try{ progVoSrc.stop(t+0.7); }catch(e){}
+  progVoSrc=null; progVoGain=null;
+}
+
+/* ── voice-over: per-scene segments played in sync with each scene ──
+   Files are optional — if one is missing, nothing plays (no error).
+   Routed through the iframe's soft bus so the recorder captures it. */
+const VO_VOL = 0.82;            /* narration level — clear but not overpowering */
+const VO_DUCK = 0.06;           /* music level while narration plays             */
+const VO_MAP = {
+  s1:       'VO2/vo-02-individuals.mp3',
+  s3:       'VO2/vo-03-company.mp3',
+  otp:      'VO2/vo-04-otp.mp3',
+  najm:     'VO2/vo-05-najm.mp3',
+  estimate: ['VO2/vo-06-estimate.mp3','VO2/vo-10-estimate-final.mp3'],  /* runs twice */
+  review:   ['VO2/vo-07-review.mp3','VO2/vo-11-review-final.mp3'],      /* runs twice */
+  basher:   'VO2/vo-08-basher.mp3'
+};
+let voSrc=null, voGain=null, voSeen={};
+function voForScene(key){
+  const m=VO_MAP[key]; if(!m) return null;
+  if(Array.isArray(m)){ const i=voSeen[key]||0; voSeen[key]=i+1; return m[Math.min(i,m.length-1)]; }
+  return m;
+}
+function stopVO(){
+  if(voSrc){ try{ voSrc.onended=null; voSrc.stop(); }catch(e){} }
+  voSrc=null; voGain=null;
+}
+async function playVO(file){
+  return;                                     /* voice-over disabled in v4 (will be re-added later) */
+  if(!file) return;
+  try{
+    const fw=frame.contentWindow;
+    const ctx=fw.getACtx(); fw.getMaster();
+    const bus=fw._softBus||ctx.destination;
+    const res=await fetch(file);
+    if(!res.ok) return;                       /* not uploaded yet — skip */
+    const buf=await ctx.decodeAudioData(await res.arrayBuffer());
+    stopVO();                                 /* cut any previous segment */
+    voSrc=ctx.createBufferSource(); voSrc.buffer=buf;
+    voGain=ctx.createGain(); voGain.gain.value=VO_VOL;
+    voSrc.connect(voGain); voGain.connect(bus);
+    /* duck the music under the narration */
+    if(musicGain){
+      const t=musicGain.context.currentTime;
+      musicGain.gain.cancelScheduledValues(t);
+      musicGain.gain.setValueAtTime(musicGain.gain.value,t);
+      musicGain.gain.linearRampToValueAtTime(VO_DUCK,t+0.4);
+    }
+    /* restore music smoothly when narration ends */
+    voSrc.onended=()=>{
+      if(musicGain){
+        const t=musicGain.context.currentTime;
+        musicGain.gain.cancelScheduledValues(t);
+        musicGain.gain.setValueAtTime(musicGain.gain.value,t);
+        musicGain.gain.linearRampToValueAtTime(MUSIC_VOL,t+0.8);
+      }
+    };
+    voSrc.start(ctx.currentTime);
+  }catch(e){ /* ignore */ }
+}
+
+async function start(record, btn){
+  /* mobile browsers (iOS Safari in particular) don't implement
+     getDisplayMedia for web pages at all — fail fast with a clear
+     message instead of letting the cryptic "is not a function" error
+     surface mid-flow */
+  if(record && (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia)){
+    alert('تسجيل الفيديو من المتصفح غير متاح على الجوال (خاصة Safari/iOS لا يدعم تسجيل الشاشة من الموقع). من فضلك استخدم متصفح Chrome أو Edge على جهاز كمبيوتر لتسجيل الفيديو.');
+    return;
+  }
+  $('playBtn').classList.add('hide'); $('recBtn').classList.add('hide');
+
+  /* reset intro/outro + music + voice-over state (allows replay) */
+  outroDone=false;
+  voSeen={}; stopVO();
+  gsap.set('#outro',{opacity:0,display:'none'});
+  gsap.set('#intro-title',{opacity:0,display:'none'});
+  stopMusic();
+
+  const fw = frame.contentWindow;
+
+  /* resume the iframe's audio engine on this user gesture */
+  try{ const c = fw.getACtx(); if(c.state==='suspended') await c.resume(); }catch(e){}
+
+  /* start fetching/decoding the VO now so it's instantly ready when we
+     need to start it at 0:00 — overlaps with the lead-in countdown below */
+  preloadProgramVO();
+
+  /* arm recording (screen picker appears now) — the recorder is prepared but
+     not started yet, so the lead-in countdown below is NOT captured */
+  if(record){
+    /* go fullscreen so the 16:9 stage fills the screen — removes the dark
+       top/bottom margins that otherwise show up as black bars in the video */
+    try{ if(!document.fullscreenElement) await document.documentElement.requestFullscreen(); }catch(e){}
+    await new Promise(r=>setTimeout(r,150));   /* let the fullscreen resize + scaleStage() settle */
+    scaleStage();
+    try{
+      /* ask for exactly the resolution/rate we'll actually encode — requesting
+         more (e.g. 4K/60) than the 1080p30 output just burns CPU decoding and
+         re-scaling frames we throw away, which is what was causing the
+         encoder to fall behind and the page to lock up mid-recording */
+      const REC_FPS = 30;
+      const display = await navigator.mediaDevices.getDisplayMedia({
+        video:{ frameRate:{ideal:REC_FPS,max:REC_FPS}, width:{ideal:1920,max:1920}, height:{ideal:1080,max:1080} }, audio:false,
+        /* bias the picker to capture only this tab's content — no browser
+           chrome, no other tabs/windows (Chrome/Edge; ignored elsewhere) */
+        preferCurrentTab:true, selfBrowserSurface:'include',
+        surfaceSwitching:'exclude', monitorTypeSurfaces:'exclude' });
+
+      /* the captured tab frame is letterboxed around the 1920×1080 stage
+         whenever the window isn't exactly 16:9 — play the capture into a
+         hidden <video>, then crop+scale just the stage's region into a
+         1920×1080 canvas so the recorded output is always exactly
+         1920×1080 with no black bars on any edge. The draw loop is
+         throttled to REC_FPS (instead of redrawing on every source frame)
+         so it can't outrun the encoder and stall the tab. */
+      const capVideo = document.createElement('video');
+      capVideo.muted = true; capVideo.playsInline = true;
+      capVideo.style.cssText = 'position:fixed;left:-99999px;top:0;width:1px;height:1px;';
+      capVideo.srcObject = display;
+      document.body.appendChild(capVideo);
+      await capVideo.play();
+      await new Promise(r=>{ if(capVideo.videoWidth) r(); else capVideo.onloadedmetadata=()=>r(); });
+
+      const cropCanvas = document.createElement('canvas');
+      cropCanvas.width = 1920; cropCanvas.height = 1080;
+      const cropCtx = cropCanvas.getContext('2d', {alpha:false, desynchronized:true});
+      const pxRatio = capVideo.videoWidth / window.innerWidth;
+      const sc = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+      const tx = (window.innerWidth-1920*sc)/2, ty = (window.innerHeight-1080*sc)/2;
+      const sx = tx*pxRatio, sy = ty*pxRatio, sw = 1920*sc*pxRatio, sh = 1080*sc*pxRatio;
+      let cropping = true;
+      const frameInterval = 1000/REC_FPS;
+      let lastDraw = 0;
+      (function drawCropFrame(){
+        if(!cropping) return;
+        const now = performance.now();
+        if(now - lastDraw >= frameInterval - 1){
+          lastDraw = now;
+          try{ cropCtx.drawImage(capVideo, sx, sy, sw, sh, 0, 0, 1920, 1080); }catch(e){}
+        }
+        (capVideo.requestVideoFrameCallback ? capVideo.requestVideoFrameCallback.bind(capVideo) : requestAnimationFrame)(drawCropFrame);
+      })();
+      const canvasTrack = cropCanvas.captureStream(REC_FPS).getVideoTracks()[0];
+
+      const ctx = fw.getACtx(); fw.getMaster();
+      if(!recTap){ recTap = ctx.createMediaStreamDestination(); fw._softBus.connect(recTap); }
+      const stream = new MediaStream([canvasTrack, ...recTap.stream.getAudioTracks()]);
+      const mime = pickRecMime();
+      const recOpts = mime ? {mimeType:mime} : {};
+      recOpts.videoBitsPerSecond = 24000000;   /* 24 Mbps — avoids the dull/washed-out look low bitrate gives the soft gradient backgrounds, still light enough not to overload the encoder */
+      recOpts.audioBitsPerSecond = 256000;     /* clear narration + music */
+      mediaRec = new MediaRecorder(stream, recOpts);
+      recChunks=[];
+      mediaRec.ondataavailable=ev=>{ if(ev.data.size) recChunks.push(ev.data); };
+      mediaRec.onerror=ev=>{ console.warn('recorder error', ev.error); };
+      mediaRec.onstop=()=>{
+        const isMp4 = (mediaRec.mimeType||mime||'').indexOf('mp4')>=0;
+        const blob=new Blob(recChunks,{type: isMp4 ? 'video/mp4':'video/webm'});
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(blob);
+        a.download='gig-presentation.'+(isMp4?'mp4':'webm'); a.click();
+        cropping = false;
+        display.getTracks().forEach(t=>t.stop());
+        capVideo.pause(); capVideo.remove();
+        try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+      };
+    }catch(err){
+      try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e2){}
+      alert('تعذّر بدء التسجيل: '+err.message);
+    }
+  }
+
+  /* lead-in buffer so you can get a recorder rolling before the show begins */
+  await runCountdown(START_DELAY, record);
+
+  /* start the recording cleanly (countdown excluded), then the music.
+     A 1s timeslice flushes chunks incrementally instead of buffering the
+     whole recording in memory until stop() — lighter on the tab. */
+  if(record && mediaRec){ try{ mediaRec.start(1000); }catch(e){} }
+
+  /* kick off background music + continuous narration from 0:00 (fade in) */
+  startMusic();
+  playProgramVO();
+
+  /* 0) narrated opening journey (incl. the website address bar), then the
+     tablet rises while the scene builds inside it */
+  await introJourney();                    /* ends on the money-transfer scene */
+  /* quick, slightly-overlapping handoff (~1.5s): the money fades out while the
+     tablet begins to rise — the tablet (z-index 30) stays in front the whole time */
+  gsap.to('#ab-money',{y:-50,scale:.9,opacity:0,duration:.5,ease:'power2.in',
+    onComplete:()=>{ gsap.set('#addrbar',{display:'none'}); gsap.set('#ab-money',{opacity:0,y:0}); }});
+  showHead('s1');
+  await delay(230);                        /* small overlap, then the tablet rises */
+  const entering = tabletEnter();          /* start the rise (don't block) */
+  await delay(450);                        /* a beat into the climb */
+  try{ fw.run(); }catch(e){}               /* build the page while it rises */
+  await entering;                          /* tablet settles, page is ready */
+  tabletShine();                           /* light sweep on the settled tablet */
+}
+
+/* ── opening title card: "تقديم مطالبات التأمين مع جي آي جي" ── */
+/* ── two cars glide in and collide above the title (smooth, then settle) ── */
+function playCrash(a){
+  return new Promise(res=>{
+    /* start invisible & already transformed so the GPU layer is built off-screen
+       (no 1px pop when it first becomes visible) */
+    gsap.set('.carL',{x:-240,y:0,rotation:0,opacity:0});
+    gsap.set('.carR',{x:240, y:0,rotation:0,opacity:0});
+    gsap.set('#it-crash',{opacity:0,scale:.3,rotation:-25});
+    const tl=gsap.timeline({onComplete:res,defaults:{force3D:true}});
+    /* fade in while already moving — never a static pop-in */
+    tl.to(['.carL','.carR'],{opacity:1,duration:.3,ease:'power1.out'},0)
+      .to('.carL',{x:-54,duration:.75,ease:'power2.in'},0)
+      .to('.carR',{x:54, duration:.75,ease:'power2.in'},0)
+      /* impact — spark burst + recoil + slight tilt */
+      .add(()=>{ if(a) sfxAppear(a); })
+      .to('#it-crash',{opacity:1,scale:1,rotation:0,duration:.16,ease:'power2.out'})
+      .to('.carL',{x:-70,rotation:-7,duration:.12,ease:'power3.out'},'<')
+      .to('.carR',{x:70, rotation:7, duration:.12,ease:'power3.out'},'<')
+      .to('#it-crash',{opacity:0,scale:1.55,duration:.5,ease:'power1.out'})
+      /* settle back together — smooth, no overshoot so the cars never bob up */
+      .to('.carL',{x:-56,y:0,rotation:0,duration:.5,ease:'power2.out'},'-=0.34')
+      .to('.carR',{x:56, y:0,rotation:0,duration:.5,ease:'power2.out'},'<')
+      .to({},{duration:.15});
+  });
+}
+
+/* ── intro-journey helpers ── */
+function ijTween(sel,vars){ return new Promise(res=>gsap.to(sel,Object.assign({},vars,{onComplete:res}))); }
+function ijCap(txt){
+  const el=$('ij-caption');
+  return new Promise(res=>{
+    gsap.to(el,{opacity:0,y:-8,duration:.2,ease:'power1.in',onComplete:()=>{
+      el.textContent=txt;
+      gsap.fromTo(el,{opacity:0,y:14},{opacity:1,y:0,duration:.5,ease:'power3.out',onComplete:res});
+    }});
+  });
+}
+function ijIn(sel){ return new Promise(res=>gsap.fromTo(sel,{opacity:0,scale:.8,y:14},{opacity:1,scale:1,y:0,duration:.55,ease:'back.out(1.4)',onComplete:res})); }
+function ijOut(sel){ return new Promise(res=>gsap.to(sel,{opacity:0,scale:.92,y:-12,duration:.34,ease:'power2.in',onComplete:res})); }
+function ijDraw(sel){
+  const el=document.querySelector(sel); if(!el||!el.getTotalLength) return;
+  const len=el.getTotalLength();
+  el.style.strokeDasharray=len; el.style.strokeDashoffset=len;
+  gsap.to(el,{strokeDashoffset:0,duration:.55,ease:'power2.out'});
+}
+async function ijBarType(url){
+  const u=$('ij-url'), caret=$('ij-caret');
+  u.textContent='';
+  await ijIn('#ij-bar');
+  const blink=gsap.to(caret,{opacity:0,duration:.45,repeat:-1,yoyo:true,ease:'power1.inOut'});
+  for(let i=0;i<=url.length;i++){ u.textContent=url.slice(0,i); await delay(i===0?180:70); }
+  await delay(320); blink.kill(); gsap.set(caret,{opacity:0});
+}
+
+/* ── opening motion-graphics journey, narrated by the voice-over ── */
+async function introJourney(){
+  const a=getAudio();
+  gsap.set('#intro-title',{opacity:0,display:'flex'});
+  gsap.set('#it-glow',{opacity:0,scale:.72});
+  gsap.set(['#ij-shield','#ij-list','#ij-docs','#ij-bar','#ij-money'],{opacity:0,scale:1,y:0,x:0});
+  gsap.set('#it-cars',{opacity:1});
+  gsap.set('.carL',{x:-240,y:0,rotation:0,opacity:0});
+  gsap.set('.carR',{x:240, y:0,rotation:0,opacity:0});
+  gsap.set('#it-crash',{opacity:0,scale:.3});
+  $('ij-caption').textContent=''; gsap.set('#ij-caption',{opacity:0});
+
+  await ijTween('#intro-title',{opacity:1,duration:.55,ease:'power2.out'});
+  gsap.to('#it-glow',{opacity:1,scale:1,duration:2.0,ease:'power2.out'});
+
+  /* BEAT 1 — accident (~2s) */
+  ijCap('لو صار لك حادث… لا قدّر الله');
+  await playCrash(a);
+  await delay(520);
+
+  /* → BEAT 2 — reassurance: the shield glides down over the crash (~2s) */
+  ijCap('وتأمينك مع جي آي جي');
+  gsap.to('#it-cars',{opacity:0,duration:.55,ease:'power2.inOut'});
+  await new Promise(res=>gsap.fromTo('#ij-shield',{opacity:0,y:-150,scale:.92},
+    {opacity:1,y:0,scale:1,duration:.8,ease:'power3.out',onComplete:res}));
+  ijDraw('#ij-shield-chk'); if(a) sfxAppear(a);
+  await delay(1150);
+
+  /* → BEAT 3 — easier: shield travels LEFT out as the checklist arrives from the RIGHT (~3s) */
+  ijCap('إجراءات المطالبة معنا صارت أسهل');
+  gsap.to('#ij-shield',{x:-440,opacity:0,duration:.75,ease:'power2.inOut'});
+  await new Promise(res=>gsap.fromTo('#ij-list',{opacity:0,x:440,scale:.96},
+    {opacity:1,x:0,scale:1,duration:.8,ease:'power3.out',onComplete:res}));
+  ijDraw('#ij-list-c1'); await delay(420);
+  ijDraw('#ij-list-c2'); if(a) sfxAppear(a);
+  await delay(1650);
+
+  /* → hand off to the website bar: the checklist lifts away while the bar rises
+     beneath it — overlapping, so it reads as one continuous journey (no cut) */
+  gsap.to('#ij-list',{y:-150,opacity:0,duration:.7,ease:'power2.in'});
+  gsap.to('#ij-caption',{opacity:0,y:-12,duration:.5,ease:'power2.in',delay:.15});
+  gsap.to('#it-glow',{opacity:0,duration:.7,ease:'power2.in'});
+  gsap.to('#intro-title',{opacity:0,duration:.8,ease:'power2.inOut',delay:.2,
+    onComplete:()=>gsap.set('#intro-title',{display:'none'})});
+  await delay(300);
+
+  /* BEAT 4 — عبر موقعنا + upload (documents/photos fly into the bar) */
+  await addressBarIntro();
+}
+
+/* ── cinematic outro: brand logo end card ── */
+async function showOutro(){
+  const a=getAudio();
+  playVO('VO2/vo-12-outro.mp3');             /* closing narration */
+  gsap.set('#outro',{opacity:0,display:'flex'});
+  gsap.set('#outro-glow',{opacity:0,scale:.72});
+  gsap.set('#outro-logo',{opacity:0,scale:.84,y:16});
+  gsap.set('#outro-slogan',{opacity:0,y:20});
+  gsap.set('#outro-url',{opacity:0});
+
+  /* 1. light background fades in */
+  await new Promise(res=>gsap.to('#outro',{opacity:1,duration:.45,ease:'power2.out',onComplete:res}));
+
+  /* 2. glow blooms behind logo */
+  gsap.to('#outro-glow',{opacity:1,scale:1,duration:1.6,ease:'power2.out'});
+  await delay(120);   /* logo appears almost right away */
+
+  /* 3. logo reveal + chime */
+  if(a) sfxChime(a);
+  await new Promise(res=>gsap.to('#outro-logo',
+    {opacity:1,scale:1,y:0,duration:.95,ease:'back.out(1.5)',onComplete:res}));
+
+  /* 3.5 slogan rises in gently below the logo */
+  await delay(180);
+  await new Promise(res=>gsap.to('#outro-slogan',
+    {opacity:1,y:0,duration:.75,ease:'power3.out',onComplete:res}));
+
+  /* 4. url fades in at bottom */
+  await new Promise(res=>gsap.to('#outro-url',
+    {opacity:1,duration:.55,ease:'power3.out',onComplete:res}));
+
+  /* 6. hold (longer end card) */
+  await delay(2600);
+}
+
+/* run the outro then stop recording when the iframe signals the end */
+let outroDone=false;
+window.addEventListener('message', async e=>{
+  if(e.data && e.data.gigScene==='end' && !outroDone){
+    outroDone=true;
+    stopMusic();          /* fade music out as the outro begins */
+    await delay(150);     /* outro comes in right after the claim is submitted */
+    await showOutro();
+    window.__outroEnd = performance.now();
+    if(mediaRec && mediaRec.state!=='inactive') mediaRec.stop();
+  }
+});
+
+$('playBtn').onclick = ()=>start(false);
+$('recBtn').onclick  = ()=>start(true);
+</script>
+</body>
+</html>
