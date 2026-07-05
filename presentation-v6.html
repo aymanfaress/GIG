@@ -750,7 +750,7 @@ async function addressBarIntro(){
   for(let i=0;i<=url.length;i++){
     urlEl.textContent=url.slice(0,i);
     if(a && i>0) sfxKey(a);
-    await delay(i===0?200:45);
+    await delay(i===0?150:28);
   }
 
   /* 3.5 upload: a continuous stream of files rises up through the bar and
@@ -759,29 +759,29 @@ async function addressBarIntro(){
   function streamFile(sel,x,delay){
     const tl=gsap.timeline({repeat:-1,delay});
     tl.set(sel,{x:x,y:135,opacity:0,scale:.92,rotation:0})
-      .to(sel,{opacity:1,duration:.4,ease:'power1.out'},0)
-      .to(sel,{y:-185,duration:1.95,ease:'sine.inOut'},0)
-      .to(sel,{opacity:0,duration:.6,ease:'power1.in'},1.3);
+      .to(sel,{opacity:1,duration:.3,ease:'power1.out'},0)
+      .to(sel,{y:-185,duration:1.2,ease:'sine.inOut'},0)
+      .to(sel,{opacity:0,duration:.4,ease:'power1.in'}, .8);
     return tl;
   }
   streams.push(streamFile('#ab-f1',-150,0));
-  streams.push(streamFile('#ab-f2', 150,0.5));
-  streams.push(streamFile('#ab-f3', -58,1.0));
-  streams.push(streamFile('#ab-f4',  58,1.5));
+  streams.push(streamFile('#ab-f2', 150,0.3));
+  streams.push(streamFile('#ab-f3', -58,0.6));
+  streams.push(streamFile('#ab-f4',  58,0.9));
 
   /* 4. pause after typing, cursor stops */
-  await delay(280);
+  await delay(160);
   blinkTween.kill();
   gsap.set(curEl,{opacity:0});
 
   /* 5. ring fades in and traces */
   gsap.to('#ab-ring',{opacity:1,duration:.28,ease:'power2.out'});
-  await delay(100);
+  await delay(80);
   if(a) sfxChime(a);
   ringPath.classList.add('running');
 
   /* let the bar + the rising file stream run a while */
-  await delay(3200);
+  await delay(1800);
 
   /* stop the stream and clear any files still on screen */
   streams.forEach(t=>t.kill());
@@ -800,15 +800,15 @@ async function addressBarIntro(){
   if(a) sfxAppear(a);
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
-    tl.to('#ab-wallet',{scale:1,opacity:1,y:0,duration:.5,ease:'back.out(1.6)'});
+    tl.to('#ab-wallet',{scale:1,opacity:1,y:0,duration:.38,ease:'back.out(1.6)'});
     ['#ab-coin1','#ab-coin2','#ab-coin3'].forEach((sel)=>{
-      tl.to(sel,{opacity:1,scale:1,duration:.22,ease:'power2.out'})
-        .to(sel,{y:58,scale:.6,opacity:0,duration:.52,ease:'power2.in'})
-        .to('#ab-wallet',{scale:1.06,duration:.15,yoyo:true,repeat:1,ease:'sine.inOut',
-          onStart:()=>{ if(a) sfxKey(a); }},'-=0.22');
+      tl.to(sel,{opacity:1,scale:1,duration:.15,ease:'power2.out'})
+        .to(sel,{y:58,scale:.6,opacity:0,duration:.35,ease:'power2.in'})
+        .to('#ab-wallet',{scale:1.06,duration:.12,yoyo:true,repeat:1,ease:'sine.inOut',
+          onStart:()=>{ if(a) sfxKey(a); }},'-=0.15');
     });
   });
-  await delay(900);
+  await delay(450);
   ringPath.classList.remove('running');
   /* leave the money scene on screen — the tablet rise picks up from here (connected) */
 }
