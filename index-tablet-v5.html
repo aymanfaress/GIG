@@ -1922,10 +1922,10 @@ async function runScene6(isFinal=false){
   /* review the data — quick gentle highlights */
   act('مراجعة البيانات');
   const rp=$('rev-personal').getBoundingClientRect();
-  await moveTo(rp.left+rp.width*.5,rp.top+rp.height*.5,.8);
+  await moveTo(rp.left+rp.width*.5,rp.top+rp.height*.5,.5);
   hl('rev-personal',true); await sleep(30); hl('rev-personal',false);
   const rpo=$('rev-policy').getBoundingClientRect();
-  await moveTo(rpo.left+rpo.width*.5,rpo.top+rpo.height*.5,.5);
+  await moveTo(rpo.left+rpo.width*.5,rpo.top+rpo.height*.5,.3);
   hl('rev-policy',true); await sleep(30); hl('rev-policy',false);
   setP(95);
 

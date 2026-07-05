@@ -429,14 +429,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#0a0a14;font-famil
       <div id="ab-caption">تقدم المعلومات المطلوبة عبر موقعنا وبنعالج طلبك بأسرع وقت</div>
     </div>
     <svg id="ab-money" viewBox="0 0 200 174" fill="none" stroke="#19058c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-      <circle id="ab-coin1" cx="72" cy="30" r="15" stroke="#d28c64"/>
-      <circle id="ab-coin2" cx="100" cy="24" r="14" stroke="#d28c64"/>
-      <circle id="ab-coin3" cx="128" cy="30" r="15" stroke="#d28c64"/>
-      <g id="ab-wallet">
-        <rect x="28" y="76" width="144" height="84" rx="16"/>
-        <path d="M28 108 H146 a14 14 0 0 1 14 14 a14 14 0 0 1 -14 14 H28"/>
-        <circle cx="150" cy="122" r="5.5" stroke="#d28c64"/>
+      <g id="ab-doc">
+        <path d="M50 14 H116 L152 50 V160 a8 8 0 0 1 -8 8 H58 a8 8 0 0 1 -8 -8 V22 a8 8 0 0 1 8 -8 Z"/>
+        <polyline points="116,14 116,50 152,50"/>
+        <line id="ab-line1" x1="68" y1="76"  x2="134" y2="76"/>
+        <line id="ab-line2" x1="68" y1="94"  x2="134" y2="94"/>
+        <line id="ab-line3" x1="68" y1="112" x2="106" y2="112"/>
       </g>
+      <path id="ab-check" d="M72 132 L88 150 L130 108" stroke="#d28c64" stroke-width="7"/>
     </svg>
   </div>
   <div id="ab-flash"></div>
@@ -793,24 +793,22 @@ async function addressBarIntro(){
   await new Promise(res=>gsap.to('#addrbar-center',{scale:.4,opacity:0,duration:.55,ease:'power2.in',onComplete:res}));
   gsap.to('#ab-glow',{opacity:0,duration:.5,ease:'power2.in'});
 
-  /* 7. MONEY TRANSFER — coins are deposited into the wallet (motion only, no text) */
+  /* 7. DOCUMENT PROCESSING — form appears, lines fill in, checkmark confirms */
   gsap.set('#ab-money',{opacity:1,y:0,scale:1});
-  gsap.set('#ab-wallet',{scale:.82,opacity:0,y:18,transformOrigin:'50% 82%'});
-  gsap.set(['#ab-coin1','#ab-coin2','#ab-coin3'],{opacity:0,y:0,scale:.85});
+  gsap.set('#ab-doc',{scale:.82,opacity:0,y:18,transformOrigin:'50% 82%'});
+  gsap.set(['#ab-line1','#ab-line2','#ab-line3'],{opacity:0,x:14});
+  gsap.set('#ab-check',{strokeDasharray:90,strokeDashoffset:90,opacity:1});
   if(a) sfxAppear(a);
   await new Promise(res=>{
     const tl=gsap.timeline({onComplete:res});
-    tl.to('#ab-wallet',{scale:1,opacity:1,y:0,duration:.38,ease:'back.out(1.6)'});
-    ['#ab-coin1','#ab-coin2','#ab-coin3'].forEach((sel)=>{
-      tl.to(sel,{opacity:1,scale:1,duration:.15,ease:'power2.out'})
-        .to(sel,{y:58,scale:.6,opacity:0,duration:.35,ease:'power2.in'})
-        .to('#ab-wallet',{scale:1.06,duration:.12,yoyo:true,repeat:1,ease:'sine.inOut',
-          onStart:()=>{ if(a) sfxKey(a); }},'-=0.15');
-    });
+    tl.to('#ab-doc',{scale:1,opacity:1,y:0,duration:.42,ease:'back.out(1.6)'})
+      .to(['#ab-line1','#ab-line2','#ab-line3'],{opacity:1,x:0,duration:.28,ease:'power2.out',stagger:.1},'+=0.06')
+      .to('#ab-check',{strokeDashoffset:0,duration:.55,ease:'power2.out',
+        onStart:()=>{ if(a) sfxKey(a); }},'+=0.12');
   });
   await delay(450);
   ringPath.classList.remove('running');
-  /* leave the money scene on screen — the tablet rise picks up from here (connected) */
+  /* leave the document scene on screen — the tablet rise picks up from here (connected) */
 }
 
 /* ── start the show (with optional recording) ── */
