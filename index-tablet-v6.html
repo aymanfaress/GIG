@@ -1792,11 +1792,11 @@ async function runScene5(){
   setP(72);
 
   /* build in */
-  gsap.to($('s5-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(300);
-  gsap.to($('s5-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(240);
-  gsap.to($('s5-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(220);
-  gsap.to($('s5-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(180);
-  gsap.to('#veh-card',{y:0,opacity:1,duration:.55,ease:'power3.out'}); await sleep(180);
+  gsap.to($('s5-sidebar'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(180);
+  gsap.to($('s5-leftpanel'),{x:0,opacity:1,duration:.7,ease:'power3.out'}); await sleep(140);
+  gsap.to($('s5-form'),{y:0,opacity:1,duration:.65,ease:'power3.out'}); await sleep(120);
+  gsap.to($('s5-title'),{y:0,opacity:1,duration:.6,ease:'back.out(1.4)'}); await sleep(100);
+  gsap.to('#veh-card',{y:0,opacity:1,duration:.55,ease:'power3.out'}); await sleep(100);
   gsap.to('#sec-evaltype',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(70);
   gsap.to('#sec-evalnum',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(70);
   gsap.to('#sec-doc1',{y:0,opacity:1,duration:.5,ease:'power2.out'}); await sleep(70);
@@ -1987,7 +1987,7 @@ async function runScene7(){
   gsap.to($('s7-leftpanel'),{x:0,opacity:1,duration:.55,ease:'power3.out',delay:.08});
   gsap.to($('s7-form'),{y:0,opacity:1,duration:.55,ease:'power3.out',delay:.14});
   gsap.to($('s7-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.4)',delay:.2});
-  gsap.to('#bsec-source',{y:0,opacity:1,duration:.5,ease:'power2.out',delay:.26}); await sleep(520);
+  gsap.to('#bsec-source',{y:0,opacity:1,duration:.5,ease:'power2.out',delay:.26}); await sleep(300);
   setP(12);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
@@ -2003,7 +2003,7 @@ async function runScene7(){
   selCard('bsrc-basher'); sfx_check(); accSpot('bspot-source',false); await sleep(160);
 
   gsap.to(['#bsec-type','#bsec-info','#bsec-ins','#bsec-docs','#s7-btn'],{y:0,opacity:1,duration:.5,ease:'power2.out',stagger:.07});
-  await sleep(360);
+  await sleep(200);
   setP(22);
 
   await scrollToEl(f,c,$('bsec-type'),.65,.45);
@@ -2011,7 +2011,7 @@ async function runScene7(){
   r=$('btype-veh').getBoundingClientRect();
   await moveTo(r.left+r.width/2,r.top+r.height/2,.7);
   sfx_confirm(); await clickAt(r.left+r.width/2,r.top+r.height/2);
-  selCard('btype-veh'); sfx_check(); accSpot('bspot-type',false); setP(34); await sleep(260);
+  selCard('btype-veh'); sfx_check(); accSpot('bspot-type',false); setP(34); await sleep(200);
 
   /* 3) details — report + serial + date fill together */
   act('تعبئة تفاصيل الحادث');
