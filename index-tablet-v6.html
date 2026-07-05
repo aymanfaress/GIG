@@ -1838,7 +1838,7 @@ async function runScene5(){
   await s5scroll($('sec-doc1'),.6,.5);
   accSpot('spot-doc1',true); await sleep(120);
   sfx_click(); await sleep(180); $('file-doc1').classList.add('attached'); sfx_check();
-  accSpot('spot-doc1',false); setP(82); await sleep(200);
+  accSpot('spot-doc1',false); setP(82); await sleep(80);
 
   /* ── 4) SETTLEMENT — type + iban + certificate (grouped) ── */
   act('بيانات التسوية والتعويض');
@@ -1848,24 +1848,24 @@ async function runScene5(){
   await moveTo(rc.left+rc.width/2,rc.top+rc.height/2,.7);
   sfx_confirm(); await clickAt(rc.left+rc.width/2,rc.top+rc.height/2);
   selCard('settle-comp'); sfx_check(); await sleep(160);
-  accSpot('spot-settle',false); setP(84); await sleep(200);
+  accSpot('spot-settle',false); setP(84); await sleep(80);
 
   /* ── 5) IBAN (fast fill) ── */
   await s5scroll($('sec-iban'),.65,.45);
   accSpot('spot-iban',true); $('lbl-iban').classList.add('active'); await sleep(120);
   await typeIn($('inp-iban'),'1000000000000000000001',46);
   $('lbl-iban').classList.remove('active'); $('chk-iban').classList.add('show'); sfx_check();
-  accSpot('spot-iban',false); setP(86); await sleep(200);
+  accSpot('spot-iban',false); setP(86); await sleep(80);
 
   /* ── 6) IBAN CERTIFICATE (upload) ── */
   await s5scroll($('sec-doc2'),.6,.5);
   accSpot('spot-doc2',true); await sleep(120);
   sfx_click(); await sleep(180); $('file-doc2').classList.add('attached'); sfx_check();
-  accSpot('spot-doc2',false); setP(88); await sleep(200);
+  accSpot('spot-doc2',false); setP(88); await sleep(80);
 
   /* step 3 line completes */
   pingOff('s5-stp3');
-  $('s5-line3').classList.add('done'); await sleep(200);
+  $('s5-line3').classList.add('done'); await sleep(120);
 
   /* ── BUTTON ── */
   act('حفظ البيانات البنكية والمتابعة');
