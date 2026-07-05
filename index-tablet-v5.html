@@ -1659,7 +1659,7 @@ async function runScene4(){
   gsap.to($('s4-form'),{y:0,opacity:1,duration:.55,ease:'power3.out',delay:.14});
   gsap.to($('s4-title'),{y:0,opacity:1,duration:.5,ease:'back.out(1.4)',delay:.2});
   gsap.to('#sec-source',{y:0,opacity:1,duration:.5,ease:'power2.out',delay:.26});
-  await sleep(360);
+  await sleep(160);
   setP(14);
 
   gsap.set(cur,{left:-60,top:-60,opacity:1}); startTrail();
@@ -1668,20 +1668,20 @@ async function runScene4(){
   /* ── 1) SOURCE + TYPE picked together ── */
   act('اختيار مصدر البلاغ ونوع الحادث');
   await scrollToEl(f,c,$('sec-source'),.6,.5);
-  accSpot('spot-src',true); await sleep(200);
+  accSpot('spot-src',true); await sleep(100);
   const rnajm=$('src-najm').getBoundingClientRect();
   await moveTo(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2,.9);
   sfx_confirm(); await clickAt(rnajm.left+rnajm.width/2,rnajm.top+rnajm.height/2);
-  selCard('src-najm'); sfx_check(); accSpot('spot-src',false); await sleep(160);
+  selCard('src-najm'); sfx_check(); accSpot('spot-src',false); await sleep(80);
 
   /* reveal the rest of the form (single fast stagger) */
   gsap.to(['#sec-type','#sec-owner','#sec-info','#s4-btn','#s4-back'],{y:0,opacity:1,duration:.5,ease:'power2.out',stagger:.08});
-  await sleep(260);
+  await sleep(120);
   setP(28);
 
   /* type right after, same motion */
   await scrollToEl(f,c,$('sec-type'),.7,.45);
-  accSpot('spot-type',true); await sleep(180);
+  accSpot('spot-type',true); await sleep(80);
   const rveh=$('type-veh').getBoundingClientRect();
   await moveTo(rveh.left+rveh.width/2,rveh.top+rveh.height/2,.6);
   sfx_confirm(); await clickAt(rveh.left+rveh.width/2,rveh.top+rveh.height/2);
